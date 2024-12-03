@@ -1,4 +1,4 @@
-export enum TemplateType {
-    STEPS = 'Steps',
-    TEXT = 'Text',
+export declare enum TemplateType {
+	STEPS = 'Steps',
+	TEXT = 'Text'
 }
