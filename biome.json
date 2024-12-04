@@ -1,44 +1,47 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.7.0/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
-	"javascript": {
-		"parser": {
-			"unsafeParameterDecoratorsEnabled": true
-		},
-		"formatter": {
-			"enabled": true,
-			"quoteStyle": "single",
-			"semicolons": "always",
-			"indentStyle": "tab",
-			"trailingCommas": "none",
-			"indentWidth": 2,
-			"lineWidth": 100
-		}
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"style": {
-				"useImportType": "off",
-				"useNumberNamespace": "off",
-				"noNonNullAssertion": "warn"
-			},
-			"suspicious": {
-				"noExplicitAny": "warn",
-				"noAsyncPromiseExecutor": "warn"
-			},
-			"performance": {
-				"noAccumulatingSpread": "warn"
-			},
-			"complexity": {
-				"noStaticOnlyClass": "off"
-			}
-		}
-	},
-	"files": {
-		"ignore": ["node_modules/*"]
-	}
+  "$schema": "https://biomejs.dev/schemas/1.9.2/schema.json",
+  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
+  "files": { "ignoreUnknown": false, "ignore": [] },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "organizeImports": { "enabled": true },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "complexity": {
+        "noUselessRename": "error",
+        "noUselessStringConcat": "error",
+        "noUselessTernary": "error"
+      },
+      "correctness": {
+        "noConstantCondition": "error",
+        "noInvalidUseBeforeDeclaration": "error",
+        "noUnreachable": "error"
+      },
+      "style": {
+        "noArguments": "error",
+        "noVar": "error",
+        "useCollapsedElseIf": "error",
+        "useConst": "error",
+        "useNumericLiterals": "error",
+        "useShorthandAssign": "error"
+      },
+      "suspicious": {
+        "noConsole": "error",
+        "noDoubleEquals": "error",
+        "noGlobalAssign": "error",
+        "noSelfCompare": "error",
+        "noShadowRestrictedNames": "error"
+      }
+    },
+    "include": ["**/*.{js,mjs}"]
+  },
+  "javascript": {
+    "formatter": { "quoteStyle": "double" },
+    "globals": ["BigInt", "module", "require", "document", "window"]
+  }
 }

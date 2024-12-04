@@ -1,16 +1,16 @@
 {
-	"name": "iram-backend",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"lint": "npx biome format . --write",
-		"test": "node --test tests/*.test.js"
-	},
-	"author": "",
-	"license": "MIT",
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"dotenv": "^16.4.7"
-	}
+  "name": "iram-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx biome format . --write",
+    "test": "node --test tests/*.test.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "dotenv": "^16.4.7"
+  }
 }

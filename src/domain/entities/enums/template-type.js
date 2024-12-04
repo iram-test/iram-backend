@@ -1,6 +1,6 @@
 export const TemplateType = {
-	STEPS: 'Steps',
-	TEXT: 'Text'
+  STEPS: "Steps",
+  TEXT: "Text",
 };
 
 Object.freeze(TemplateType);
