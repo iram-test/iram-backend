@@ -15,8 +15,8 @@ export class Milestone {
 		this.parentId = parentId;
 		this.description = description;
 		this.startDate = startDate;
-		this.description = description;
-		this.description = description;
+		this.endDate = endDate;
+		this.status = status;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
