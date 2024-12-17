@@ -16,7 +16,9 @@ export class AuthorizationDomainService implements AuthRepository {
     return this.authorizationRepository.logout(refreshToken);
   }
 
-  refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+  refresh(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authorizationRepository.refresh(refreshToken);
   }
 }

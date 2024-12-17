@@ -1,4 +1,4 @@
-import { Folder } from "../entities/folder-entity"
+import { Folder } from "../entities/folder-entity";
 
 export interface FolderRepository {
   addFolder(folder: Folder): Promise<Folder>;

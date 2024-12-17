@@ -1,4 +1,4 @@
-import { ProjectRole } from './enums/project-role';
+import { ProjectRole } from "./enums/project-role";
 
 export class ProjectUserAssociation {
   constructor(

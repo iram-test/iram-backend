@@ -1,7 +1,9 @@
 import { ProjectUserAssociation } from "../entities/project-user-association";
 
 export interface ProjectUserAssociationRepository {
-  addAssociation(association: ProjectUserAssociation): Promise<ProjectUserAssociation>;
+  addAssociation(
+    association: ProjectUserAssociation,
+  ): Promise<ProjectUserAssociation>;
   getAll(): Promise<ProjectUserAssociation[]>;
   save(association: ProjectUserAssociation): Promise<ProjectUserAssociation>;
   getById(associationId: string): Promise<ProjectUserAssociation | null>;

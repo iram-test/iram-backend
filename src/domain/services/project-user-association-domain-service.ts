@@ -1,10 +1,16 @@
 import { ProjectUserAssociation } from "../entities/project-user-association";
 import { ProjectUserAssociationRepository } from "../repositories/project-user-association-repository";
 
-export class ProjectUserAssociationDomainService implements ProjectUserAssociationRepository {
-  constructor(private associationRepository: ProjectUserAssociationRepository) {}
+export class ProjectUserAssociationDomainService
+  implements ProjectUserAssociationRepository
+{
+  constructor(
+    private associationRepository: ProjectUserAssociationRepository,
+  ) {}
 
-  addAssociation(association: ProjectUserAssociation): Promise<ProjectUserAssociation> {
+  addAssociation(
+    association: ProjectUserAssociation,
+  ): Promise<ProjectUserAssociation> {
     return this.associationRepository.addAssociation(association);
   }
 
@@ -22,7 +28,7 @@ export class ProjectUserAssociationDomainService implements ProjectUserAssociati
 
   getByUserId(userId: string): Promise<ProjectUserAssociation | null> {
     return this.associationRepository.getByUserId(userId);
-  }  
+  }
 
   update(association: ProjectUserAssociation): Promise<ProjectUserAssociation> {
     return this.associationRepository.update(association);

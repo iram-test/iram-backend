@@ -1,4 +1,4 @@
-import { MilestoneStatus } from './enums/milestone-status';
+import { MilestoneStatus } from "./enums/milestone-status";
 
 export class Milestone {
   constructor(

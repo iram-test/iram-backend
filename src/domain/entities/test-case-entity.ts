@@ -1,8 +1,8 @@
-import { Priority } from './enums/project-priority';
-import { Status } from './enums/project-status';
-import { TemplateType } from './enums/template-type';
-import { TestType } from './enums/test-type';
-import { Step } from './step-entity';
+import { Priority } from "./enums/project-priority";
+import { Status } from "./enums/project-status";
+import { TemplateType } from "./enums/template-type";
+import { TestType } from "./enums/test-type";
+import { Step } from "./step-entity";
 
 export class TestCase {
   constructor(

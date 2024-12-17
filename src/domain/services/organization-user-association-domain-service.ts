@@ -1,10 +1,16 @@
 import { OrganizationUserAssociation } from "../entities/organization-user-association";
 import { OrganizationUserAssociationRepository } from "../repositories/organization-user-association-repository";
 
-export class OrganizationUserAssociationDomainService implements OrganizationUserAssociationRepository {
-  constructor(private associationRepository: OrganizationUserAssociationRepository) {}
+export class OrganizationUserAssociationDomainService
+  implements OrganizationUserAssociationRepository
+{
+  constructor(
+    private associationRepository: OrganizationUserAssociationRepository,
+  ) {}
 
-  addAssociation(association: OrganizationUserAssociation): Promise<OrganizationUserAssociation> {
+  addAssociation(
+    association: OrganizationUserAssociation,
+  ): Promise<OrganizationUserAssociation> {
     return this.associationRepository.addAssociation(association);
   }
 
@@ -12,7 +18,9 @@ export class OrganizationUserAssociationDomainService implements OrganizationUse
     return this.associationRepository.getAll();
   }
 
-  save(association: OrganizationUserAssociation): Promise<OrganizationUserAssociation> {
+  save(
+    association: OrganizationUserAssociation,
+  ): Promise<OrganizationUserAssociation> {
     return this.associationRepository.save(association);
   }
 
@@ -24,7 +32,9 @@ export class OrganizationUserAssociationDomainService implements OrganizationUse
     return this.associationRepository.getByUserId(userId);
   }
 
-  update(association: OrganizationUserAssociation): Promise<OrganizationUserAssociation> {
+  update(
+    association: OrganizationUserAssociation,
+  ): Promise<OrganizationUserAssociation> {
     return this.associationRepository.update(association);
   }
 

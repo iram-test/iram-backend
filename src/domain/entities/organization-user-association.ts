@@ -1,5 +1,5 @@
-import { UserRole } from './enums/user-role';
-import { UserPermission } from './enums/user-permission';
+import { UserRole } from "./enums/user-role";
+import { UserPermission } from "./enums/user-permission";
 
 export class OrganizationUserAssociation {
   constructor(
