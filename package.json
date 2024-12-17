@@ -4,13 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "npx biome format . --write",
-    "test": "node --test tests/*.test.js"
+    "start": "npm run build && npm run run",
+		"dev": "ts-node-dev --respawn --transpile-only index.ts",
+		"build": "npx tsc --project tsconfig.json",
+		"run": "node dist/index.js",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "npx biome format . --write"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "dotenv": "^16.4.7"
+    "@types/winston": "^2.4.4",
+    "dotenv": "^16.4.7",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "dependencies": {
+    "fastify": "^5.2.0"
   }
 }
