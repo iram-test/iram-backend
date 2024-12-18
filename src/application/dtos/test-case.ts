@@ -1,7 +1,7 @@
 import { TemplateType } from "../../domain/entities/enums/template-type";
 import { Priority } from "../../domain/entities/enums/project-priority";
 import { TestType } from "../../domain/entities/enums/test-type";
-import { Status } from "../../domain/entities/enums/project-status";
+import { Status } from "../../domain/entities/enums/status";
 import { StepDTO } from "./step-dto";
 import { CreateStepDTO } from "./step-dto";
 

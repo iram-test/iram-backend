@@ -1,11 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-import { Project } from './project-entity';
-import { TestCase } from './test-case-entity';
-import { TestReport } from './test-report-entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from "typeorm";
+import { Project } from "./project-entity";
+import { TestCase } from "./test-case-entity";
+import { TestReport } from "./test-report-entity";
 
 @Entity()
 export class Folder {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   folderId!: string;
 
   @Column()
@@ -21,18 +30,24 @@ export class Folder {
   updatedAt!: Date;
 
   @Column()
-    projectId!: string;
+  projectId!: string;
 
-  @ManyToOne(() => Project, project => project.folders)
+  @ManyToOne(
+    () => Project,
+    (project) => project.folders,
+  )
   @JoinColumn({ name: "projectId" })
   project?: Project;
 
+  @OneToMany(
+    () => TestCase,
+    (testCase) => testCase.folder,
+  )
+  testCases?: TestCase[];
 
-    @OneToMany(() => TestCase, testCase => testCase.folder)
-    testCases?: TestCase[]
-
-
-    @OneToMany(() => TestReport, testReport => testReport.folder)
-    testReports?: TestReport[]
-
+  @OneToMany(
+    () => TestReport,
+    (testReport) => testReport.folder,
+  )
+  testReports?: TestReport[];
 }

@@ -1,28 +1,38 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { TestCase } from './test-case-entity';
-
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
+import { TestCase } from "./test-case-entity";
 
 @Entity()
 export class Step {
-    @PrimaryGeneratedColumn('uuid')
-    stepId!: string;
+  @PrimaryGeneratedColumn("uuid")
+  stepId!: string;
 
-    @Column()
-    stepDescription!: string;
+  @Column()
+  stepDescription!: string;
 
-    @Column()
-    expectedResult!: string;
+  @Column()
+  expectedResult!: string;
 
-    @Column({ nullable: true })
-    image!: string | null;
+  @Column({ nullable: true })
+  image!: string | null;
 
-    @CreateDateColumn()
-    createdAt!: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
-   @ManyToOne(() => TestCase, testCase => testCase.steps)
-   @JoinColumn({ name: "testCaseId"})
-   testCase?: TestCase
+  @ManyToOne(
+    () => TestCase,
+    (testCase) => testCase.steps,
+  )
+  @JoinColumn({ name: "testCaseId" })
+  testCase?: TestCase;
 }

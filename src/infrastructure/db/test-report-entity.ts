@@ -1,45 +1,62 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn,  ManyToMany,  JoinTable, OneToMany} from 'typeorm';
-import { Milestone } from './milestone-entity';
-import { TestCase } from './test-case-entity';
-import { User } from './user-entity';
-import { Folder } from './folder-entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+} from "typeorm";
+import { Milestone } from "./milestone-entity";
+import { TestCase } from "./test-case-entity";
+import { User } from "./user-entity";
+import { Folder } from "./folder-entity";
 
 @Entity()
 export class TestReport {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   testReportId!: string;
 
   @Column()
   name!: string;
 
-    @Column({nullable: true})
+  @Column({ nullable: true })
   reference!: string | null;
 
-     @Column({nullable: true})
+  @Column({ nullable: true })
   milestoneId!: string | null;
 
   @Column()
   description!: string;
 
-   @Column({nullable: true})
+  @Column({ nullable: true })
   assignedUserId!: string | null;
 
-    @Column({ type: 'text', array: true })
+  @Column({ type: "text", array: true })
   testCaseId!: string[];
 
-    @Column({ nullable: true})
+  @Column({ nullable: true })
   folderId!: string | null;
 
-   @ManyToOne(() => Milestone, milestone => milestone.testReports)
+  @ManyToOne(
+    () => Milestone,
+    (milestone) => milestone.testReports,
+  )
   @JoinColumn({ name: "milestoneId" })
-   milestone?: Milestone;
+  milestone?: Milestone;
 
-   @ManyToOne(() => User, user => user.testReports)
-    @JoinColumn({ name: "assignedUserId" })
-     assignedUser?: User;
+  @ManyToOne(
+    () => User,
+    (user) => user.testReports,
+  )
+  @JoinColumn({ name: "assignedUserId" })
+  assignedUser?: User;
 
-
-   @ManyToOne(() => Folder, folder => folder.testReports)
-  @JoinColumn({name: "folderId"})
-  folder?: Folder
+  @ManyToOne(
+    () => Folder,
+    (folder) => folder.testReports,
+  )
+  @JoinColumn({ name: "folderId" })
+  folder?: Folder;
 }

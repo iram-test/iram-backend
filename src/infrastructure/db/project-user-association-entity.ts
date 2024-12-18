@@ -1,20 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { ProjectRole } from '../../domain/entities/enums/project-role';
-import { User } from './user-entity';
-import { Project } from './project-entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
+import { ProjectRole } from "../../domain/entities/enums/project-role";
+import { User } from "./user-entity";
+import { Project } from "./project-entity";
 
 @Entity()
 export class ProjectUserAssociation {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   associationId!: string;
 
-    @Column()
+  @Column()
   projectId!: string;
 
-    @Column()
+  @Column()
   userId!: string;
 
-  @Column({ type: 'enum', enum: ProjectRole })
+  @Column({ type: "enum", enum: ProjectRole })
   projectRole!: ProjectRole;
 
   @CreateDateColumn()
@@ -23,11 +31,17 @@ export class ProjectUserAssociation {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @ManyToOne(() => User, user => user.projectAssociations)
-    @JoinColumn({ name: "userId" })
+  @ManyToOne(
+    () => User,
+    (user) => user.projectAssociations,
+  )
+  @JoinColumn({ name: "userId" })
   user?: User;
 
-    @ManyToOne(() => Project, project => project.userAssociations)
-    @JoinColumn({ name: "projectId" })
-    project?: Project
+  @ManyToOne(
+    () => Project,
+    (project) => project.userAssociations,
+  )
+  @JoinColumn({ name: "projectId" })
+  project?: Project;
 }
