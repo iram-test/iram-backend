@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
-import { User } from '../db/userEntity';
+import { User } from '../infrastructure/db/user-entity';
+import { Folder } from '../infrastructure/db/folder-entity';
+import { Milestone } from '../infrastructure/db/milestone-entity';
 
 export const PostgresDataSource: DataSource = new DataSource({
 	type: 'postgres',
@@ -9,7 +11,7 @@ export const PostgresDataSource: DataSource = new DataSource({
 	password: process.env.POSTGRES_PASSWORD,
 	database: process.env.POSTGRES_DB,
 	synchronize: true,
-	entities: [User],
+	entities: [User, Folder, Milestone],
 	subscribers: [],
 	migrations: []
 });
