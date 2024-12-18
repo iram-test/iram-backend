@@ -1,3 +1,4 @@
+// src/domain/entities/user-entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import { ProjectUserAssociation } from "./project-user-association-entity";
 import { OrganizationUserAssociation } from "./organization-user-association-entity";
 import { TestCase } from "./test-case-entity";
 import { TestReport } from "./test-report-entity";
+import { TestRun } from "./test-run-entity";
 
 @Entity()
 export class User {
@@ -69,4 +71,10 @@ export class User {
     (testReport) => testReport.assignedUser,
   )
   testReports?: TestReport[];
+
+  @OneToMany(
+    () => TestRun,
+    (testRun) => testRun.assignedTo,
+  )
+  testRuns?: TestRun[];
 }

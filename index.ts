@@ -6,6 +6,7 @@ import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import { router } from "./src/infrastructure/routes";
 import sensible from "@fastify/sensible";
+import { PostgresDataSource } from "./src/tools/db-connection";
 dotenv.config();
 
 (async () => {
@@ -17,6 +18,11 @@ dotenv.config();
     await server.register(router, { prefix: "/api" });
     setConsoleLogs(logger);
     setFileLogs(logger, "logs");
+    await PostgresDataSource.initialize()
+      .then(() => logger.info("Postgres Connected..."))
+      .catch((error) =>
+        logger.error("Error during connecting to Postgres", error),
+      );
     const port = config.port;
     await server.listen({ port });
     logger.info(`Server was launched on port: ${port}`);

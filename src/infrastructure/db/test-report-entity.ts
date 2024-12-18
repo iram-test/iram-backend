@@ -4,12 +4,8 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  ManyToMany,
-  JoinTable,
-  OneToMany,
 } from "typeorm";
 import { Milestone } from "./milestone-entity";
-import { TestCase } from "./test-case-entity";
 import { User } from "./user-entity";
 import { Folder } from "./folder-entity";
 
