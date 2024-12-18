@@ -1,4 +1,4 @@
-import { MilestoneStatus } from "../../domain/entities/enums/milestone-status"; 
+import { MilestoneStatus } from "../../domain/entities/enums/milestone-status";
 
 export interface MilestoneDTO {
   milestoneID: string;
@@ -13,12 +13,12 @@ export interface MilestoneDTO {
 }
 
 export interface CreateMilestoneDTO {
-    name: string;
-    parentId?: string | null;
-    description: string;
-    startDate?: Date | null;
-    endDate?: Date | null;
-    status: MilestoneStatus;
+  name: string;
+  parentId?: string | null;
+  description: string;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  status: MilestoneStatus;
 }
 
 export interface UpdateMilestoneDTO {

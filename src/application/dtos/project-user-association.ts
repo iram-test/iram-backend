@@ -1,14 +1,13 @@
-import { ProjectRole } from "../../domain/entities/enums/project-role"; 
+import { ProjectRole } from "../../domain/entities/enums/project-role";
 
 export interface ProjectUserAssociationDTO {
-    associationId: string;
-    projectId: string;
-    userId: string;
-    projectRole: ProjectRole;
-    createdAt: Date;
-    updatedAt: Date;
+  associationId: string;
+  projectId: string;
+  userId: string;
+  projectRole: ProjectRole;
+  createdAt: Date;
+  updatedAt: Date;
 }
-
 
 export interface CreateProjectUserAssociationDTO {
   projectId: string;
@@ -16,8 +15,7 @@ export interface CreateProjectUserAssociationDTO {
   projectRole: ProjectRole;
 }
 
-
 export interface UpdateProjectUserAssociationDTO {
   associationId: string;
-    projectRole?: ProjectRole;
+  projectRole?: ProjectRole;
 }

@@ -11,9 +11,8 @@ export interface CreateProjectDTO {
   description: string;
 }
 
-
 export interface UpdateProjectDTO {
-    projectId: string;
-    name?: string;
-    description?: string;
+  projectId: string;
+  name?: string;
+  description?: string;
 }

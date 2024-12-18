@@ -4,17 +4,17 @@ export interface OrganizationDTO {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-    projectId: string;
+  projectId: string;
 }
 
 export interface CreateOrganizationDTO {
-    name: string;
-    description: string;
-    projectId: string;
+  name: string;
+  description: string;
+  projectId: string;
 }
 
 export interface UpdateOrganizationDTO {
-    organizationId: string;
-    name?: string;
-    description?: string;
+  organizationId: string;
+  name?: string;
+  description?: string;
 }

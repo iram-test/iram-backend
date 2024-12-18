@@ -1,5 +1,5 @@
-import { UserRole } from '../../domain/entities/enums/user-role';
-import { UserPermission } from '../../domain/entities/enums/user-permission';
+import { UserRole } from "../../domain/entities/enums/user-role";
+import { UserPermission } from "../../domain/entities/enums/user-permission";
 
 export interface OrganizationUserAssociationDTO {
   associationId: string;
@@ -19,6 +19,6 @@ export interface CreateOrganizationUserAssociationDTO {
 
 export interface UpdateOrganizationUserAssociationDTO {
   associationId: string;
-    role?: UserRole;
-    permission?: UserPermission;
+  role?: UserRole;
+  permission?: UserPermission;
 }

@@ -8,13 +8,13 @@ export interface FolderDTO {
 }
 
 export interface CreateFolderDTO {
-    name: string;
-    description: string;
-    projectId: string;
+  name: string;
+  description: string;
+  projectId: string;
 }
 
 export interface UpdateFolderDTO {
-    folderId: string;
-    name?: string;
-    description?: string;
+  folderId: string;
+  name?: string;
+  description?: string;
 }

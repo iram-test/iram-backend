@@ -4,28 +4,28 @@ export interface TestReportDTO {
   reference: string | null;
   milestoneId: string | null;
   description: string;
-    assignedUserId: string | null;
+  assignedUserId: string | null;
   testCaseId: string[];
   folderId: string | null;
 }
 
 export interface CreateTestReportDTO {
-    name: string;
-    reference?: string | null;
-    milestoneId?: string | null;
-    description: string;
-    assignedUserId?: string | null;
-    testCaseId: string[];
-    folderId?: string | null;
+  name: string;
+  reference?: string | null;
+  milestoneId?: string | null;
+  description: string;
+  assignedUserId?: string | null;
+  testCaseId: string[];
+  folderId?: string | null;
 }
 
 export interface UpdateTestReportDTO {
-    testReportId: string;
-    name?: string;
-    reference?: string | null;
-    milestoneId?: string | null;
-    description?: string;
+  testReportId: string;
+  name?: string;
+  reference?: string | null;
+  milestoneId?: string | null;
+  description?: string;
   assignedUserId?: string | null;
   testCaseId?: string[];
-    folderId?: string | null;
+  folderId?: string | null;
 }
