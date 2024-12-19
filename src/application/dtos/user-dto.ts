@@ -4,7 +4,6 @@ export interface UserDTO {
   lastName: string;
   username: string;
   email: string;
-  country: string;
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -16,13 +15,14 @@ export interface CreateUserDTO {
   username: string;
   email: string;
   password?: string;
-  country: string;
+  isVerified: boolean;
+  lastLoginAt: Date;
+  activationLink?: string;
 }
 
 export interface UpdateUserDTO {
-  userId: string;
   firstName?: string;
   lastName?: string;
   username?: string;
-  country?: string;
+  email?: string;
 }

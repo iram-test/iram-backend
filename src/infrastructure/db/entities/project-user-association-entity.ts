@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { ProjectRole } from "../../domain/entities/enums/project-role";
+import { ProjectRole } from "../../../domain/entities/enums/project-role";
 import { User } from "./user-entity";
 import { Project } from "./project-entity";
 

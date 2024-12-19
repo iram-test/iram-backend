@@ -24,3 +24,14 @@ export class TestRunStepDTO {
     this.updatedAt = updatedAt;
   }
 }
+
+export interface CreateTestRunStepDTO {
+  stepId: string;
+  status: Status;
+  resultDescription?: string;
+}
+
+export interface UpdateTestRunStepDTO {
+  status?: Status;
+  resultDescription?: string;
+}

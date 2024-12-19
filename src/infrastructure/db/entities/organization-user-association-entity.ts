@@ -6,8 +6,8 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from "typeorm";
-import { UserRole } from "../../domain/entities/enums/user-role";
-import { UserPermission } from "../../domain/entities/enums/user-permission";
+import { UserRole } from "../../../domain/entities/enums/user-role";
+import { UserPermission } from "../../../domain/entities/enums/user-permission";
 import { User } from "./user-entity";
 import { Organization } from "./organization-entity";
 

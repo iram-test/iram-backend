@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { TestRun } from "./test-run-entity";
 import { Step } from "./step-entity";
-import { Status } from "../../domain/entities/enums/status";
+import { Status } from "../../../domain/entities/enums/status";
 
 @Entity()
 export class TestRunStep {

@@ -8,10 +8,10 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { Priority } from "../../domain/entities/enums/project-priority";
-import { Status } from "../../domain/entities/enums/status";
-import { TemplateType } from "../../domain/entities/enums/template-type";
-import { TestType } from "../../domain/entities/enums/test-type";
+import { Priority } from "../../../domain/entities/enums/project-priority";
+import { Status } from "../../../domain/entities/enums/status";
+import { TemplateType } from "../../../domain/entities/enums/template-type";
+import { TestType } from "../../../domain/entities/enums/test-type";
 import { Project } from "./project-entity";
 import { Step } from "./step-entity";
 import { User } from "./user-entity";

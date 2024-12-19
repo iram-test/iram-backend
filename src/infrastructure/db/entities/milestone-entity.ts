@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { MilestoneStatus } from "../../domain/entities/enums/milestone-status";
+import { MilestoneStatus } from "../../../domain/entities/enums/milestone-status";
 import { TestReport } from "./test-report-entity";
 
 @Entity()

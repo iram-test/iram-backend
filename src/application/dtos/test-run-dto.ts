@@ -32,3 +32,20 @@ export class TestRunDTO {
     this.updatedAt = updatedAt;
   }
 }
+
+export interface CreateTestRunDTO {
+  status: Status;
+  comment: string;
+  version: string;
+  elapsed: string;
+  defects: string;
+  description: string;
+}
+export interface UpdateTestRunDTO {
+  status?: Status;
+  comment?: string;
+  version?: string;
+  elapsed?: string;
+  defects?: string;
+  description?: string;
+}
