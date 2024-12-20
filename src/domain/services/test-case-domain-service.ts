@@ -1,19 +1,23 @@
 import { TestCase } from "../entities/test-case-entity";
 import { TestCaseRepository } from "../repositories/test-case-repository";
+import {
+  CreateTestCaseDTO,
+  UpdateTestCaseDTO,
+} from "../../application/dtos/test-case-dto";
 
 export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
-  addTestCase(testCase: TestCase): Promise<TestCase> {
-    return this.testCaseRepository.addTestCase(testCase);
+  addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
+    return this.testCaseRepository.addTestCase(testCaseDto);
   }
 
   getAll(): Promise<TestCase[]> {
     return this.testCaseRepository.getAll();
   }
 
-  save(testCase: TestCase): Promise<TestCase> {
-    return this.testCaseRepository.save(testCase);
+  save(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
+    return this.testCaseRepository.save(testCaseDto);
   }
 
   getById(testCaseId: string): Promise<TestCase | null> {
@@ -24,7 +28,7 @@ export class TestCaseDomainService implements TestCaseRepository {
     return this.testCaseRepository.getByTitle(title);
   }
 
-  update(testCase: TestCase): Promise<TestCase> {
+  update(testCase: UpdateTestCaseDTO & { testCaseId: string }): Promise<TestCase> {
     return this.testCaseRepository.update(testCase);
   }
 

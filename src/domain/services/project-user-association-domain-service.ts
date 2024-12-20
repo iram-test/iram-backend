@@ -1,5 +1,9 @@
 import { ProjectUserAssociation } from "../entities/project-user-association";
 import { ProjectUserAssociationRepository } from "../repositories/project-user-association-repository";
+import {
+    CreateProjectUserAssociationDTO,
+    UpdateProjectUserAssociationDTO,
+  } from "../../application/dtos/project-user-association-dto";
 
 export class ProjectUserAssociationDomainService
   implements ProjectUserAssociationRepository
@@ -8,18 +12,18 @@ export class ProjectUserAssociationDomainService
     private associationRepository: ProjectUserAssociationRepository,
   ) {}
 
-  addAssociation(
-    association: ProjectUserAssociation,
+    addAssociation(
+    associationDto: CreateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
-    return this.associationRepository.addAssociation(association);
+    return this.associationRepository.addAssociation(associationDto);
   }
 
   getAll(): Promise<ProjectUserAssociation[]> {
     return this.associationRepository.getAll();
   }
 
-  save(association: ProjectUserAssociation): Promise<ProjectUserAssociation> {
-    return this.associationRepository.save(association);
+  save(associationDto: CreateProjectUserAssociationDTO): Promise<ProjectUserAssociation> {
+    return this.associationRepository.save(associationDto);
   }
 
   getById(associationId: string): Promise<ProjectUserAssociation | null> {
@@ -30,7 +34,9 @@ export class ProjectUserAssociationDomainService
     return this.associationRepository.getByUserId(userId);
   }
 
-  update(association: ProjectUserAssociation): Promise<ProjectUserAssociation> {
+  update(
+    association: UpdateProjectUserAssociationDTO & { associationId: string },
+  ): Promise<ProjectUserAssociation> {
     return this.associationRepository.update(association);
   }
 

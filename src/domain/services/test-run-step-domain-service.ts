@@ -1,11 +1,23 @@
 import { TestRunStep } from "../entities/test-run-step-entity";
 import { TestRunStepRepository } from "../repositories/test-run-step-repository";
+import {
+  CreateTestRunStepDTO,
+  UpdateTestRunStepDTO,
+} from "../../application/dtos/test-run-step-dto";
 
 export class TestRunStepDomainService implements TestRunStepRepository {
   constructor(private testRunStepRepository: TestRunStepRepository) {}
 
-  addTestRunStep(testRunStep: TestRunStep): Promise<TestRunStep> {
-    return this.testRunStepRepository.addTestRunStep(testRunStep);
+  async addTestRunStep(testRunStepDto: CreateTestRunStepDTO): Promise<TestRunStep> {
+        const testRunStep : TestRunStep = {
+            testRunStepId: "", //generate a valid ID
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            stepId: testRunStepDto.stepId,
+            status: testRunStepDto.status,
+            resultDescription: testRunStepDto.resultDescription ?? undefined,
+        }
+    return await this.testRunStepRepository.addTestRunStep(testRunStep);
   }
 
   getAll(): Promise<TestRunStep[]> {
@@ -16,11 +28,19 @@ export class TestRunStepDomainService implements TestRunStepRepository {
     return this.testRunStepRepository.getById(testRunStepId);
   }
 
-  save(testRunStep: TestRunStep): Promise<TestRunStep> {
-    return this.testRunStepRepository.save(testRunStep);
+  async save(testRunStepDto: CreateTestRunStepDTO): Promise<TestRunStep> {
+     const testRunStep : TestRunStep = {
+            testRunStepId: "", //generate a valid ID
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            stepId: testRunStepDto.stepId,
+            status: testRunStepDto.status,
+            resultDescription: testRunStepDto.resultDescription ?? undefined,
+        }
+    return await this.testRunStepRepository.save(testRunStep);
   }
 
-  update(testRunStep: TestRunStep): Promise<TestRunStep> {
+  update(testRunStep: UpdateTestRunStepDTO & { testRunStepId: string }): Promise<TestRunStep> {
     return this.testRunStepRepository.update(testRunStep);
   }
 

@@ -1,5 +1,9 @@
 import { OrganizationUserAssociation } from "../entities/organization-user-association";
 import { OrganizationUserAssociationRepository } from "../repositories/organization-user-association-repository";
+import {
+    CreateOrganizationUserAssociationDTO,
+    UpdateOrganizationUserAssociationDTO,
+  } from "../../application/dtos/organization-user-association-dto";
 
 export class OrganizationUserAssociationDomainService
   implements OrganizationUserAssociationRepository
@@ -9,9 +13,9 @@ export class OrganizationUserAssociationDomainService
   ) {}
 
   addAssociation(
-    association: OrganizationUserAssociation,
+    associationDto: CreateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation> {
-    return this.associationRepository.addAssociation(association);
+    return this.associationRepository.addAssociation(associationDto);
   }
 
   getAll(): Promise<OrganizationUserAssociation[]> {
@@ -19,9 +23,9 @@ export class OrganizationUserAssociationDomainService
   }
 
   save(
-    association: OrganizationUserAssociation,
+    associationDto: CreateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation> {
-    return this.associationRepository.save(association);
+    return this.associationRepository.save(associationDto);
   }
 
   getById(associationId: string): Promise<OrganizationUserAssociation | null> {
@@ -32,11 +36,14 @@ export class OrganizationUserAssociationDomainService
     return this.associationRepository.getByUserId(userId);
   }
 
-  update(
-    association: OrganizationUserAssociation,
+   update(
+    association: UpdateOrganizationUserAssociationDTO & {
+        associationId: string;
+    },
   ): Promise<OrganizationUserAssociation> {
     return this.associationRepository.update(association);
   }
+
 
   delete(associationId: string): Promise<void> {
     return this.associationRepository.delete(associationId);
