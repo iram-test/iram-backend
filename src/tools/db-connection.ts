@@ -1,16 +1,16 @@
 import { DataSource } from "typeorm";
-import { User } from "../domain/entities/user-entity";
-import { Folder } from "../domain/entities/folder-entity";
-import { Milestone } from "../domain/entities/milestone-entity";
-import { Organization } from "../domain/entities/organization-entity";
-import { OrganizationUserAssociation } from "../domain/entities/organization-user-association";
-import { Project } from "../domain/entities/project-entity";
-import { ProjectUserAssociation } from "../domain/entities/project-user-association";
-import { Step } from "../domain/entities/step-entity";
-import { TestCase } from "../domain/entities/test-case-entity";
-import { TestReport } from "../domain/entities/test-report-entity";
-import { TestRun } from "../domain/entities/test-run-entity";
-import { TestRunStep } from "../domain/entities/test-run-step-entity";
+import { UserEntity } from "../infrastructure/db/entities/user-entity";
+import { FolderEntity } from "../infrastructure/db/entities/folder-entity";
+import { MilestoneEntity } from "../infrastructure/db/entities/milestone-entity";
+import { OrganizationEntity } from "../infrastructure/db/entities/organization-entity";
+import { OrganizationUserAssociationEntity } from "../infrastructure/db/entities/organization-user-association-entity";
+import { ProjectEntity } from "../infrastructure/db/entities/project-entity";
+import { ProjectUserAssociationEntity } from "../infrastructure/db/entities/project-user-association-entity";
+import { StepEntity } from "../infrastructure/db/entities/step-entity";
+import { TestCaseEntity } from "../infrastructure/db/entities/test-case-entity";
+import { TestReportEntity } from "../infrastructure/db/entities/test-report-entity";
+import { TestRunEntity } from "../infrastructure/db/entities/test-run-entity";
+import { TestRunStepEntity } from "../infrastructure/db/entities/test-run-step-entity";
 import { config } from "../configs/index";
 
 export const PostgresDataSource: DataSource = new DataSource({
@@ -22,18 +22,18 @@ export const PostgresDataSource: DataSource = new DataSource({
   database: config.db.name,
   synchronize: true,
   entities: [
-    Folder,
-    Milestone,
-    Organization,
-    OrganizationUserAssociation,
-    Project,
-    ProjectUserAssociation,
-    Step,
-    TestCase,
-    TestReport,
-    TestRun,
-    TestRunStep,
-    User,
+    FolderEntity,
+    MilestoneEntity,
+    OrganizationEntity,
+    OrganizationUserAssociationEntity,
+    ProjectEntity,
+    ProjectUserAssociationEntity,
+    StepEntity,
+    TestCaseEntity,
+    TestReportEntity,
+    TestRunEntity,
+    TestRunStepEntity,
+    UserEntity,
   ],
   subscribers: [],
   migrations: [],

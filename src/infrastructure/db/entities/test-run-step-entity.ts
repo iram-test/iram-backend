@@ -7,25 +7,25 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { TestRun } from "./test-run-entity";
-import { Step } from "./step-entity";
+import { TestRunEntity } from "./test-run-entity";
+import { StepEntity } from "./step-entity";
 import { Status } from "../../../domain/entities/enums/status";
 
 @Entity()
-export class TestRunStep {
+export class TestRunStepEntity {
   @PrimaryGeneratedColumn("uuid")
   testRunStepId!: string;
 
   @ManyToOne(
-    () => TestRun,
+    () => TestRunEntity,
     (testRun) => testRun.steps,
   )
   @JoinColumn({ name: "testRunId" })
-  testRun!: TestRun;
+  testRun!: TestRunEntity;
 
-  @ManyToOne(() => Step)
+  @ManyToOne(() => StepEntity)
   @JoinColumn({ name: "stepId" })
-  step!: Step;
+  step!: StepEntity;
 
   @Column({ type: "enum", enum: Status })
   status!: Status;

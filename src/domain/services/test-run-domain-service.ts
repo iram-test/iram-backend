@@ -9,12 +9,12 @@ export class TestRunDomainService implements TestRunRepository {
   constructor(private testRunRepository: TestRunRepository) {}
 
   async addTestRun(testRunDto: CreateTestRunDTO): Promise<TestRun> {
-      const testRun: TestRun = {
-          testRunId: "",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          ...testRunDto,
-      }
+    const testRun: TestRun = {
+      testRunId: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...testRunDto,
+    };
 
     return await this.testRunRepository.addTestRun(testRun);
   }
@@ -28,19 +28,18 @@ export class TestRunDomainService implements TestRunRepository {
   }
 
   async save(testRunDto: CreateTestRunDTO): Promise<TestRun> {
-      const testRun: TestRun = {
-            testRunId: "",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            ...testRunDto,
-        }
+    const testRun: TestRun = {
+      testRunId: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...testRunDto,
+    };
     return await this.testRunRepository.save(testRun);
   }
 
-   update(testRun: UpdateTestRunDTO & { testRunId: string }): Promise<TestRun> {
-      return this.testRunRepository.update(testRun)
-   }
-
+  update(testRun: UpdateTestRunDTO & { testRunId: string }): Promise<TestRun> {
+    return this.testRunRepository.update(testRun);
+  }
 
   delete(testRunId: string): Promise<void> {
     return this.testRunRepository.delete(testRunId);

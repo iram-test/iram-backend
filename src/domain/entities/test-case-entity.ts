@@ -1,8 +1,8 @@
-import { Priority } from "./enums/project-priority";
-import { Status } from "./enums/status";
-import { TemplateType } from "./enums/template-type";
-import { TestType } from "./enums/test-type";
-import { Step } from "./step-entity";
+import { TemplateType } from "../../domain/entities/enums/template-type";
+import { Priority } from "../../domain/entities/enums/project-priority";
+import { TestType } from "../../domain/entities/enums/test-type";
+import { Status } from "../../domain/entities/enums/status";
+import { StepDTO } from "../../application/dtos/step-dto";
 
 export class TestCase {
   constructor(
@@ -25,6 +25,6 @@ export class TestCase {
     public elapsedTime: string,
     public defects: string,
     public version: string,
-    public step: Step[],
+    public step: StepDTO[],
   ) {}
 }

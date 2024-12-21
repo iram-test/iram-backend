@@ -65,4 +65,5 @@ export interface UpdateTestCaseDTO {
   elapsedTime?: string;
   defects?: string;
   version?: string;
+  steps?: StepDTO[];
 }

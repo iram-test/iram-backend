@@ -20,17 +20,17 @@ export class TestReportDomainService implements TestReportRepository {
     return this.testReportRepository.save(testReportDto);
   }
 
-
   getById(testReportId: string): Promise<TestReport | null> {
     return this.testReportRepository.getById(testReportId);
   }
 
   getByName(name: string): Promise<TestReport | null> {
-     return this.testReportRepository.getByName(name);
+    return this.testReportRepository.getByName(name);
   }
 
-
-  update(testReport: UpdateTestReportDTO & { testReportId: string }): Promise<TestReport> {
+  update(
+    testReport: UpdateTestReportDTO & { testReportId: string },
+  ): Promise<TestReport> {
     return this.testReportRepository.update(testReport);
   }
 

@@ -1,94 +1,82 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { UserService } from "../../domain/services/user-domain-service";
+import UserService from "../services/user-service";
 import { CreateUserDTO, UpdateUserDTO } from "../../application/dtos/user-dto";
-import { User } from "../../domain/entities/user-entity";
-import { UserPostgresRepository } from "../db/repositories/user-postgres-repository";
+import logger from "../../tools/logger";
 
-class UserController {
-  constructor(
-    private userService: UserService = new UserService(
-      new UserPostgresRepository(),
-    ),
-  ) {}
+export const addUser = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const userDto = request.body as CreateUserDTO;
+    const newUser = await UserService.addUser(userDto);
+    reply.code(201).send(newUser);
+  } catch (error) {
+    logger.error(`Error creating user: ${error}`);
+    reply.code(500).send({ message: "Error creating user" });
+  }
+};
 
-  async createUser(
-    request: FastifyRequest<{ Body: CreateUserDTO }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const user: User = await this.userService.addUser(request.body);
-      reply.code(201).send(user);
-    } catch (error) {
-      reply
-        .code(500)
-        .send({ message: "Something went wrong when creating user", error });
+export const getAllUsers = async (_: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const users = await UserService.getAllUsers();
+    reply.code(200).send(users);
+  } catch (error) {
+    logger.error(`Error getting all users: ${error}`);
+    reply.code(500).send({ message: "Error during get all users" });
+  }
+};
+
+export const getUserById = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { userId } = request.params as { userId: string };
+    const user = await UserService.getUserById(userId);
+    reply.code(200).send(user);
+  } catch (error) {
+    logger.error(`Error getting user by ID: ${error}`);
+    if (error instanceof Error && error.message === "User not found") {
+      reply.code(404).send({ message: "User not found" });
+    } else {
+      reply.code(500).send({ message: "Error getting user" });
     }
   }
-  async getUsers(request: FastifyRequest, reply: FastifyReply) {
-    try {
-      const users: User[] = await this.userService.getAll();
-      reply.code(200).send(users);
-    } catch (error) {
-      reply.code(500).send({
-        message: "Something went wrong when fetching all users",
-        error,
-      });
+};
+
+export const updateUser = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { userId } = request.params as { userId: string };
+    const userDto = request.body as UpdateUserDTO;
+    const updatedUser = await UserService.updateUser(userId, userDto);
+    reply.code(200).send(updatedUser);
+  } catch (error) {
+    logger.error(
+      `Error during updating user with ID ${request.params}: ${error}`,
+    );
+    if (error instanceof Error && error.message === "User not found") {
+      reply.code(404).send({ message: "User not found" });
+    } else {
+      reply.code(500).send({ message: "Error during update user" });
     }
   }
-  async getUserById(
-    request: FastifyRequest<{ Params: { userId: string } }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const user: User | null = await this.userService.getUserById(
-        request.params.userId,
-      );
-      if (!user) {
-        reply.code(404).send({
-          message: `User with id: ${request.params.userId} not found`,
-        });
-        return;
-      }
-      reply.code(200).send(user);
-    } catch (error) {
-      reply.code(500).send({
-        message: `Something went wrong when fetching user with id: ${request.params.userId}`,
-      });
+};
+
+export const deleteUser = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { userId } = request.params as { userId: string };
+    await UserService.deleteUser(userId);
+    reply.code(204).send();
+  } catch (error) {
+    logger.error(`Error deleting user: ${error}`);
+    if (error instanceof Error && error.message === "User not found") {
+      reply.code(404).send({ message: "User not found" });
+    } else {
+      reply.code(500).send({ message: "Error during delete user" });
     }
   }
-  async updateUser(
-    request: FastifyRequest<{
-      Body: UpdateUserDTO;
-      Params: { userId: string };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const user: User = await this.userService.updateUser({
-        ...request.body,
-        userId: request.params.userId,
-      });
-      reply.code(200).send(user);
-    } catch (error) {
-      reply.code(500).send({
-        message: `Something went wrong when updating user with id: ${request.params.userId}`,
-        error,
-      });
-    }
-  }
-  async deleteUser(
-    request: FastifyRequest<{ Params: { userId: string } }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      await this.userService.deleteUser(request.params.userId);
-      reply.code(204).send({
-        message: `User with id: ${request.params.userId} was successfully deleted`,
-      });
-    } catch (error) {
-      reply.code(500).send({
-        message: `Something went wrong when deleting user with id: ${request.params.userId}`,
-      });
-    }
-  }
-}
+};

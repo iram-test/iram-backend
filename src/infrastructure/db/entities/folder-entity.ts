@@ -8,12 +8,12 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { Project } from "./project-entity";
-import { TestCase } from "./test-case-entity";
-import { TestReport } from "./test-report-entity";
+import { ProjectEntity } from "./project-entity";
+import { TestCaseEntity } from "./test-case-entity";
+import { TestReportEntity } from "./test-report-entity";
 
 @Entity()
-export class Folder {
+export class FolderEntity {
   @PrimaryGeneratedColumn("uuid")
   folderId!: string;
 
@@ -33,21 +33,21 @@ export class Folder {
   projectId!: string;
 
   @ManyToOne(
-    () => Project,
+    () => ProjectEntity,
     (project) => project.folders,
   )
   @JoinColumn({ name: "projectId" })
-  project?: Project;
+  project?: ProjectEntity;
 
   @OneToMany(
-    () => TestCase,
+    () => TestCaseEntity,
     (testCase) => testCase.folder,
   )
-  testCases?: TestCase[];
+  testCases?: TestCaseEntity[];
 
   @OneToMany(
-    () => TestReport,
+    () => TestReportEntity,
     (testReport) => testReport.folder,
   )
-  testReports?: TestReport[];
+  testReports?: TestReportEntity[];
 }

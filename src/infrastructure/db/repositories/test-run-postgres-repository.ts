@@ -1,4 +1,5 @@
 import { TestRun } from "../../../domain/entities/test-run-entity";
+import { TestRunEntity } from "../entities/test-run-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { TestRunRepository } from "../../../domain/repositories/test-run-repository";
@@ -9,9 +10,9 @@ import {
 import { v4 } from "uuid";
 
 export class TestRunPostgresRepository implements TestRunRepository {
-  private repository: Repository<TestRun>;
+  private repository: Repository<TestRunEntity>;
   constructor() {
-    this.repository = PostgresDataSource.getRepository(TestRun);
+    this.repository = PostgresDataSource.getRepository(TestRunEntity);
   }
   async addTestRun(testRun: CreateTestRunDTO): Promise<TestRun> {
     const createdTestRun = this.repository.create({

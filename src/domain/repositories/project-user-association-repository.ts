@@ -18,4 +18,8 @@ export interface ProjectUserAssociationRepository {
     association: UpdateProjectUserAssociationDTO & { associationId: string },
   ): Promise<ProjectUserAssociation>;
   delete(associationId: string): Promise<void>;
+  getAssociationByUserIdAndProjectId(
+    userId: string,
+    projectId: string,
+  ): Promise<ProjectUserAssociation | null>;
 }

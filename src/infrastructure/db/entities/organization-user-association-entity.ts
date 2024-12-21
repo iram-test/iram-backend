@@ -8,11 +8,11 @@ import {
 } from "typeorm";
 import { UserRole } from "../../../domain/entities/enums/user-role";
 import { UserPermission } from "../../../domain/entities/enums/user-permission";
-import { User } from "./user-entity";
-import { Organization } from "./organization-entity";
+import { UserEntity } from "./user-entity";
+import { OrganizationEntity } from "./organization-entity";
 
 @Entity()
-export class OrganizationUserAssociation {
+export class OrganizationUserAssociationEntity {
   @PrimaryGeneratedColumn("uuid")
   associationId!: string;
 
@@ -32,16 +32,16 @@ export class OrganizationUserAssociation {
   assignedAt!: Date;
 
   @ManyToOne(
-    () => User,
+    () => UserEntity,
     (user) => user.organizationAssociations,
   )
   @JoinColumn({ name: "userId" })
-  user?: User;
+  user?: UserEntity;
 
   @ManyToOne(
-    () => Organization,
+    () => OrganizationEntity,
     (organization) => organization.userAssociations,
   )
   @JoinColumn({ name: "organizationId" })
-  organization?: Organization;
+  organization?: OrganizationEntity;
 }

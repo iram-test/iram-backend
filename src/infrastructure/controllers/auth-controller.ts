@@ -1,88 +1,77 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { AuthService } from "../../domain/services/auth-domain-service";
-import { RegistrationDTO, LoginDTO } from "../../application/dtos/auth-dto";
-import { User } from "../../domain/entities/user-entity";
-import { UserPostgresRepository } from "../db/PostgresRepository/UserPostgresRepository";
-import { AuthInfrastructureService } from "../services/AuthInfrastructureService";
-import { RedisService } from "../services/OuterServices/RedisService";
-class AuthController {
-  constructor(
-    readonly authService: AuthInfrastructureService = new AuthInfrastructureService(
-      new UserPostgresRepository(),
-      new RedisService(),
-    ),
-  ) {}
+import {
+  RegisterDTO,
+  LoginWithUsernameDTO,
+  LoginWithEmailDTO,
+} from "../../application/dtos/auth-dto";
+import authService from "../services/auth-service";
+import logger from "../../tools/logger";
 
-  async registration(
-    request: FastifyRequest<{ Body: RegistrationDTO }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const userData = await this.authService.registration(request.body);
-      return reply.status(201).send(userData);
-    } catch (e) {
-      reply.code(500).send(e);
-    }
+export const register = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const registerDto = request.body as RegisterDTO;
+    const data = await authService.registration(registerDto);
+    reply.code(201).send({
+      message: "User registered successfully",
+      userId: data.userId,
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    });
+  } catch (error) {
+    logger.error(`Error during registration: ${error}`);
+    reply.code(500).send({ message: "Error during registration" });
   }
+};
 
-  async login(
-    request: FastifyRequest<{ Body: LoginDTO }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const user: User = request.user as User; // this relies on local strategy from passport and user property can have any user there
-      const userData = await this.authService.login(user);
-      reply.status(200).send(userData);
-    } catch (error) {
-      reply
-        .code(500)
-        .send({ message: `Something went wrong when logging user in`, error });
-    }
+export const loginWithUsername = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const loginDto = request.body as LoginWithUsernameDTO;
+    const tokens = await authService.login(loginDto);
+    reply.code(200).send(tokens);
+  } catch (error) {
+    logger.error(`Error during login: ${error}`);
+    reply.code(401).send({ message: "Invalid username or password" });
   }
+};
 
-  async logout(
-    request: FastifyRequest<{ Body: { email: string } }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { email } = request.body;
-      await this.authService.logout(email);
-      return reply.status(200).send({ message: "successfully logged out" });
-    } catch (e) {
-      reply
-        .code(500)
-        .send({ message: "Something went wrong during logout", error: e });
-    }
+export const loginWithEmail = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const loginDto = request.body as LoginWithEmailDTO;
+    const tokens = await authService.login(loginDto);
+    reply.code(200).send(tokens);
+  } catch (error) {
+    logger.error(`Error during login: ${error}`);
+    reply.code(401).send({ message: "Invalid email or password" });
   }
+};
 
-  async activate(
-    request: FastifyRequest<{ Params: { link: string } }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { link } = request.params;
-      await this.authService.activate(link);
-      return reply.redirect(process.env.CLIENT_URL || "");
-    } catch (e) {
-      reply.code(500).send({
-        message: "Something went wrong during account activation",
-        error: e,
-      });
-    }
+export const logout = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const refreshToken = request.headers["x-refresh-token"] as string;
+    await authService.logout(refreshToken);
+    reply.code(200).send({ message: "Logged out successfully" });
+  } catch (error) {
+    logger.error(`Error during logout: ${error}`);
+    reply.code(500).send({ message: "Error during logout" });
   }
+};
 
-  async refresh(request: FastifyRequest, reply: FastifyReply) {
-    try {
-      // const {refreshToken} = req.cookies
-      //   const userData = await this.authService.refresh(refreshToken)
-      reply.code(200).send("This is temporary endpoint and need refactor");
-    } catch (e) {
-      reply.code(500).send({
-        message: "Something went wrong during account refresh",
-        error: e,
-      });
-    }
+export const refresh = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const refreshToken = request.headers["x-refresh-token"] as string;
+    const tokens = await authService.refresh(refreshToken);
+    reply.code(200).send(tokens);
+  } catch (error) {
+    logger.error(`Error during refresh: ${error}`);
+    reply.code(401).send({ message: "Invalid refresh token" });
   }
-}
-
-export default new AuthController();
+};

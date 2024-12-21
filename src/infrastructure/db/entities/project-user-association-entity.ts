@@ -8,11 +8,11 @@ import {
   JoinColumn,
 } from "typeorm";
 import { ProjectRole } from "../../../domain/entities/enums/project-role";
-import { User } from "./user-entity";
-import { Project } from "./project-entity";
+import { UserEntity } from "./user-entity";
+import { ProjectEntity } from "./project-entity";
 
 @Entity()
-export class ProjectUserAssociation {
+export class ProjectUserAssociationEntity {
   @PrimaryGeneratedColumn("uuid")
   associationId!: string;
 
@@ -23,7 +23,7 @@ export class ProjectUserAssociation {
   userId!: string;
 
   @Column({ type: "enum", enum: ProjectRole })
-  projectRole!: ProjectRole;
+  role!: ProjectRole;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -32,16 +32,16 @@ export class ProjectUserAssociation {
   updatedAt!: Date;
 
   @ManyToOne(
-    () => User,
+    () => UserEntity,
     (user) => user.projectAssociations,
   )
   @JoinColumn({ name: "userId" })
-  user?: User;
+  user?: UserEntity;
 
   @ManyToOne(
-    () => Project,
+    () => ProjectEntity,
     (project) => project.userAssociations,
   )
   @JoinColumn({ name: "projectId" })
-  project?: Project;
+  project?: ProjectEntity;
 }

@@ -1,9 +1,9 @@
 import { ProjectUserAssociation } from "../entities/project-user-association";
 import { ProjectUserAssociationRepository } from "../repositories/project-user-association-repository";
 import {
-    CreateProjectUserAssociationDTO,
-    UpdateProjectUserAssociationDTO,
-  } from "../../application/dtos/project-user-association-dto";
+  CreateProjectUserAssociationDTO,
+  UpdateProjectUserAssociationDTO,
+} from "../../application/dtos/project-user-association-dto";
 
 export class ProjectUserAssociationDomainService
   implements ProjectUserAssociationRepository
@@ -12,7 +12,7 @@ export class ProjectUserAssociationDomainService
     private associationRepository: ProjectUserAssociationRepository,
   ) {}
 
-    addAssociation(
+  addAssociation(
     associationDto: CreateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
     return this.associationRepository.addAssociation(associationDto);
@@ -22,7 +22,9 @@ export class ProjectUserAssociationDomainService
     return this.associationRepository.getAll();
   }
 
-  save(associationDto: CreateProjectUserAssociationDTO): Promise<ProjectUserAssociation> {
+  save(
+    associationDto: CreateProjectUserAssociationDTO,
+  ): Promise<ProjectUserAssociation> {
     return this.associationRepository.save(associationDto);
   }
 
@@ -42,5 +44,14 @@ export class ProjectUserAssociationDomainService
 
   delete(associationId: string): Promise<void> {
     return this.associationRepository.delete(associationId);
+  }
+  async getAssociationByUserIdAndProjectId(
+    userId: string,
+    projectId: string,
+  ): Promise<ProjectUserAssociation | null> {
+    return this.associationRepository.getAssociationByUserIdAndProjectId(
+      userId,
+      projectId,
+    );
   }
 }

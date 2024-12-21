@@ -28,7 +28,9 @@ export class TestCaseDomainService implements TestCaseRepository {
     return this.testCaseRepository.getByTitle(title);
   }
 
-  update(testCase: UpdateTestCaseDTO & { testCaseId: string }): Promise<TestCase> {
+  update(
+    testCase: UpdateTestCaseDTO & { testCaseId: string },
+  ): Promise<TestCase> {
     return this.testCaseRepository.update(testCase);
   }
 

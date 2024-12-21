@@ -8,15 +8,17 @@ import {
 export class TestRunStepDomainService implements TestRunStepRepository {
   constructor(private testRunStepRepository: TestRunStepRepository) {}
 
-  async addTestRunStep(testRunStepDto: CreateTestRunStepDTO): Promise<TestRunStep> {
-        const testRunStep : TestRunStep = {
-            testRunStepId: "", //generate a valid ID
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            stepId: testRunStepDto.stepId,
-            status: testRunStepDto.status,
-            resultDescription: testRunStepDto.resultDescription ?? undefined,
-        }
+  async addTestRunStep(
+    testRunStepDto: CreateTestRunStepDTO,
+  ): Promise<TestRunStep> {
+    const testRunStep: TestRunStep = {
+      testRunStepId: "", //generate a valid ID
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      stepId: testRunStepDto.stepId,
+      status: testRunStepDto.status,
+      resultDescription: testRunStepDto.resultDescription ?? undefined,
+    };
     return await this.testRunStepRepository.addTestRunStep(testRunStep);
   }
 
@@ -29,18 +31,20 @@ export class TestRunStepDomainService implements TestRunStepRepository {
   }
 
   async save(testRunStepDto: CreateTestRunStepDTO): Promise<TestRunStep> {
-     const testRunStep : TestRunStep = {
-            testRunStepId: "", //generate a valid ID
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            stepId: testRunStepDto.stepId,
-            status: testRunStepDto.status,
-            resultDescription: testRunStepDto.resultDescription ?? undefined,
-        }
+    const testRunStep: TestRunStep = {
+      testRunStepId: "", //generate a valid ID
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      stepId: testRunStepDto.stepId,
+      status: testRunStepDto.status,
+      resultDescription: testRunStepDto.resultDescription ?? undefined,
+    };
     return await this.testRunStepRepository.save(testRunStep);
   }
 
-  update(testRunStep: UpdateTestRunStepDTO & { testRunStepId: string }): Promise<TestRunStep> {
+  update(
+    testRunStep: UpdateTestRunStepDTO & { testRunStepId: string },
+  ): Promise<TestRunStep> {
     return this.testRunStepRepository.update(testRunStep);
   }
 

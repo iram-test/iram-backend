@@ -1,16 +1,15 @@
 import { Folder } from "../entities/folder-entity";
 import { FolderRepository } from "../repositories/folder-repository";
 import {
-    CreateFolderDTO,
-    UpdateFolderDTO,
-  } from "../../application/dtos/folder-dto";
-
+  CreateFolderDTO,
+  UpdateFolderDTO,
+} from "../../application/dtos/folder-dto";
 
 export class FolderDomainService implements FolderRepository {
   constructor(private folderRepository: FolderRepository) {}
 
   addFolder(folderDto: CreateFolderDTO): Promise<Folder> {
-      return this.folderRepository.addFolder(folderDto);
+    return this.folderRepository.addFolder(folderDto);
   }
 
   getAll(): Promise<Folder[]> {
@@ -30,9 +29,8 @@ export class FolderDomainService implements FolderRepository {
   }
 
   update(folder: UpdateFolderDTO & { folderId: string }): Promise<Folder> {
-      return this.folderRepository.update(folder);
+    return this.folderRepository.update(folder);
   }
-
 
   delete(folderId: string): Promise<void> {
     return this.folderRepository.delete(folderId);

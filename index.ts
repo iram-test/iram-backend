@@ -18,13 +18,20 @@ dotenv.config();
     await server.register(router, { prefix: "/api" });
     setConsoleLogs(logger);
     setFileLogs(logger, "logs");
-    await PostgresDataSource.initialize()
-      .then(() => logger.info("Postgres Connected..."))
+    PostgresDataSource.initialize()
+      .then(() => {
+        logger.info("Database Connected...");
+      })
       .catch((error) =>
         logger.error("Error during connecting to Postgres", error),
       );
-    const port = config.port;
-    await server.listen({ port });
+    const { port, host } = config;
+    await server.listen({ port, host }, (err, address) => {
+      if (err) {
+        logger.error(err);
+        process.exit(1);
+      }
+    });
     logger.info(`Server was launched on port: ${port}`);
   } catch (error) {
     logger.error("Error during launching server", error);

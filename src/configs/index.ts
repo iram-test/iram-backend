@@ -1,5 +1,6 @@
 export const config = {
   port: 3000,
+  host: "localhost", //Docker
   db: {
     type: process.env.DB_TYPE!,
     host: process.env.DB_HOST!,
@@ -10,11 +11,13 @@ export const config = {
     ssl: process.env.DB_SSL!,
   },
   jwt: {
-    secretKey: process.env.JWT_SECRET_KEY!,
-    validTime: "5m",
+    accessSecret: process.env.JWT_ACCESS_SECRET!,
+    accessExpiration: process.env.JWT_ACCESS_EXPIRATION!,
+    refreshSecret: process.env.JWT_REFRESH_SECRET!,
+    refreshExpiration: process.env.JWT_REFRESH_EXPIRATION!,
   },
   cors: {
-    origin: [`http://${process.env.IP_ADDRESS!}`],
+    origin: [`http://${process.env.IP_ADDRESS!}`, "http://localhost:3001"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
     optionsSuccessStatus: 204,
@@ -23,6 +26,7 @@ export const config = {
   hash: {
     iterations: 1000,
     keyLength: 64,
+    salt: "10",
     digest: "sha512",
   },
   rateLimiter: {

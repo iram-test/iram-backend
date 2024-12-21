@@ -7,10 +7,10 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { TestCase } from "./test-case-entity";
+import { TestCaseEntity } from "./test-case-entity";
 
 @Entity()
-export class Step {
+export class StepEntity {
   @PrimaryGeneratedColumn("uuid")
   stepId!: string;
 
@@ -20,7 +20,7 @@ export class Step {
   @Column()
   expectedResult!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true }) // Вказано тип text
   image!: string | null;
 
   @CreateDateColumn()
@@ -30,9 +30,9 @@ export class Step {
   updatedAt!: Date;
 
   @ManyToOne(
-    () => TestCase,
+    () => TestCaseEntity,
     (testCase) => testCase.steps,
   )
   @JoinColumn({ name: "testCaseId" })
-  testCase?: TestCase;
+  testCase?: TestCaseEntity;
 }

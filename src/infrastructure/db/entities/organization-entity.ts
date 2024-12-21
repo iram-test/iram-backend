@@ -8,11 +8,11 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { Project } from "./project-entity";
-import { OrganizationUserAssociation } from "./organization-user-association-entity";
+import { ProjectEntity } from "./project-entity";
+import { OrganizationUserAssociationEntity } from "./organization-user-association-entity";
 
 @Entity()
-export class Organization {
+export class OrganizationEntity {
   @PrimaryGeneratedColumn("uuid")
   organizationId!: string;
 
@@ -32,15 +32,15 @@ export class Organization {
   projectId!: string;
 
   @ManyToOne(
-    () => Project,
+    () => ProjectEntity,
     (project) => project.organizations,
   )
   @JoinColumn({ name: "projectId" })
-  project?: Project;
+  project?: ProjectEntity;
 
   @OneToMany(
-    () => OrganizationUserAssociation,
+    () => OrganizationUserAssociationEntity,
     (organizationUserAssociation) => organizationUserAssociation.organization,
   )
-  userAssociations?: OrganizationUserAssociation[];
+  userAssociations?: OrganizationUserAssociationEntity[];
 }

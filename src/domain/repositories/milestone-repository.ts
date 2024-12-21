@@ -5,7 +5,7 @@ import {
 } from "../../application/dtos/milestone-dto";
 
 export interface MilestoneRepository {
-  addMilestone(milestone: Milestone): Promise<Milestone>;
+  addMilestone(milestone: CreateMilestoneDTO): Promise<Milestone>;
   getAll(): Promise<Milestone[]>;
   getByParent(parent: Milestone): Promise<Milestone[]>;
   save(milestone: Milestone): Promise<Milestone>;

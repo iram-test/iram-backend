@@ -1,4 +1,5 @@
 import { Folder } from "../../../domain/entities/folder-entity";
+import { FolderEntity } from "../entities/folder-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { FolderRepository } from "../../../domain/repositories/folder-repository";
@@ -9,9 +10,9 @@ import {
 import { v4 } from "uuid";
 
 export class FolderPostgresRepository implements FolderRepository {
-  private repository: Repository<Folder>;
+  private repository: Repository<FolderEntity>;
   constructor() {
-    this.repository = PostgresDataSource.getRepository(Folder);
+    this.repository = PostgresDataSource.getRepository(FolderEntity);
   }
   async addFolder(folder: CreateFolderDTO): Promise<Folder> {
     const createdFolder = this.repository.create({

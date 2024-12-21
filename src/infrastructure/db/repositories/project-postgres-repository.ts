@@ -1,4 +1,5 @@
 import { Project } from "../../../domain/entities/project-entity";
+import { ProjectEntity } from "../entities/project-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { ProjectRepository } from "../../../domain/repositories/project-repository";
@@ -9,9 +10,9 @@ import {
 import { v4 } from "uuid";
 
 export class ProjectPostgresRepository implements ProjectRepository {
-  private repository: Repository<Project>;
+  private repository: Repository<ProjectEntity>;
   constructor() {
-    this.repository = PostgresDataSource.getRepository(Project);
+    this.repository = PostgresDataSource.getRepository(ProjectEntity);
   }
   async addProject(project: CreateProjectDTO): Promise<Project> {
     const createdProject = this.repository.create({

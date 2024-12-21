@@ -1,3 +1,6 @@
+import { UserPermission } from "./enums/user-permission";
+import { UserRole } from "./enums/user-role";
+
 export class User {
   constructor(
     public userId: string,
@@ -9,6 +12,9 @@ export class User {
     public isVerified: boolean,
     public createdAt: Date,
     public updatedAt: Date,
-    public lastLoginAt: Date,
+    public lastLoginAt: Date | null,
+    public refreshToken: string | null,
+    public role: UserRole,
+    public permissions: UserPermission[],
   ) {}
 }

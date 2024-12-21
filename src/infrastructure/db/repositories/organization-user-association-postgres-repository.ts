@@ -1,5 +1,5 @@
-// src/infrastructure/db/PostgresRepository/OrganizationUserAssociationPostgresRepository.ts
 import { OrganizationUserAssociation } from "../../../domain/entities/organization-user-association";
+import { OrganizationUserAssociationEntity } from "../entities/organization-user-association-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { OrganizationUserAssociationRepository } from "../../../domain/repositories/organization-user-association-repository";
@@ -12,10 +12,10 @@ import { v4 } from "uuid";
 export class OrganizationUserAssociationPostgresRepository
   implements OrganizationUserAssociationRepository
 {
-  private repository: Repository<OrganizationUserAssociation>;
+  private repository: Repository<OrganizationUserAssociationEntity>;
   constructor() {
     this.repository = PostgresDataSource.getRepository(
-      OrganizationUserAssociation,
+      OrganizationUserAssociationEntity,
     );
   }
   async addAssociation(

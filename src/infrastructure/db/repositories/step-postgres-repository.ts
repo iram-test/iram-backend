@@ -1,4 +1,5 @@
 import { Step } from "../../../domain/entities/step-entity";
+import { StepEntity } from "../entities/step-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { StepRepository } from "../../../domain/repositories/step-repository";
@@ -9,9 +10,9 @@ import {
 import { v4 } from "uuid";
 
 export class StepPostgresRepository implements StepRepository {
-  private repository: Repository<Step>;
+  private repository: Repository<StepEntity>;
   constructor() {
-    this.repository = PostgresDataSource.getRepository(Step);
+    this.repository = PostgresDataSource.getRepository(StepEntity);
   }
   async addStep(step: CreateStepDTO): Promise<Step> {
     const createdStep = this.repository.create({

@@ -1,4 +1,5 @@
 import { Organization } from "../../../domain/entities/organization-entity";
+import { OrganizationEntity } from "../entities/organization-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { OrganizationRepository } from "../../../domain/repositories/organization-repository";
@@ -9,9 +10,9 @@ import {
 import { v4 } from "uuid";
 
 export class OrganizationPostgresRepository implements OrganizationRepository {
-  private repository: Repository<Organization>;
+  private repository: Repository<OrganizationEntity>;
   constructor() {
-    this.repository = PostgresDataSource.getRepository(Organization);
+    this.repository = PostgresDataSource.getRepository(OrganizationEntity);
   }
   async addOrganization(
     organization: CreateOrganizationDTO,

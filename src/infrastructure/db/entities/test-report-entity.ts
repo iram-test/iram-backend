@@ -5,20 +5,27 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { Milestone } from "./milestone-entity";
-import { User } from "./user-entity";
-import { Folder } from "./folder-entity";
+import { MilestoneEntity } from "./milestone-entity";
+import { UserEntity } from "./user-entity";
+import { FolderEntity } from "./folder-entity";
 
 @Entity()
-export class TestReport {
+export class TestReportEntity {
   @PrimaryGeneratedColumn("uuid")
   testReportId!: string;
 
   @Column()
   name!: string;
 
-  @Column({ nullable: true })
-  reference!: string | null;
+  @Column({
+    type: "text", // Use 'text' to store JSON string
+    nullable: true,
+    transformer: {
+      to: (value: any) => (value ? JSON.stringify(value) : null),
+      from: (value: string) => (value ? JSON.parse(value) : null),
+    },
+  })
+  reference!: any | null;
 
   @Column({ nullable: true })
   milestoneId!: string | null;
@@ -36,23 +43,23 @@ export class TestReport {
   folderId!: string | null;
 
   @ManyToOne(
-    () => Milestone,
+    () => MilestoneEntity,
     (milestone) => milestone.testReports,
   )
   @JoinColumn({ name: "milestoneId" })
-  milestone?: Milestone;
+  milestone?: MilestoneEntity;
 
   @ManyToOne(
-    () => User,
+    () => UserEntity,
     (user) => user.testReports,
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedUser?: User;
+  assignedUser?: UserEntity;
 
   @ManyToOne(
-    () => Folder,
+    () => FolderEntity,
     (folder) => folder.testReports,
   )
   @JoinColumn({ name: "folderId" })
-  folder?: Folder;
+  folder?: FolderEntity;
 }

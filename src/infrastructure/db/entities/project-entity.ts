@@ -6,13 +6,13 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { ProjectUserAssociation } from "./project-user-association-entity";
-import { Folder } from "./folder-entity";
-import { Organization } from "./organization-entity";
-import { TestCase } from "./test-case-entity";
+import { ProjectUserAssociationEntity } from "./project-user-association-entity";
+import { FolderEntity } from "./folder-entity";
+import { OrganizationEntity } from "./organization-entity";
+import { TestCaseEntity } from "./test-case-entity";
 
 @Entity()
-export class Project {
+export class ProjectEntity {
   @PrimaryGeneratedColumn("uuid")
   projectId!: string;
 
@@ -29,26 +29,26 @@ export class Project {
   updatedAt!: Date;
 
   @OneToMany(
-    () => ProjectUserAssociation,
+    () => ProjectUserAssociationEntity,
     (projectUserAssociation) => projectUserAssociation.project,
   )
-  userAssociations?: ProjectUserAssociation[];
+  userAssociations?: ProjectUserAssociationEntity[];
 
   @OneToMany(
-    () => Folder,
+    () => FolderEntity,
     (folder) => folder.project,
   )
-  folders?: Folder[];
+  folders?: FolderEntity[];
 
   @OneToMany(
-    () => Organization,
+    () => OrganizationEntity,
     (organization) => organization.project,
   )
-  organizations?: Organization[];
+  organizations?: OrganizationEntity[];
 
   @OneToMany(
-    () => TestCase,
+    () => TestCaseEntity,
     (testCase) => testCase.project,
   )
-  testCases?: TestCase[];
+  testCases?: TestCaseEntity[];
 }

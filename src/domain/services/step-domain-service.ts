@@ -22,7 +22,7 @@ export class StepDomainService implements StepRepository {
   }
 
   update(step: UpdateStepDTO & { stepId: string }): Promise<Step> {
-      return this.stepRepository.update(step)
+    return this.stepRepository.update(step);
   }
 
   delete(stepId: string): Promise<void> {

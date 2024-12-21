@@ -1,4 +1,3 @@
-// src/domain/entities/user-entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,14 +6,16 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { ProjectUserAssociation } from "./project-user-association-entity";
-import { OrganizationUserAssociation } from "./organization-user-association-entity";
-import { TestCase } from "./test-case-entity";
-import { TestReport } from "./test-report-entity";
-import { TestRun } from "./test-run-entity";
+import { ProjectUserAssociationEntity } from "./project-user-association-entity";
+import { OrganizationUserAssociationEntity } from "./organization-user-association-entity";
+import { TestCaseEntity } from "./test-case-entity";
+import { TestReportEntity } from "./test-report-entity";
+import { TestRunEntity } from "./test-run-entity";
+import { UserRole } from "../../../domain/entities/enums/user-role";
+import { UserPermission } from "../../../domain/entities/enums/user-permission";
 
 @Entity()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn("uuid")
   userId!: string;
 
@@ -33,48 +34,69 @@ export class User {
   @Column()
   password!: string;
 
-  @Column()
-  country!: string;
-
-  @Column()
+  @Column({ default: false })
   isVerified!: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt!: Date;
 
-  @Column({ type: "date" })
-  lastLoginAt!: Date;
+  @Column({ type: "date", nullable: true, name: "last_login_at" })
+  lastLoginAt!: Date | null;
 
+  @Column({
+    type: "text",
+    nullable: true,
+    transformer: {
+      to: (value: any) => (value ? JSON.stringify(value) : null),
+      from: (value: string) => (value ? JSON.parse(value) : null),
+    },
+  })
+  refreshToken!: any | null;
+  @Column({
+    type: "enum",
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role!: UserRole;
+  @Column({
+    type: "text",
+    nullable: true,
+    transformer: {
+      to: (value: any) => (value ? JSON.stringify(value) : null),
+      from: (value: string) => (value ? JSON.parse(value) : null),
+    },
+  })
+  permissions?: UserPermission[];
   @OneToMany(
-    () => ProjectUserAssociation,
+    () => ProjectUserAssociationEntity,
     (projectUserAssociation) => projectUserAssociation.user,
   )
-  projectAssociations?: ProjectUserAssociation[];
+  projectAssociations?: ProjectUserAssociationEntity[];
 
   @OneToMany(
-    () => OrganizationUserAssociation,
+    () => OrganizationUserAssociationEntity,
     (organizationUserAssociation) => organizationUserAssociation.user,
   )
-  organizationAssociations?: OrganizationUserAssociation[];
+  organizationAssociations?: OrganizationUserAssociationEntity[];
 
   @OneToMany(
-    () => TestCase,
+    () => TestCaseEntity,
     (testCase) => testCase.assignedUser,
   )
-  testCases?: TestCase[];
+  testCases?: TestCaseEntity[];
 
   @OneToMany(
-    () => TestReport,
+    () => TestReportEntity,
     (testReport) => testReport.assignedUser,
   )
-  testReports?: TestReport[];
+  testReports?: TestReportEntity[];
 
   @OneToMany(
-    () => TestRun,
+    () => TestRunEntity,
     (testRun) => testRun.assignedTo,
   )
-  testRuns?: TestRun[];
+  testRuns?: TestRunEntity[];
 }

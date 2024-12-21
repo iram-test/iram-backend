@@ -8,12 +8,12 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { TestRunStep } from "./test-run-step-entity";
-import { User } from "./user-entity";
+import { TestRunStepEntity } from "./test-run-step-entity";
+import { UserEntity } from "./user-entity";
 import { Status } from "../../../domain/entities/enums/status";
 
 @Entity()
-export class TestRun {
+export class TestRunEntity {
   @PrimaryGeneratedColumn("uuid")
   testRunId!: string;
 
@@ -24,17 +24,17 @@ export class TestRun {
   comment!: string;
 
   @OneToMany(
-    () => TestRunStep,
+    () => TestRunStepEntity,
     (testRunStep) => testRunStep.testRun,
   )
-  steps!: TestRunStep[];
+  steps!: TestRunStepEntity[];
 
   @ManyToOne(
-    () => User,
+    () => UserEntity,
     (user) => user.testRuns,
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedTo?: User;
+  assignedTo?: UserEntity;
 
   @Column()
   version!: string;

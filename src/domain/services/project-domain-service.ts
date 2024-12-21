@@ -1,9 +1,9 @@
 import { Project } from "../entities/project-entity";
 import { ProjectRepository } from "../repositories/project-repository";
 import {
-    CreateProjectDTO,
-    UpdateProjectDTO,
-  } from "../../application/dtos/project-dto";
+  CreateProjectDTO,
+  UpdateProjectDTO,
+} from "../../application/dtos/project-dto";
 
 export class ProjectDomainService implements ProjectRepository {
   constructor(private projectRepository: ProjectRepository) {}
@@ -28,10 +28,9 @@ export class ProjectDomainService implements ProjectRepository {
     return this.projectRepository.getByName(projectName);
   }
 
-    update(project: UpdateProjectDTO & { projectId: string }): Promise<Project> {
-        return this.projectRepository.update(project);
-    }
-
+  update(project: UpdateProjectDTO & { projectId: string }): Promise<Project> {
+    return this.projectRepository.update(project);
+  }
 
   delete(projectId: string): Promise<void> {
     return this.projectRepository.delete(projectId);

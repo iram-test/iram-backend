@@ -1,74 +1,113 @@
 import { ProjectUserAssociation } from "../../../domain/entities/project-user-association";
-import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
 import { ProjectUserAssociationRepository } from "../../../domain/repositories/project-user-association-repository";
 import {
   CreateProjectUserAssociationDTO,
   UpdateProjectUserAssociationDTO,
 } from "../../../application/dtos/project-user-association-dto";
-import { v4 } from "uuid";
+import { PostgresDataSource } from "../../../tools/db-connection";
+import { ProjectUserAssociationEntity } from "../entities/project-user-association-entity";
 
 export class ProjectUserAssociationPostgresRepository
   implements ProjectUserAssociationRepository
 {
-  private repository: Repository<ProjectUserAssociation>;
-  constructor() {
-    this.repository = PostgresDataSource.getRepository(ProjectUserAssociation);
-  }
   async addAssociation(
     association: CreateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
-    const createdAssociation = this.repository.create({
-      ...association,
-      associationId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    return await this.repository.save(createdAssociation);
+    const { projectId, userId, projectRole } = association;
+    const newAssociation = await PostgresDataSource.query(
+      `INSERT INTO project_user_associations (project_id, user_id, role ) VALUES ($1, $2, $3) RETURNING *`,
+      [projectId, userId, projectRole],
+    );
+    return this.mapDbEntityToProjectUserAssociation(
+      newAssociation.rows[0] as ProjectUserAssociationEntity,
+    );
   }
   async getAll(): Promise<ProjectUserAssociation[]> {
-    return await this.repository.find();
+    const associations = await PostgresDataSource.query(
+      `SELECT * FROM project_user_associations`,
+    );
+    return associations.rows.map((association: ProjectUserAssociationEntity) =>
+      this.mapDbEntityToProjectUserAssociation(association),
+    );
   }
+  async save(
+    association: CreateProjectUserAssociationDTO,
+  ): Promise<ProjectUserAssociation> {
+    const { projectId, userId, projectRole } = association;
+    const updatedAssociation = await PostgresDataSource.query(
+      `UPDATE project_user_associations SET role = $1 WHERE project_id = $2 and user_id = $3 RETURNING *`,
+      [projectRole, projectId, userId],
+    );
+    return this.mapDbEntityToProjectUserAssociation(
+      updatedAssociation.rows[0] as ProjectUserAssociationEntity,
+    );
+  }
+
   async getById(associationId: string): Promise<ProjectUserAssociation | null> {
-    return await this.repository.findOneBy({ associationId });
+    const association = await PostgresDataSource.query(
+      `SELECT * FROM project_user_associations WHERE associationId = $1`,
+      [associationId],
+    );
+    return association.rows[0]
+      ? this.mapDbEntityToProjectUserAssociation(
+          association.rows[0] as ProjectUserAssociationEntity,
+        )
+      : null;
   }
 
   async getByUserId(userId: string): Promise<ProjectUserAssociation | null> {
-    return await this.repository.findOneBy({ userId });
+    const association = await PostgresDataSource.query(
+      `SELECT * FROM project_user_associations WHERE user_id = $1`,
+      [userId],
+    );
+    return association.rows[0]
+      ? this.mapDbEntityToProjectUserAssociation(
+          association.rows[0] as ProjectUserAssociationEntity,
+        )
+      : null;
   }
 
   async update(
     association: UpdateProjectUserAssociationDTO & { associationId: string },
   ): Promise<ProjectUserAssociation> {
-    const existingAssociation = await this.repository.findOneBy({
-      associationId: association.associationId,
-    });
-    if (!existingAssociation) {
-      throw new Error(
-        `Association with id ${association.associationId} was not found`,
-      );
-    }
-    await this.repository.update(association.associationId, {
-      ...association,
-      updatedAt: new Date(),
-    });
-    return (await this.repository.findOneBy({
-      associationId: association.associationId,
-    })) as ProjectUserAssociation;
+    const { associationId, projectRole } = association;
+    const updatedAssociation = await PostgresDataSource.query(
+      `UPDATE project_user_associations SET role = $1 WHERE associationId = $2  RETURNING *`,
+      [projectRole, associationId],
+    );
+    return this.mapDbEntityToProjectUserAssociation(
+      updatedAssociation.rows[0] as ProjectUserAssociationEntity,
+    );
   }
+
   async delete(associationId: string): Promise<void> {
-    await this.repository.delete({ associationId });
+    await PostgresDataSource.query(
+      `DELETE FROM project_user_associations WHERE associationId = $1`,
+      [associationId],
+    );
   }
-
-  async save(
-    association: ProjectUserAssociation,
-  ): Promise<ProjectUserAssociation> {
-    return await this.repository.save(association);
-  }
-
-  async getBy(
-    options: FindOptionsWhere<ProjectUserAssociation>,
+  async getAssociationByUserIdAndProjectId(
+    userId: string,
+    projectId: string,
   ): Promise<ProjectUserAssociation | null> {
-    return await this.repository.findOneBy(options);
+    const association = await PostgresDataSource.query(
+      `SELECT * FROM project_user_associations WHERE user_id = $1 AND project_id = $2`,
+      [userId, projectId],
+    );
+    return association.rows[0]
+      ? this.mapDbEntityToProjectUserAssociation(
+          association.rows[0] as ProjectUserAssociationEntity,
+        )
+      : null;
+  }
+  private mapDbEntityToProjectUserAssociation(
+    projectUserAssociationEntity: ProjectUserAssociationEntity,
+  ): ProjectUserAssociation {
+    return {
+      associationId: projectUserAssociationEntity.associationId,
+      projectId: projectUserAssociationEntity.projectId,
+      userId: projectUserAssociationEntity.userId,
+      role: projectUserAssociationEntity.role,
+    };
   }
 }

@@ -12,13 +12,13 @@ import { Priority } from "../../../domain/entities/enums/project-priority";
 import { Status } from "../../../domain/entities/enums/status";
 import { TemplateType } from "../../../domain/entities/enums/template-type";
 import { TestType } from "../../../domain/entities/enums/test-type";
-import { Project } from "./project-entity";
-import { Step } from "./step-entity";
-import { User } from "./user-entity";
-import { Folder } from "./folder-entity";
+import { ProjectEntity } from "./project-entity";
+import { StepEntity } from "./step-entity";
+import { UserEntity } from "./user-entity";
+import { FolderEntity } from "./folder-entity";
 
 @Entity()
-export class TestCase {
+export class TestCaseEntity {
   @PrimaryGeneratedColumn("uuid")
   testCaseId!: string;
 
@@ -46,8 +46,15 @@ export class TestCase {
   @Column()
   timeEstimation!: string;
 
-  @Column({ nullable: true })
-  reference!: string | null;
+  @Column({
+    type: "text", // Use 'text' to store JSON string
+    nullable: true,
+    transformer: {
+      to: (value: any) => (value ? JSON.stringify(value) : null),
+      from: (value: string) => (value ? JSON.parse(value) : null),
+    },
+  })
+  reference!: any | null;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -77,29 +84,29 @@ export class TestCase {
   version!: string;
 
   @ManyToOne(
-    () => Project,
+    () => ProjectEntity,
     (project) => project.testCases,
   )
   @JoinColumn({ name: "projectId" })
-  project?: Project;
+  project?: ProjectEntity;
 
   @ManyToOne(
-    () => User,
+    () => UserEntity,
     (user) => user.testCases,
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedUser?: User;
+  assignedUser?: UserEntity;
 
   @ManyToOne(
-    () => Folder,
+    () => FolderEntity,
     (folder) => folder.testCases,
   )
   @JoinColumn({ name: "folderId" })
-  folder?: Folder;
+  folder?: FolderEntity;
 
   @OneToMany(
-    () => Step,
+    () => StepEntity,
     (step) => step.testCase,
   )
-  steps?: Step[];
+  steps?: StepEntity[];
 }

@@ -1,5 +1,5 @@
-// src/infrastructure/db/PostgresRepository/TestReportPostgresRepository.ts
 import { TestReport } from "../../../domain/entities/test-report-entity";
+import { TestReportEntity } from "../entities/test-report-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
 import { TestReportRepository } from "../../../domain/repositories/test-report-repository";
@@ -10,14 +10,22 @@ import {
 import { v4 } from "uuid";
 
 export class TestReportPostgresRepository implements TestReportRepository {
-  private repository: Repository<TestReport>;
+  private repository: Repository<TestReportEntity>;
   constructor() {
-    this.repository = PostgresDataSource.getRepository(TestReport);
+    this.repository = PostgresDataSource.getRepository(TestReportEntity);
   }
   async addTestReport(testReport: CreateTestReportDTO): Promise<TestReport> {
     const createdTestReport = this.repository.create({
-      ...testReport,
       testReportId: v4(),
+      name: testReport.name,
+      reference: testReport.reference === null ? null : testReport.reference,
+      milestoneId:
+        testReport.milestoneId === null ? null : testReport.milestoneId,
+      description: testReport.description,
+      assignedUserId:
+        testReport.assignedUserId === null ? null : testReport.assignedUserId,
+      testCaseId: testReport.testCaseId,
+      folderId: testReport.folderId === null ? null : testReport.folderId,
     });
     return await this.repository.save(createdTestReport);
   }
@@ -41,7 +49,20 @@ export class TestReportPostgresRepository implements TestReportRepository {
         `Test report with id ${testReport.testReportId} was not found`,
       );
     }
-    await this.repository.update(testReport.testReportId, { ...testReport });
+
+    const updateTestReport: any = {
+      name: testReport.name,
+      reference: testReport.reference === null ? null : testReport.reference,
+      milestoneId:
+        testReport.milestoneId === null ? null : testReport.milestoneId,
+      description: testReport.description,
+      assignedUserId:
+        testReport.assignedUserId === null ? null : testReport.assignedUserId,
+      testCaseId: testReport.testCaseId,
+      folderId: testReport.folderId === null ? null : testReport.folderId,
+    };
+
+    await this.repository.update(testReport.testReportId, updateTestReport);
     return (await this.repository.findOneBy({
       testReportId: testReport.testReportId,
     })) as TestReport;

@@ -7,18 +7,25 @@ import {
   OneToMany,
 } from "typeorm";
 import { MilestoneStatus } from "../../../domain/entities/enums/milestone-status";
-import { TestReport } from "./test-report-entity";
+import { TestReportEntity } from "./test-report-entity";
 
 @Entity()
-export class Milestone {
+export class MilestoneEntity {
   @PrimaryGeneratedColumn("uuid")
   milestoneID!: string;
 
   @Column()
   name!: string;
 
-  @Column({ nullable: true })
-  parentId!: string | null;
+  @Column({
+    type: "text", // Use 'text' to store JSON string
+    nullable: true,
+    transformer: {
+      to: (value: any) => (value ? JSON.stringify(value) : null),
+      from: (value: string) => (value ? JSON.parse(value) : null),
+    },
+  })
+  parentId!: any | null;
 
   @Column()
   description!: string;
@@ -39,8 +46,8 @@ export class Milestone {
   updatedAt!: Date;
 
   @OneToMany(
-    () => TestReport,
+    () => TestReportEntity,
     (testReport) => testReport.milestone,
   )
-  testReports?: TestReport[];
+  testReports?: TestReportEntity[];
 }
