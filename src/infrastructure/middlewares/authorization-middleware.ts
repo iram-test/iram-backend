@@ -24,21 +24,22 @@ interface AccessTokenPayload {
   role: UserRole;
   permissions: UserPermission[];
 }
+
 export const authorize = (
   roles: UserRole[] | null = null,
   permissions: UserPermission[] | null = null,
   projectRole: ProjectRole | null = null,
+  userIdParam: string | null = null,
 ) => {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     const authHeader = request.headers.authorization;
-
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new CustomError("No token provided", 401);
     }
-
     const token = authHeader.split(" ")[1];
     try {
       const decodedToken = verifyAccessToken(token) as AccessTokenPayload;
+
       if (roles && !roles.includes(decodedToken.role)) {
         throw new CustomError("User does not have required role", 403);
       }
@@ -65,6 +66,15 @@ export const authorize = (
               403,
             );
           }
+        }
+      }
+      if (userIdParam) {
+        const { userId } = request.params as { userId: string };
+        if (userId && userId !== decodedToken.userId) {
+          throw new CustomError(
+            "User does not have permission to access other users resources",
+            403,
+          );
         }
       }
 

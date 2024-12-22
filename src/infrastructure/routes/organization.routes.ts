@@ -6,11 +6,32 @@ import {
   updateOrganization,
   deleteOrganization,
 } from "../controllers/organization-controller";
+import { authorize } from "../middlewares/authorization-middleware";
 
 export async function organizationRoutes(fastify: FastifyInstance) {
-  fastify.post("/organizations", addOrganization);
-  fastify.get("/organizations", getAllOrganizations);
-  fastify.get("/organizations/:organizationId", getOrganizationById);
-  fastify.put("/organizations/:organizationId", updateOrganization);
-  fastify.delete("/organizations/:organizationId", deleteOrganization);
+  fastify.post(
+    "/organizations",
+    { preHandler: [authorize()] },
+    addOrganization,
+  );
+  fastify.get(
+    "/organizations",
+    { preHandler: [authorize()] },
+    getAllOrganizations,
+  );
+  fastify.get(
+    "/organizations/:organizationId",
+    { preHandler: [authorize()] },
+    getOrganizationById,
+  );
+  fastify.put(
+    "/organizations/:organizationId",
+    { preHandler: [authorize()] },
+    updateOrganization,
+  );
+  fastify.delete(
+    "/organizations/:organizationId",
+    { preHandler: [authorize()] },
+    deleteOrganization,
+  );
 }
