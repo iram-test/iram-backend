@@ -6,7 +6,8 @@ export interface TestReportDTO {
   description: string;
   assignedUserId: string | null;
   testCaseId: string[];
-  folderId: string | null;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface CreateTestReportDTO {
@@ -16,7 +17,6 @@ export interface CreateTestReportDTO {
   description: string;
   assignedUserId?: string | null;
   testCaseId: string[];
-  folderId?: string | null;
 }
 
 export interface UpdateTestReportDTO {
@@ -27,5 +27,4 @@ export interface UpdateTestReportDTO {
   description?: string;
   assignedUserId?: string | null;
   testCaseId?: string[];
-  folderId?: string | null;
 }

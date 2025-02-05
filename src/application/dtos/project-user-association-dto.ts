@@ -4,18 +4,18 @@ export interface ProjectUserAssociationDTO {
   associationId: string;
   projectId: string;
   userId: string;
-  projectRole: ProjectRole;
-  createdAt: Date;
-  updatedAt: Date;
+  role: ProjectRole;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface CreateProjectUserAssociationDTO {
   projectId: string;
   userId: string;
-  projectRole: ProjectRole;
+  role: ProjectRole;
 }
 
 export interface UpdateProjectUserAssociationDTO {
   associationId: string;
-  projectRole?: ProjectRole;
+  role?: ProjectRole;
 }

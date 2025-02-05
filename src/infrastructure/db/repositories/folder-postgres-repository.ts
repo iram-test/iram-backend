@@ -1,4 +1,4 @@
-import { Folder } from "../../../domain/entities/folder-entity";
+import { Folder } from "../../../domain/entities/section-entity";
 import { FolderEntity } from "../entities/folder-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { Repository, FindOptionsWhere } from "typeorm";
@@ -6,7 +6,7 @@ import { FolderRepository } from "../../../domain/repositories/folder-repository
 import {
   CreateFolderDTO,
   UpdateFolderDTO,
-} from "../../../application/dtos/folder-dto";
+} from "../../../application/dtos/section-dto";
 import { v4 } from "uuid";
 
 export class FolderPostgresRepository implements FolderRepository {

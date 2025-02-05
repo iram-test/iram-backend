@@ -1,9 +1,9 @@
-import { Folder } from "../entities/folder-entity";
+import { Folder } from "../entities/section-entity";
 import { FolderRepository } from "../repositories/folder-repository";
 import {
   CreateFolderDTO,
   UpdateFolderDTO,
-} from "../../application/dtos/folder-dto";
+} from "../../application/dtos/section-dto";
 
 export class FolderDomainService implements FolderRepository {
   constructor(private folderRepository: FolderRepository) {}

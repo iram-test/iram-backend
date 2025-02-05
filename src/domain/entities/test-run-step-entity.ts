@@ -1,12 +1,16 @@
+import { Priority } from "./enums/project-priority";
 import { Status } from "./enums/status";
+import { TestType } from "./enums/test-type";
 
 export class TestRunStep {
   constructor(
     public testRunStepId: string,
-    public stepId: string,
+    public step: TestType,
+    public priority: Priority,
+    public assignedUserId: string[] | null,
+    public estimatedTime: string,
     public status: Status,
-    public resultDescription: string | undefined,
-    public createdAt: Date,
-    public updatedAt: Date,
+    public createdAt: string,
+    public updatedAt: string,
   ) {}
 }

@@ -1,8 +1,8 @@
-import { Folder } from "../entities/folder-entity";
+import { Folder } from "../entities/section-entity";
 import {
   CreateFolderDTO,
   UpdateFolderDTO,
-} from "../../application/dtos/folder-dto";
+} from "../../application/dtos/section-dto";
 
 export interface FolderRepository {
   addFolder(folder: CreateFolderDTO): Promise<Folder>;

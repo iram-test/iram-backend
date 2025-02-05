@@ -1,37 +1,31 @@
 import { Status } from "../../domain/entities/enums/status";
+import { TestType } from "../../domain/entities/enums/test-type";
+import { Priority } from "../../domain/entities/enums/project-priority";
 
-export class TestRunStepDTO {
+export interface TestRunStepDTO {
   testRunStepId: string;
-  stepId: string;
+  step: TestType;
+  priority: Priority;
+  assignedUserId: string[] | null;
+  estimatedTime: string;
   status: Status;
-  resultDescription: string | undefined;
-  createdAt: Date;
-  updatedAt: Date;
-
-  constructor({
-    testRunStepId,
-    stepId,
-    status,
-    resultDescription,
-    createdAt,
-    updatedAt,
-  }: TestRunStepDTO) {
-    this.testRunStepId = testRunStepId;
-    this.stepId = stepId;
-    this.status = status;
-    this.resultDescription = resultDescription;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface CreateTestRunStepDTO {
-  stepId: string;
+  step: TestType;
+  priority: Priority;
+  assignedUserId?: string[] | null;
+  estimatedTime: string;
   status: Status;
-  resultDescription?: string;
 }
 
 export interface UpdateTestRunStepDTO {
+  testRunStepId: string;
+  step?: TestType;
+  priority?: Priority;
+  assignedUserId?: string[] | null;
+  estimatedTime?: string;
   status?: Status;
-  resultDescription?: string;
 }

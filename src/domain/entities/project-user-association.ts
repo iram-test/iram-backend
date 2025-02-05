@@ -6,7 +6,7 @@ export class ProjectUserAssociation {
     public projectId: string,
     public userId: string,
     public role: ProjectRole,
-    public createdAt?: Date,
-    public updatedAt?: Date,
+    public createdAt: string,
+    public updatedAt: string,
   ) {}
 }

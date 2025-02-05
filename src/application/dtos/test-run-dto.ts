@@ -1,51 +1,27 @@
-import { Status } from "../../domain/entities/enums/status";
-
-export class TestRunDTO {
+export interface TestRunDTO {
   testRunId: string;
-  status: Status;
-  comment: string;
-  version: string;
-  elapsed: string;
-  defects: string;
+  name: string;
+  milestone: string[]; // Array of Milestone IDs
+  assignedUserId: string[] | null;
   description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  constructor({
-    testRunId,
-    status,
-    comment,
-    version,
-    elapsed,
-    defects,
-    description,
-    createdAt,
-    updatedAt,
-  }: TestRunDTO) {
-    this.testRunId = testRunId;
-    this.status = status;
-    this.comment = comment;
-    this.version = version;
-    this.elapsed = elapsed;
-    this.defects = defects;
-    this.description = description;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+  testRunSteps: string[]; // Array of TestRunStep IDs
 }
 
 export interface CreateTestRunDTO {
-  status: Status;
-  comment: string;
-  version: string;
-  elapsed: string;
-  defects: string;
+  name: string;
+  milestone: string[]; // Array of Milestone IDs
+  assignedUserId?: string[] | null;
   description: string;
+  testRunSteps?: string[]; // Array of TestRunStep IDs
 }
+
 export interface UpdateTestRunDTO {
-  status?: Status;
-  comment?: string;
-  version?: string;
-  elapsed?: string;
-  defects?: string;
+  testRunId: string;
+  name?: string;
+  milestone?: string[]; // Array of Milestone IDs
+  assignedUserId?: string[] | null;
   description?: string;
+  testRunSteps?: string[]; // Array of TestRunStep IDs
 }

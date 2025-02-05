@@ -2,20 +2,20 @@ export interface StepDTO {
   stepId: string;
   stepDescription: string;
   expectedResult: string;
-  image?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  image: string[] | null;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface CreateStepDTO {
   stepDescription: string;
-  image?: string;
   expectedResult: string;
+  image?: string[] | null;
 }
 
 export interface UpdateStepDTO {
   stepId: string;
-  image?: string;
   stepDescription?: string;
   expectedResult?: string;
+  image?: string[] | null;
 }

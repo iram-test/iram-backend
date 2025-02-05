@@ -1,5 +1,4 @@
 import { UserRole } from "./enums/user-role";
-import { UserPermission } from "./enums/user-permission";
 
 export class OrganizationUserAssociation {
   constructor(
@@ -7,7 +6,6 @@ export class OrganizationUserAssociation {
     public userId: string,
     public organizationId: string,
     public role: UserRole,
-    public permission: UserPermission,
-    public assignedAt: Date,
+    public assignedAt: string,
   ) {}
 }

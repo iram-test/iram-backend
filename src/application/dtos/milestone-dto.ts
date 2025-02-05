@@ -5,19 +5,19 @@ export interface MilestoneDTO {
   name: string;
   parentId: string | null;
   description: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: string | null; // ISO string
+  endDate: string | null; // ISO string
   status: MilestoneStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface CreateMilestoneDTO {
   name: string;
   parentId?: string | null;
   description: string;
-  startDate?: Date | null;
-  endDate?: Date | null;
+  startDate?: string | null; // ISO string
+  endDate?: string | null; // ISO string
   status: MilestoneStatus;
 }
 
@@ -26,7 +26,7 @@ export interface UpdateMilestoneDTO {
   name?: string;
   parentId?: string | null;
   description?: string;
-  startDate?: Date | null;
-  endDate?: Date | null;
+  startDate?: string | null; // ISO string
+  endDate?: string | null; // ISO string
   status?: MilestoneStatus;
 }

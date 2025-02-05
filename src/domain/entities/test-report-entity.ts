@@ -7,6 +7,7 @@ export class TestReport {
     public description: string,
     public assignedUserId: string | null,
     public testCaseId: string[],
-    public folderId: string | null,
+    public createdAt: string,
+    public updatedAt: string,
   ) {}
 }

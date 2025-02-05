@@ -3,8 +3,8 @@ export class Step {
     public stepId: string,
     public stepDescription: string,
     public expectedResult: string,
-    public image: string | null,
-    public createdAt: Date,
-    public updatedAt: Date,
+    public image: string[] | null,
+    public createdAt: string,
+    public updatedAt: string,
   ) {}
 }

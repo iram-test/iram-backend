@@ -6,10 +6,10 @@ export class Milestone {
     public name: string,
     public parentId: string | null,
     public description: string,
-    public startDate: Date | null,
-    public endDate: Date | null,
+    public startDate: string | null,
+    public endDate: string | null,
     public status: MilestoneStatus,
-    public createdAt: Date,
-    public updatedAt: Date,
+    public createdAt: string,
+    public updatedAt: string, // ISO8601 -> new Date().toISOString();
   ) {}
 }

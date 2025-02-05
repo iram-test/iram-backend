@@ -3,7 +3,7 @@ import FolderService from "../services/folder-service";
 import {
   CreateFolderDTO,
   UpdateFolderDTO,
-} from "../../application/dtos/folder-dto";
+} from "../../application/dtos/section-dto";
 import logger from "../../tools/logger";
 
 export const addFolder = async (

@@ -7,9 +7,10 @@ export interface UserDTO {
   username: string;
   email: string;
   isVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
-  lastLoginAt: string | null;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+  lastLoginAt: string | null; // ISO string
+  role: UserRole;
 }
 
 export interface CreateUserDTO {
@@ -19,12 +20,13 @@ export interface CreateUserDTO {
   email: string;
   password?: string;
   isVerified: boolean;
-  lastLoginAt: string | null;
-  activationLink?: string;
+  lastLoginAt?: string | null; // ISO string
   role: UserRole;
+  refreshToken?: string | null;
 }
 
 export interface UpdateUserDTO {
+  userId: string;
   firstName?: string;
   lastName?: string;
   username?: string;

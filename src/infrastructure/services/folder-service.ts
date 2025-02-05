@@ -3,7 +3,7 @@ import { FolderPostgresRepository } from "../db/repositories/folder-postgres-rep
 import {
   CreateFolderDTO,
   UpdateFolderDTO,
-} from "../../application/dtos/folder-dto";
+} from "../../application/dtos/section-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 
