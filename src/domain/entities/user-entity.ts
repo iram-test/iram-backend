@@ -1,4 +1,3 @@
-import { UserPermission } from "./enums/user-permission";
 import { UserRole } from "./enums/user-role";
 
 export class User {
@@ -10,11 +9,10 @@ export class User {
     public email: string,
     public password: string,
     public isVerified: boolean,
-    public createdAt: Date,
-    public updatedAt: Date,
-    public lastLoginAt: Date | null,
+    public createdAt: string,
+    public updatedAt: string,
+    public lastLoginAt: string | null,
     public refreshToken: string | null,
     public role: UserRole,
-    public permissions: UserPermission[],
   ) {}
 }

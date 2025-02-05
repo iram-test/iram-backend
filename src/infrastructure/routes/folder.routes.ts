@@ -7,32 +7,32 @@ import {
   deleteFolder,
 } from "../controllers/folder-controller";
 import { authorize } from "../middlewares/authorization-middleware";
-import { UserPermission } from "../../domain/entities/enums/user-permission";
+import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function folderRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/folders",
-    { preHandler: [authorize(null, [UserPermission.WRITE])] },
+    { preHandler: [authorize([UserRole.MANAGER])] },
     addFolder,
   );
   fastify.get(
     "/folders",
-    { preHandler: [authorize(null, [UserPermission.READ])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     getAllFolders,
   );
   fastify.get(
     "/folders/:folderId",
-    { preHandler: [authorize(null, [UserPermission.READ])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     getFolderById,
   );
   fastify.put(
     "/folders/:folderId",
-    { preHandler: [authorize(null, [UserPermission.WRITE])] },
+    { preHandler: [authorize([UserRole.MANAGER])] },
     updateFolder,
   );
   fastify.delete(
     "/folders/:folderId",
-    { preHandler: [authorize(null, [UserPermission.DELETE])] },
+    { preHandler: [authorize([UserRole.MANAGER])] },
     deleteFolder,
   );
 }

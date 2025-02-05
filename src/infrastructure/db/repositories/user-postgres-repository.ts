@@ -9,7 +9,6 @@ import { PostgresDataSource } from "../../../tools/db-connection";
 import { hashPassword } from "../../../tools/password-utils";
 import { config } from "../../../configs";
 import { UserRole } from "../../../domain/entities/enums/user-role";
-import { UserPermission } from "../../../domain/entities/enums/user-permission";
 import { FindOneOptions } from "typeorm";
 
 export class UserPostgresRepository implements UserRepository {
@@ -27,7 +26,7 @@ export class UserPostgresRepository implements UserRepository {
       firstName,
       lastName,
       role: UserRole.USER,
-      permissions: [UserPermission.READ],
+      lastLoginAt: new Date().toISOString(),
     });
     return this.mapDbEntityToUser(await this.repository.save(newUser));
   }
@@ -75,7 +74,11 @@ export class UserPostgresRepository implements UserRepository {
     existingUser.password = hashedPassword!;
     existingUser.firstName = firstName || "";
     existingUser.lastName = lastName || "";
-    return this.mapDbEntityToUser(await this.repository.save(existingUser));
+    existingUser.updatedAt = new Date().toISOString();
+    await this.repository.save(existingUser);
+    return this.mapDbEntityToUser(
+      (await this.repository.findOneBy({ userId })) as UserEntity,
+    );
   }
 
   async deleteUser(userId: string): Promise<void> {
@@ -88,6 +91,7 @@ export class UserPostgresRepository implements UserRepository {
       throw new Error("User not found");
     }
     existingUser.refreshToken = refreshToken;
+    existingUser.updatedAt = new Date().toISOString();
     await this.repository.save(existingUser);
   }
 
@@ -102,24 +106,27 @@ export class UserPostgresRepository implements UserRepository {
       throw new Error("User not found");
     }
     existingUser.refreshToken = null;
+    existingUser.updatedAt = new Date().toISOString();
     await this.repository.save(existingUser);
   }
 
-  async save(user: User): Promise<User> {
+  async save(
+    user: User,
+    refreshToken: string,
+    lastLoginAt: string,
+  ): Promise<User> {
     const existingUser = await this.repository.findOneBy({
       userId: user.userId,
     });
     if (!existingUser) {
       throw new Error("User not found");
     }
-    existingUser.username = user.username;
-    existingUser.email = user.email;
-    existingUser.password = user.password!;
-    existingUser.firstName = user.firstName;
-    existingUser.lastName = user.lastName;
-    existingUser.role = user.role;
-    existingUser.permissions = user.permissions;
-    return this.mapDbEntityToUser(await this.repository.save(existingUser));
+    existingUser.refreshToken = refreshToken;
+    existingUser.lastLoginAt = lastLoginAt;
+    existingUser.updatedAt = new Date().toISOString();
+    await this.repository.save(existingUser);
+
+    return this.mapDbEntityToUser(existingUser);
   }
 
   private mapDbEntityToUser(userEntity: UserEntity): User {
@@ -136,7 +143,6 @@ export class UserPostgresRepository implements UserRepository {
       userEntity.lastLoginAt,
       userEntity.refreshToken,
       userEntity.role as UserRole,
-      userEntity.permissions as UserPermission[],
     );
   }
 }

@@ -1,5 +1,5 @@
-import { UserPermission } from "../../domain/entities/enums/user-permission";
 import { UserRole } from "../../domain/entities/enums/user-role";
+
 export interface UserDTO {
   userId: string;
   firstName: string;
@@ -7,10 +7,11 @@ export interface UserDTO {
   username: string;
   email: string;
   isVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  lastLoginAt: Date | null;
+  createdAt: string;
+  updatedAt: string;
+  lastLoginAt: string | null;
 }
+
 export interface CreateUserDTO {
   firstName: string;
   lastName: string;
@@ -18,10 +19,9 @@ export interface CreateUserDTO {
   email: string;
   password?: string;
   isVerified: boolean;
-  lastLoginAt: Date | null;
+  lastLoginAt: string | null;
   activationLink?: string;
   role: UserRole;
-  permissions: UserPermission[];
 }
 
 export interface UpdateUserDTO {
@@ -31,5 +31,4 @@ export interface UpdateUserDTO {
   email?: string;
   password?: string;
   role?: UserRole;
-  permissions?: UserPermission[];
 }

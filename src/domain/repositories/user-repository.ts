@@ -7,7 +7,11 @@ export interface UserRepository {
   getUserById(userId: string): Promise<User | null>;
   updateUser(user: UpdateUserDTO & { userId: string }): Promise<User>;
   deleteUser(userId: string): Promise<void>;
-  save(user: User): Promise<User>;
+  save(
+    user: User,
+    refreshToken: string,
+    lastLogin: string | null,
+  ): Promise<User>;
   getByEmail(email: string): Promise<User | null>;
   getByUsername(username: string): Promise<User | null>;
   deleteRefreshToken(userId: string): Promise<void>;

@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { verifyAccessToken } from "../../tools/jwt";
 import { CustomError } from "../../tools/custom-error";
 import { UserRole } from "../../domain/entities/enums/user-role";
-import { UserPermission } from "../../domain/entities/enums/user-permission";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -13,7 +12,6 @@ interface AccessTokenPayload {
   userId: string;
   username: string;
   role: UserRole;
-  permissions: UserPermission[];
 }
 
 export const isAdmin = () => {

@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { verifyAccessToken } from "../../tools/jwt";
 import { CustomError } from "../../tools/custom-error";
 import { UserRole } from "../../domain/entities/enums/user-role";
-import { UserPermission } from "../../domain/entities/enums/user-permission";
 import { ProjectUserAssociationDomainService } from "../../domain/services/project-user-association-domain-service";
 import { ProjectUserAssociationPostgresRepository } from "../db/repositories/project-user-association-postgres-repository";
 import { ProjectRole } from "../../domain/entities/enums/project-role";
@@ -22,12 +21,10 @@ interface AccessTokenPayload {
   userId: string;
   username: string;
   role: UserRole;
-  permissions: UserPermission[];
 }
 
 export const authorize = (
   roles: UserRole[] | null = null,
-  permissions: UserPermission[] | null = null,
   projectRole: ProjectRole | null = null,
   userIdParam: string | null = null,
 ) => {
@@ -39,45 +36,10 @@ export const authorize = (
     const token = authHeader.split(" ")[1];
     try {
       const decodedToken = verifyAccessToken(token) as AccessTokenPayload;
-
+      // Check role
       if (roles && !roles.includes(decodedToken.role)) {
         throw new CustomError("User does not have required role", 403);
       }
-      if (permissions) {
-        const hasRequiredPermission = permissions.every((permission) =>
-          decodedToken.permissions.includes(permission),
-        );
-        if (!hasRequiredPermission) {
-          throw new CustomError("User does not have required permission", 403);
-        }
-      }
-
-      if (projectRole) {
-        const { projectId } = request.params as { projectId: string };
-        if (projectId) {
-          const userProjectRole =
-            await projectUserAssociationService.getAssociationByUserIdAndProjectId(
-              decodedToken.userId,
-              projectId,
-            );
-          if (userProjectRole?.role !== projectRole) {
-            throw new CustomError(
-              "User does not have required role in the project",
-              403,
-            );
-          }
-        }
-      }
-      if (userIdParam) {
-        const { userId } = request.params as { userId: string };
-        if (userId && userId !== decodedToken.userId) {
-          throw new CustomError(
-            "User does not have permission to access other users resources",
-            403,
-          );
-        }
-      }
-
       request.user = decodedToken;
     } catch (error) {
       if (error instanceof CustomError) {

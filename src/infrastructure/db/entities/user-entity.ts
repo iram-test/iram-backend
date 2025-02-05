@@ -12,7 +12,6 @@ import { TestCaseEntity } from "./test-case-entity";
 import { TestReportEntity } from "./test-report-entity";
 import { TestRunEntity } from "./test-run-entity";
 import { UserRole } from "../../../domain/entities/enums/user-role";
-import { UserPermission } from "../../../domain/entities/enums/user-permission";
 
 @Entity()
 export class UserEntity {
@@ -37,14 +36,26 @@ export class UserEntity {
   @Column({ default: false })
   isVerified!: boolean;
 
-  @CreateDateColumn({ name: "created_at" })
-  createdAt!: Date;
+  @CreateDateColumn({
+    name: "created_at",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  createdAt!: string;
 
-  @UpdateDateColumn({ name: "updated_at" })
-  updatedAt!: Date;
+  @UpdateDateColumn({
+    name: "updated_at",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  updatedAt!: string;
 
-  @Column({ type: "date", nullable: true, name: "last_login_at" })
-  lastLoginAt!: Date | null;
+  @Column({
+    name: "last_login_at",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  lastLoginAt!: string;
 
   @Column({
     type: "text",
@@ -55,21 +66,14 @@ export class UserEntity {
     },
   })
   refreshToken!: any | null;
+
   @Column({
     type: "enum",
     enum: UserRole,
     default: UserRole.USER,
   })
   role!: UserRole;
-  @Column({
-    type: "text",
-    nullable: true,
-    transformer: {
-      to: (value: any) => (value ? JSON.stringify(value) : null),
-      from: (value: string) => (value ? JSON.parse(value) : null),
-    },
-  })
-  permissions?: UserPermission[];
+
   @OneToMany(
     () => ProjectUserAssociationEntity,
     (projectUserAssociation) => projectUserAssociation.user,

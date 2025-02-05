@@ -1,6 +1,6 @@
 export const config = {
-  port: 3000,
-  host: "localhost", //Docker
+  port: 3001,
+  host: "0.0.0.0", //Docker
   db: {
     type: process.env.DB_TYPE!,
     host: process.env.DB_HOST!,

@@ -7,32 +7,32 @@ import {
   deleteTestRun,
 } from "../controllers/test-run-controller";
 import { authorize } from "../middlewares/authorization-middleware";
-import { UserPermission } from "../../domain/entities/enums/user-permission";
+import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function testRunRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/test-runs",
-    { preHandler: [authorize(null, [UserPermission.WRITE])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     addTestRun,
   );
   fastify.get(
     "/test-runs",
-    { preHandler: [authorize(null, [UserPermission.READ])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     getAllTestRuns,
   );
   fastify.get(
     "/test-runs/:testRunId",
-    { preHandler: [authorize(null, [UserPermission.READ])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     getTestRunById,
   );
   fastify.put(
     "/test-runs/:testRunId",
-    { preHandler: [authorize(null, [UserPermission.WRITE])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     updateTestRun,
   );
   fastify.delete(
     "/test-runs/:testRunId",
-    { preHandler: [authorize(null, [UserPermission.DELETE])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     deleteTestRun,
   );
 }
