@@ -5,7 +5,7 @@ import { CreateStepDTO, UpdateStepDTO } from "../../application/dtos/step-dto";
 export class StepDomainService implements StepRepository {
   constructor(private stepRepository: StepRepository) {}
 
-  addStep(stepDto: CreateStepDTO): Promise<Step> {
+  async addStep(stepDto: CreateStepDTO): Promise<Step> {
     const step = new Step(
       "",
       stepDto.stepDescription,
@@ -14,7 +14,7 @@ export class StepDomainService implements StepRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return this.stepRepository.addStep(stepDto);
+    return await this.stepRepository.addStep(step);
   }
 
   getAll(): Promise<Step[]> {

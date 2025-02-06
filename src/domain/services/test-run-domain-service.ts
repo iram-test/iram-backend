@@ -9,20 +9,18 @@ export class TestRunDomainService implements TestRunRepository {
   constructor(private testRunRepository: TestRunRepository) {}
 
   async addTestRun(testRunDto: CreateTestRunDTO): Promise<TestRun> {
-    // Assuming Milestone is an array of Milestone IDs
-    const milestone: any = testRunDto.milestone;
-
     const testRun: TestRun = new TestRun(
       "",
       testRunDto.name,
-      milestone,
-      testRunDto.assignedUserId ?? null,
+      testRunDto.milestoneIds,
+      testRunDto.assignedUserIds ?? null,
+      testRunDto.projectId,
+      testRunDto.testCaseIds,
       testRunDto.description,
       new Date().toISOString(),
       new Date().toISOString(),
-      [], // Assuming testRunSteps are handled separately
     );
-    return await this.testRunRepository.addTestRun(testRunDto);
+    return await this.testRunRepository.addTestRun(testRun); // Pass the constructed entity
   }
 
   getAll(): Promise<TestRun[]> {
@@ -39,5 +37,18 @@ export class TestRunDomainService implements TestRunRepository {
 
   delete(testRunId: string): Promise<void> {
     return this.testRunRepository.delete(testRunId);
+  }
+
+  getByProjectId(projectId: string): Promise<TestRun[]> {
+    return this.testRunRepository.getByProjectId(projectId);
+  }
+  getByMilestoneId(milestoneId: string): Promise<TestRun[]> {
+    return this.testRunRepository.getByMilestoneId(milestoneId);
+  }
+  getByAssignedUserId(assignedUserId: string): Promise<TestRun[]> {
+    return this.testRunRepository.getByAssignedUserId(assignedUserId);
+  }
+  getByTestCaseId(testCaseId: string): Promise<TestRun[]> {
+    return this.testRunRepository.getByTestCaseId(testCaseId);
   }
 }

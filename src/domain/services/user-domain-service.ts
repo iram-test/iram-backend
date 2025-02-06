@@ -20,7 +20,7 @@ export class UserDomainService {
       userDto.refreshToken ?? null,
       userDto.role,
     );
-    return await this.userRepository.addUser(userDto);
+    return await this.userRepository.addUser(user);
   }
 
   async getAll(): Promise<User[]> {

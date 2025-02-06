@@ -8,18 +8,18 @@ import {
 export class ProjectDomainService implements ProjectRepository {
   constructor(private projectRepository: ProjectRepository) {}
 
-  addProject(projectDto: CreateProjectDTO): Promise<Project> {
+  async addProject(projectDto: CreateProjectDTO): Promise<Project> {
     const project: Project = new Project(
       "",
       projectDto.name,
       projectDto.language ?? null,
       projectDto.location ?? null,
       projectDto.description,
-      projectDto.assignedUserId ?? null,
+      projectDto.organizationId,
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return this.projectRepository.addProject(projectDto);
+    return await this.projectRepository.addProject(project); // Pass the constructed entity
   }
 
   getAll(): Promise<Project[]> {
@@ -40,5 +40,9 @@ export class ProjectDomainService implements ProjectRepository {
 
   delete(projectId: string): Promise<void> {
     return this.projectRepository.delete(projectId);
+  }
+
+  getByOrganizationId(organizationId: string): Promise<Project[]> {
+    return this.projectRepository.getByOrganizationId(organizationId);
   }
 }

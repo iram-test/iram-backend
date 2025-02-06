@@ -12,7 +12,7 @@ export class OrganizationUserAssociationDomainService
     private associationRepository: OrganizationUserAssociationRepository,
   ) {}
 
-  addAssociation(
+  async addAssociation(
     associationDto: CreateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation> {
     const association: OrganizationUserAssociation =
@@ -23,7 +23,7 @@ export class OrganizationUserAssociationDomainService
         associationDto.role,
         new Date().toISOString(),
       );
-    return this.associationRepository.addAssociation(associationDto);
+    return await this.associationRepository.addAssociation(association); // Pass the constructed entity
   }
 
   getAll(): Promise<OrganizationUserAssociation[]> {
@@ -34,7 +34,7 @@ export class OrganizationUserAssociationDomainService
     return this.associationRepository.getById(associationId);
   }
 
-  getByUserId(userId: string): Promise<OrganizationUserAssociation | null> {
+  getByUserId(userId: string): Promise<OrganizationUserAssociation[]> {
     return this.associationRepository.getByUserId(userId);
   }
 

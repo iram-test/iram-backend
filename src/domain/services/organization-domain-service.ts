@@ -8,19 +8,17 @@ import {
 export class OrganizationDomainService implements OrganizationRepository {
   constructor(private organizationRepository: OrganizationRepository) {}
 
-  addOrganization(
+  async addOrganization(
     organizationDto: CreateOrganizationDTO,
   ): Promise<Organization> {
     const organization: Organization = new Organization(
       "",
-      null,
       organizationDto.name,
       organizationDto.description,
       new Date().toISOString(),
       new Date().toISOString(),
-      organizationDto.projectId,
     );
-    return this.organizationRepository.addOrganization(organizationDto);
+    return await this.organizationRepository.addOrganization(organization); // Pass the constructed entity
   }
 
   getAll(): Promise<Organization[]> {

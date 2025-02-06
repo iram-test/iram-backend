@@ -8,22 +8,23 @@ import {
 export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
-  addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
+  async addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
     const testCase = new TestCase(
       "",
       testCaseDto.title,
-      testCaseDto.sectionId,
+      testCaseDto.sectionIds,
+      testCaseDto.projectId,
+      testCaseDto.assignedUserId,
       testCaseDto.templateType,
       testCaseDto.testType,
       testCaseDto.priority,
-      testCaseDto.assignedUserId,
       testCaseDto.timeEstimation,
       testCaseDto.description,
-      testCaseDto.stepsId,
+      testCaseDto.stepIds,
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return this.testCaseRepository.addTestCase(testCaseDto);
+    return await this.testCaseRepository.addTestCase(testCase); // Pass the constructed entity
   }
 
   getAll(): Promise<TestCase[]> {
@@ -44,5 +45,15 @@ export class TestCaseDomainService implements TestCaseRepository {
 
   delete(testCaseId: string): Promise<void> {
     return this.testCaseRepository.delete(testCaseId);
+  }
+
+  getByProjectId(projectId: string): Promise<TestCase[]> {
+    return this.testCaseRepository.getByProjectId(projectId);
+  }
+  getBySectionId(sectionId: string): Promise<TestCase[]> {
+    return this.testCaseRepository.getBySectionId(sectionId);
+  }
+  getByAssignedUserId(assignedUserId: string): Promise<TestCase[]> {
+    return this.testCaseRepository.getByAssignedUserId(assignedUserId);
   }
 }

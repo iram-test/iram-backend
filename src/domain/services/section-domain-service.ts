@@ -8,16 +8,16 @@ import {
 export class SectionDomainService implements SectionRepository {
   constructor(private sectionRepository: SectionRepository) {}
 
-  addSection(sectionDto: CreateSectionDTO): Promise<Section> {
+  async addSection(sectionDto: CreateSectionDTO): Promise<Section> {
     const section = new Section(
       "",
-      sectionDto.subsectionId ?? null,
       sectionDto.name,
       sectionDto.description,
+      sectionDto.subsectionIds ?? null,
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return this.sectionRepository.addSection(sectionDto);
+    return await this.sectionRepository.addSection(section); // Pass the constructed entity
   }
 
   getAll(): Promise<Section[]> {
@@ -38,5 +38,8 @@ export class SectionDomainService implements SectionRepository {
 
   delete(sectionId: string): Promise<void> {
     return this.sectionRepository.delete(sectionId);
+  }
+  getBySubsectionId(subsectionId: string): Promise<Section[]> {
+    return this.sectionRepository.getBySubsectionId(subsectionId);
   }
 }
