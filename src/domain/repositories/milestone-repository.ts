@@ -12,4 +12,5 @@ export interface MilestoneRepository {
   getById(milestoneID: string): Promise<Milestone | null>;
   getByName(milestoneName: string): Promise<Milestone | null>;
   delete(milestoneID: string): Promise<void>;
+  getByProjectId(projectId: string): Promise<Milestone[]>;
 }

@@ -11,4 +11,5 @@ export interface ProjectRepository {
   getById(projectId: string): Promise<Project | null>;
   getByName(projectName: string): Promise<Project | null>;
   delete(projectId: string): Promise<void>;
+  getByOrganizationId(organizationId: string): Promise<Project[]>;
 }

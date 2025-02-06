@@ -1,45 +1,56 @@
-import { Organization } from "../entities/organization-entity";
-import { OrganizationRepository } from "../repositories/organization-repository";
+import { OrganizationUserAssociation } from "../entities/organization-user-association";
+import { OrganizationUserAssociationRepository } from "../repositories/organization-user-association-repository";
 import {
-  CreateOrganizationDTO,
-  UpdateOrganizationDTO,
-} from "../../application/dtos/organization-dto";
+  CreateOrganizationUserAssociationDTO,
+  UpdateOrganizationUserAssociationDTO,
+} from "../../application/dtos/organization-user-association-dto";
 
-export class OrganizationDomainService implements OrganizationRepository {
-  constructor(private organizationRepository: OrganizationRepository) {}
+export class OrganizationUserAssociationDomainService
+  implements OrganizationUserAssociationRepository
+{
+  constructor(
+    private associationRepository: OrganizationUserAssociationRepository,
+  ) {}
 
-  addOrganization(
-    organizationDto: CreateOrganizationDTO,
-  ): Promise<Organization> {
-    const organization: Organization = new Organization(
-      "",
-      organizationDto.associationId ?? null,
-      organizationDto.name,
-      organizationDto.description,
-      new Date().toISOString(),
-      new Date().toISOString(),
-      organizationDto.projectId,
-    );
-    return this.organizationRepository.addOrganization(organizationDto);
+  addAssociation(
+    associationDto: CreateOrganizationUserAssociationDTO,
+  ): Promise<OrganizationUserAssociation> {
+    const association: OrganizationUserAssociation =
+      new OrganizationUserAssociation(
+        "",
+        associationDto.userId,
+        associationDto.organizationId,
+        associationDto.role,
+        new Date().toISOString(),
+      );
+    return this.associationRepository.addAssociation(associationDto);
   }
 
-  getAll(): Promise<Organization[]> {
-    return this.organizationRepository.getAll();
+  getAll(): Promise<OrganizationUserAssociation[]> {
+    return this.associationRepository.getAll();
   }
 
-  getById(organizationId: string): Promise<Organization | null> {
-    return this.organizationRepository.getById(organizationId);
+  getById(associationId: string): Promise<OrganizationUserAssociation | null> {
+    return this.associationRepository.getById(associationId);
   }
 
-  getByName(organizationName: string): Promise<Organization | null> {
-    return this.organizationRepository.getByName(organizationName);
+  getByUserId(userId: string): Promise<OrganizationUserAssociation | null> {
+    return this.associationRepository.getByUserId(userId);
   }
 
-  update(organizationDto: UpdateOrganizationDTO): Promise<Organization> {
-    return this.organizationRepository.update(organizationDto);
+  getByOrganizationId(
+    organizationId: string,
+  ): Promise<OrganizationUserAssociation[]> {
+    return this.associationRepository.getByOrganizationId(organizationId);
   }
 
-  delete(organizationId: string): Promise<void> {
-    return this.organizationRepository.delete(organizationId);
+  update(
+    associationDto: UpdateOrganizationUserAssociationDTO,
+  ): Promise<OrganizationUserAssociation> {
+    return this.associationRepository.update(associationDto);
+  }
+
+  delete(associationId: string): Promise<void> {
+    return this.associationRepository.delete(associationId);
   }
 }

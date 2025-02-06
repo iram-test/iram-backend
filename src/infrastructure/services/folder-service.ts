@@ -1,5 +1,5 @@
-import { FolderDomainService } from "../../domain/services/folder-domain-service";
-import { FolderPostgresRepository } from "../db/repositories/folder-postgres-repository";
+import { FolderDomainService } from "../../domain/services/section-domain-service";
+import { FolderPostgresRepository } from "../db/repositories/section-postgres-repository";
 import {
   CreateFolderDTO,
   UpdateFolderDTO,

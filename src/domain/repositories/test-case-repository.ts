@@ -11,4 +11,7 @@ export interface TestCaseRepository {
   getById(testCaseId: string): Promise<TestCase | null>;
   getByTitle(title: string): Promise<TestCase | null>;
   delete(testCaseId: string): Promise<void>;
+  getByProjectId(projectId: string): Promise<TestCase[]>;
+  getBySectionId(sectionId: string): Promise<TestCase[]>;
+  getByAssignedUserId(assignedUserId: string): Promise<TestCase[]>;
 }

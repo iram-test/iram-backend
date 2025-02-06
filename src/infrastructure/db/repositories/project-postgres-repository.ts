@@ -1,7 +1,7 @@
 import { Project } from "../../../domain/entities/project-entity";
 import { ProjectEntity } from "../entities/project-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
+import { Repository } from "typeorm";
 import { ProjectRepository } from "../../../domain/repositories/project-repository";
 import {
   CreateProjectDTO,

@@ -10,4 +10,8 @@ export interface TestRunRepository {
   getById(testRunId: string): Promise<TestRun | null>;
   update(testRun: UpdateTestRunDTO): Promise<TestRun>;
   delete(testRunId: string): Promise<void>;
+  getByProjectId(projectId: string): Promise<TestRun[]>;
+  getByMilestoneId(milestoneId: string): Promise<TestRun[]>;
+  getByAssignedUserId(assignedUserId: string): Promise<TestRun[]>;
+  getByTestCaseId(testCaseId: string): Promise<TestRun[]>;
 }
