@@ -8,9 +8,8 @@ export interface TestRunStepRepository {
   addTestRunStep(testRunStep: CreateTestRunStepDTO): Promise<TestRunStep>;
   getAll(): Promise<TestRunStep[]>;
   getById(testRunStepId: string): Promise<TestRunStep | null>;
-  save(testRunStep: CreateTestRunStepDTO): Promise<TestRunStep>;
   update(
-    testRunStep: UpdateTestRunStepDTO & { testRunStepId: string },
+    testRunStep: UpdateTestRunStepDTO
   ): Promise<TestRunStep>;
   delete(testRunStepId: string): Promise<void>;
 }

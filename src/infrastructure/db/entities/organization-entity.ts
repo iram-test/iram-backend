@@ -36,7 +36,7 @@ export class OrganizationEntity {
     (project) => project.organizations,
   )
   @JoinColumn({ name: "projectId" })
-  project?: ProjectEntity;
+  project!: ProjectEntity; // project is not optional
 
   @OneToMany(
     () => OrganizationUserAssociationEntity,

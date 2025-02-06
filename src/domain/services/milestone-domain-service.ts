@@ -9,42 +9,27 @@ export class MilestoneDomainService implements MilestoneRepository {
   constructor(private milestoneRepository: MilestoneRepository) {}
 
   async addMilestone(milestoneDto: CreateMilestoneDTO): Promise<Milestone> {
-    const milestone: Milestone = {
-      milestoneID: "",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      name: milestoneDto.name,
-      description: milestoneDto.description,
-      startDate: milestoneDto.startDate ?? null,
-      endDate: milestoneDto.endDate ?? null,
-      status: milestoneDto.status,
-      parentId: milestoneDto.parentId ?? null,
-    };
+    const milestone: Milestone = new Milestone(
+        '',
+        milestoneDto.name,
+        milestoneDto.parentId ?? null,
+        milestoneDto.description,
+        milestoneDto.startDate ?? null,
+        milestoneDto.endDate ?? null,
+        milestoneDto.status,
+        new Date().toISOString(),
+        new Date().toISOString(),
+    );
 
-    return await this.milestoneRepository.addMilestone(milestone);
+    return await this.milestoneRepository.addMilestone(milestoneDto);
   }
 
   getAll(): Promise<Milestone[]> {
     return this.milestoneRepository.getAll();
   }
 
-  getByParent(parent: Milestone): Promise<Milestone[]> {
-    return this.milestoneRepository.getByParent(parent);
-  }
-
-  async save(milestoneDto: CreateMilestoneDTO): Promise<Milestone> {
-    const milestone: Milestone = {
-      milestoneID: "", //assign a valid id according to your logic
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      name: milestoneDto.name,
-      description: milestoneDto.description,
-      startDate: milestoneDto.startDate ?? null,
-      endDate: milestoneDto.endDate ?? null,
-      status: milestoneDto.status,
-      parentId: milestoneDto.parentId ?? null,
-    };
-    return await this.milestoneRepository.save(milestone);
+  getByParentId(parentId: string | null): Promise<Milestone[]> {
+    return this.milestoneRepository.getByParentId(parentId);
   }
 
   getById(milestoneID: string): Promise<Milestone | null> {
@@ -56,9 +41,9 @@ export class MilestoneDomainService implements MilestoneRepository {
   }
 
   update(
-    milestone: UpdateMilestoneDTO & { milestoneID: string },
+    milestoneDto: UpdateMilestoneDTO,
   ): Promise<Milestone> {
-    return this.milestoneRepository.update(milestone);
+    return this.milestoneRepository.update(milestoneDto);
   }
 
   delete(milestoneID: string): Promise<void> {

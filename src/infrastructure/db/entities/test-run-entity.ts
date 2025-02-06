@@ -4,46 +4,23 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
   OneToMany,
 } from "typeorm";
 import { TestRunStepEntity } from "./test-run-step-entity";
-import { UserEntity } from "./user-entity";
-import { Status } from "../../../domain/entities/enums/status";
 
 @Entity()
 export class TestRunEntity {
   @PrimaryGeneratedColumn("uuid")
   testRunId!: string;
 
-  @Column({ type: "enum", enum: Status })
-  status!: Status;
-
   @Column()
-  comment!: string;
+  name!: string;
 
-  @OneToMany(
-    () => TestRunStepEntity,
-    (testRunStep) => testRunStep.testRun,
-  )
-  steps!: TestRunStepEntity[];
+  @Column({ type: "text", array: true, nullable: true })
+  milestone!: string[] | null;
 
-  @ManyToOne(
-    () => UserEntity,
-    (user) => user.testRuns,
-  )
-  @JoinColumn({ name: "assignedUserId" })
-  assignedTo?: UserEntity;
-
-  @Column()
-  version!: string;
-
-  @Column()
-  elapsed!: string;
-
-  @Column()
-  defects!: string;
+  @Column({ type: "text", array: true, nullable: true })
+  assignedUserId!: string[] | null;
 
   @Column()
   description!: string;
@@ -53,4 +30,10 @@ export class TestRunEntity {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(
+      () => TestRunStepEntity,
+      (testRunStep) => testRunStep.testRun,
+  )
+  testRunSteps?: TestRunStepEntity[];
 }

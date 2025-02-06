@@ -11,15 +11,17 @@ export class TestRunStepDomainService implements TestRunStepRepository {
   async addTestRunStep(
     testRunStepDto: CreateTestRunStepDTO,
   ): Promise<TestRunStep> {
-    const testRunStep: TestRunStep = {
-      testRunStepId: "", //generate a valid ID
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      stepId: testRunStepDto.stepId,
-      status: testRunStepDto.status,
-      resultDescription: testRunStepDto.resultDescription ?? undefined,
-    };
-    return await this.testRunStepRepository.addTestRunStep(testRunStep);
+      const testRunStep = new TestRunStep(
+          '',
+          testRunStepDto.step,
+          testRunStepDto.priority,
+          testRunStepDto.assignedUserId ?? null,
+          testRunStepDto.estimatedTime ?? null,
+          testRunStepDto.status,
+          new Date().toISOString(),
+          new Date().toISOString(),
+      );
+    return await this.testRunStepRepository.addTestRunStep(testRunStepDto);
   }
 
   getAll(): Promise<TestRunStep[]> {
@@ -30,22 +32,11 @@ export class TestRunStepDomainService implements TestRunStepRepository {
     return this.testRunStepRepository.getById(testRunStepId);
   }
 
-  async save(testRunStepDto: CreateTestRunStepDTO): Promise<TestRunStep> {
-    const testRunStep: TestRunStep = {
-      testRunStepId: "", //generate a valid ID
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      stepId: testRunStepDto.stepId,
-      status: testRunStepDto.status,
-      resultDescription: testRunStepDto.resultDescription ?? undefined,
-    };
-    return await this.testRunStepRepository.save(testRunStep);
-  }
 
   update(
-    testRunStep: UpdateTestRunStepDTO & { testRunStepId: string },
+    testRunStepDto: UpdateTestRunStepDTO
   ): Promise<TestRunStep> {
-    return this.testRunStepRepository.update(testRunStep);
+    return this.testRunStepRepository.update(testRunStepDto);
   }
 
   delete(testRunStepId: string): Promise<void> {

@@ -1,7 +1,7 @@
 import { OrganizationUserAssociation } from "../../../domain/entities/organization-user-association";
 import { OrganizationUserAssociationEntity } from "../entities/organization-user-association-entity";
 import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
+import { Repository } from "typeorm";
 import { OrganizationUserAssociationRepository } from "../../../domain/repositories/organization-user-association-repository";
 import {
   CreateOrganizationUserAssociationDTO,
@@ -19,66 +19,106 @@ export class OrganizationUserAssociationPostgresRepository
     );
   }
   async addAssociation(
-    association: CreateOrganizationUserAssociationDTO,
+    associationDto: CreateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation> {
-    const createdAssociation = this.repository.create({
-      ...association,
-      associationId: v4(),
-      assignedAt: new Date(),
-    });
-    return await this.repository.save(createdAssociation);
+      const associationEntity = this.repository.create({
+          associationId: v4(),
+          userId: associationDto.userId,
+          organizationId: associationDto.organizationId,
+          role: associationDto.role,
+          assignedAt: new Date(),
+      });
+    const savedAssociation = await this.repository.save(associationEntity);
+    return new OrganizationUserAssociation(
+      savedAssociation.associationId,
+      savedAssociation.userId,
+      savedAssociation.organizationId,
+      savedAssociation.role,
+      savedAssociation.assignedAt.toISOString(),
+    );
   }
 
   async getAll(): Promise<OrganizationUserAssociation[]> {
-    return await this.repository.find();
+      const entities = await this.repository.find({
+          relations: ['user', 'organization'], // Eagerly load the related user and organization
+      });
+    return entities.map((entity) => new OrganizationUserAssociation(
+      entity.associationId,
+      entity.userId,
+      entity.organizationId,
+      entity.role,
+      entity.assignedAt.toISOString(),
+    ));
   }
   async getById(
     associationId: string,
   ): Promise<OrganizationUserAssociation | null> {
-    return await this.repository.findOneBy({ associationId });
+      const entity = await this.repository.findOne({
+          where: { associationId },
+          relations: ['user', 'organization'], // Eagerly load the related user and organization
+      });
+      if (!entity) return null;
+    return new OrganizationUserAssociation(
+      entity.associationId,
+      entity.userId,
+      entity.organizationId,
+      entity.role,
+      entity.assignedAt.toISOString(),
+    );
   }
   async getByUserId(
     userId: string,
   ): Promise<OrganizationUserAssociation | null> {
-    return await this.repository.findOneBy({ userId });
+      const entity = await this.repository.findOne({
+          where: { userId },
+          relations: ['user', 'organization'], // Eagerly load the related user and organization
+      });
+      if (!entity) return null;
+    return new OrganizationUserAssociation(
+      entity.associationId,
+      entity.userId,
+      entity.organizationId,
+      entity.role,
+      entity.assignedAt.toISOString(),
+    );
   }
 
-  async update(
-    association: UpdateOrganizationUserAssociationDTO & {
-      associationId: string;
-    },
-  ): Promise<OrganizationUserAssociation> {
-    const existingAssociation = await this.repository.findOneBy({
-      associationId: association.associationId,
-    });
-    if (!existingAssociation) {
-      throw new Error(
-        `Association with id ${association.associationId} was not found`,
-      );
+    async getByOrganizationId(organizationId: string): Promise<OrganizationUserAssociation[]> {
+        const entities = await this.repository.find({
+            where: { organizationId },
+            relations: ['user', 'organization'], // Eagerly load the related user and organization
+        });
+        return entities.map((entity) => new OrganizationUserAssociation(
+            entity.associationId,
+            entity.userId,
+            entity.organizationId,
+            entity.role,
+            entity.assignedAt.toISOString(),
+        ));
     }
 
-    await this.repository.update(association.associationId, {
-      ...association,
-      assignedAt: new Date(),
-    });
-    return (await this.repository.findOneBy({
-      associationId: association.associationId,
-    })) as OrganizationUserAssociation;
+  async update(
+    associationDto: UpdateOrganizationUserAssociationDTO
+  ): Promise<OrganizationUserAssociation> {
+      const associationEntity = await this.repository.findOneBy({ associationId: associationDto.associationId });
+
+      if (!associationEntity) {
+          throw new Error(`Association with id ${associationDto.associationId} was not found`);
+      }
+
+      associationEntity.role = associationDto.role ?? associationEntity.role;
+
+    const updatedAssociation = await this.repository.save(associationEntity);
+    return new OrganizationUserAssociation(
+      updatedAssociation.associationId,
+      updatedAssociation.userId,
+      updatedAssociation.organizationId,
+      updatedAssociation.role,
+      updatedAssociation.assignedAt.toISOString(),
+    );
   }
 
   async delete(associationId: string): Promise<void> {
     await this.repository.delete({ associationId });
-  }
-
-  async save(
-    association: OrganizationUserAssociation,
-  ): Promise<OrganizationUserAssociation> {
-    return await this.repository.save(association);
-  }
-
-  async getBy(
-    options: FindOptionsWhere<OrganizationUserAssociation>,
-  ): Promise<OrganizationUserAssociation | null> {
-    return await this.repository.findOneBy(options);
   }
 }

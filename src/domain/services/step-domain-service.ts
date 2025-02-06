@@ -6,6 +6,14 @@ export class StepDomainService implements StepRepository {
   constructor(private stepRepository: StepRepository) {}
 
   addStep(stepDto: CreateStepDTO): Promise<Step> {
+      const step = new Step(
+          '',
+          stepDto.stepDescription,
+          stepDto.expectedResult,
+          stepDto.image ?? null,
+          new Date().toISOString(),
+          new Date().toISOString(),
+      );
     return this.stepRepository.addStep(stepDto);
   }
 
@@ -13,16 +21,13 @@ export class StepDomainService implements StepRepository {
     return this.stepRepository.getAll();
   }
 
-  save(stepDto: CreateStepDTO): Promise<Step> {
-    return this.stepRepository.save(stepDto);
-  }
 
   getById(stepId: string): Promise<Step | null> {
     return this.stepRepository.getById(stepId);
   }
 
-  update(step: UpdateStepDTO & { stepId: string }): Promise<Step> {
-    return this.stepRepository.update(step);
+  update(stepDto: UpdateStepDTO): Promise<Step> {
+    return this.stepRepository.update(stepDto);
   }
 
   delete(stepId: string): Promise<void> {

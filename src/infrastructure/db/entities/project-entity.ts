@@ -7,9 +7,10 @@ import {
   OneToMany,
 } from "typeorm";
 import { ProjectUserAssociationEntity } from "./project-user-association-entity";
-import { FolderEntity } from "./folder-entity";
+import { SectionEntity } from "./section-entity";
 import { OrganizationEntity } from "./organization-entity";
 import { TestCaseEntity } from "./test-case-entity";
+import {Language} from "../../../domain/entities/enums/language";
 
 @Entity()
 export class ProjectEntity {
@@ -18,6 +19,12 @@ export class ProjectEntity {
 
   @Column()
   name!: string;
+
+  @Column({ type: "enum", enum: Language, nullable: true })
+  language!: Language | null;
+
+  @Column({ type: "jsonb", nullable: true })
+  location!: Location | null;
 
   @Column()
   description!: string;
@@ -35,10 +42,10 @@ export class ProjectEntity {
   userAssociations?: ProjectUserAssociationEntity[];
 
   @OneToMany(
-    () => FolderEntity,
+    () => SectionEntity,
     (folder) => folder.project,
   )
-  folders?: FolderEntity[];
+  sections?: SectionEntity[];
 
   @OneToMany(
     () => OrganizationEntity,

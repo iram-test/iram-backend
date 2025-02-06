@@ -3,7 +3,7 @@ export class Subsection {
     public subsectionId: string,
     public name: string,
     public description: string,
-    public createdAt: Date,
-    public updatedAt: Date,
+    public createdAt: string,
+    public updatedAt: string,
   ) {}
 }

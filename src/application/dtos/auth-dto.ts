@@ -1,5 +1,3 @@
-import { UserRole } from "../../domain/entities/enums/user-role";
-
 export interface RegisterDTO {
   firstName: string;
   lastName: string;

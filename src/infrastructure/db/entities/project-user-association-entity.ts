@@ -36,12 +36,12 @@ export class ProjectUserAssociationEntity {
     (user) => user.projectAssociations,
   )
   @JoinColumn({ name: "userId" })
-  user?: UserEntity;
+  user!: UserEntity;
 
   @ManyToOne(
     () => ProjectEntity,
     (project) => project.userAssociations,
   )
   @JoinColumn({ name: "projectId" })
-  project?: ProjectEntity;
+  project!: ProjectEntity;
 }

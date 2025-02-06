@@ -8,7 +8,6 @@ export interface TestRunRepository {
   addTestRun(testRun: CreateTestRunDTO): Promise<TestRun>;
   getAll(): Promise<TestRun[]>;
   getById(testRunId: string): Promise<TestRun | null>;
-  save(testRun: TestRun): Promise<TestRun>;
-  update(testRun: UpdateTestRunDTO & { testRunId: string }): Promise<TestRun>;
+  update(testRun: UpdateTestRunDTO): Promise<TestRun>;
   delete(testRunId: string): Promise<void>;
 }

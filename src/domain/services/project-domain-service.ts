@@ -9,6 +9,16 @@ export class ProjectDomainService implements ProjectRepository {
   constructor(private projectRepository: ProjectRepository) {}
 
   addProject(projectDto: CreateProjectDTO): Promise<Project> {
+    const project:Project = new Project(
+      '',
+      projectDto.name,
+      projectDto.language ?? null,
+      projectDto.location ?? null,
+      projectDto.description,
+      projectDto.assignedUserId ?? null,
+      new Date().toISOString(),
+      new Date().toISOString(),
+    )
     return this.projectRepository.addProject(projectDto);
   }
 
@@ -16,9 +26,6 @@ export class ProjectDomainService implements ProjectRepository {
     return this.projectRepository.getAll();
   }
 
-  save(projectDto: CreateProjectDTO): Promise<Project> {
-    return this.projectRepository.save(projectDto);
-  }
 
   getById(projectId: string): Promise<Project | null> {
     return this.projectRepository.getById(projectId);
@@ -28,8 +35,8 @@ export class ProjectDomainService implements ProjectRepository {
     return this.projectRepository.getByName(projectName);
   }
 
-  update(project: UpdateProjectDTO & { projectId: string }): Promise<Project> {
-    return this.projectRepository.update(project);
+  update(projectDto: UpdateProjectDTO): Promise<Project> {
+    return this.projectRepository.update(projectDto);
   }
 
   delete(projectId: string): Promise<void> {

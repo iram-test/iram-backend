@@ -9,14 +9,20 @@ export class TestRunDomainService implements TestRunRepository {
   constructor(private testRunRepository: TestRunRepository) {}
 
   async addTestRun(testRunDto: CreateTestRunDTO): Promise<TestRun> {
-    const testRun: TestRun = {
-      testRunId: "",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ...testRunDto,
-    };
+        // Assuming Milestone is an array of Milestone IDs
+        const milestone: any = testRunDto.milestone;
 
-    return await this.testRunRepository.addTestRun(testRun);
+        const testRun: TestRun = new TestRun(
+            '',
+            testRunDto.name,
+            milestone,
+            testRunDto.assignedUserId ?? null,
+            testRunDto.description,
+            new Date().toISOString(),
+            new Date().toISOString(),
+            [], // Assuming testRunSteps are handled separately
+        );
+        return await this.testRunRepository.addTestRun(testRunDto);
   }
 
   getAll(): Promise<TestRun[]> {
@@ -27,18 +33,9 @@ export class TestRunDomainService implements TestRunRepository {
     return this.testRunRepository.getById(testRunId);
   }
 
-  async save(testRunDto: CreateTestRunDTO): Promise<TestRun> {
-    const testRun: TestRun = {
-      testRunId: "",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ...testRunDto,
-    };
-    return await this.testRunRepository.save(testRun);
-  }
 
-  update(testRun: UpdateTestRunDTO & { testRunId: string }): Promise<TestRun> {
-    return this.testRunRepository.update(testRun);
+  update(testRunDto: UpdateTestRunDTO): Promise<TestRun> {
+    return this.testRunRepository.update(testRunDto);
   }
 
   delete(testRunId: string): Promise<void> {

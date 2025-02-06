@@ -5,8 +5,22 @@ import { UserRepository } from "../repositories/user-repository";
 export class UserDomainService {
   constructor(private userRepository: UserRepository) {}
 
-  async addUser(user: CreateUserDTO): Promise<User> {
-    return await this.userRepository.addUser(user);
+  async addUser(userDto: CreateUserDTO): Promise<User> {
+        const user: User = new User(
+            '',
+            userDto.firstName,
+            userDto.lastName,
+            userDto.username,
+            userDto.email,
+            userDto.password ?? '',
+            userDto.isVerified,
+            new Date().toISOString(),
+            new Date().toISOString(),
+            userDto.lastLoginAt ?? null,
+            userDto.refreshToken ?? null,
+            userDto.role,
+        );
+    return await this.userRepository.addUser(userDto);
   }
 
   async getAll(): Promise<User[]> {
@@ -17,21 +31,14 @@ export class UserDomainService {
     return await this.userRepository.getUserById(userId);
   }
 
-  async updateUser(user: UpdateUserDTO & { userId: string }): Promise<User> {
-    return this.userRepository.updateUser(user);
+  async updateUser(userDto: UpdateUserDTO): Promise<User> {
+    return this.userRepository.updateUser(userDto);
   }
 
   async deleteUser(userId: string): Promise<void> {
     return await this.userRepository.deleteUser(userId);
   }
 
-  async save(
-    user: User,
-    refreshToken: string,
-    lastLogin: string | null,
-  ): Promise<User> {
-    return this.userRepository.save(user, refreshToken, lastLogin);
-  }
 
   async getUserByEmail(email: string): Promise<User | null> {
     return await this.userRepository.getByEmail(email);

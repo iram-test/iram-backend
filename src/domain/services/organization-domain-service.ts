@@ -11,15 +11,20 @@ export class OrganizationDomainService implements OrganizationRepository {
   addOrganization(
     organizationDto: CreateOrganizationDTO,
   ): Promise<Organization> {
+    const organization: Organization = new Organization(
+      '',
+      null,
+      organizationDto.name,
+      organizationDto.description,
+      new Date().toISOString(),
+      new Date().toISOString(),
+      organizationDto.projectId
+    )
     return this.organizationRepository.addOrganization(organizationDto);
   }
 
   getAll(): Promise<Organization[]> {
     return this.organizationRepository.getAll();
-  }
-
-  save(organizationDto: CreateOrganizationDTO): Promise<Organization> {
-    return this.organizationRepository.save(organizationDto);
   }
 
   getById(organizationId: string): Promise<Organization | null> {
@@ -31,9 +36,9 @@ export class OrganizationDomainService implements OrganizationRepository {
   }
 
   update(
-    organization: UpdateOrganizationDTO & { organizationId: string },
+    organizationDto: UpdateOrganizationDTO
   ): Promise<Organization> {
-    return this.organizationRepository.update(organization);
+    return this.organizationRepository.update(organizationDto);
   }
 
   delete(organizationId: string): Promise<void> {

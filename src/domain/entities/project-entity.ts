@@ -7,7 +7,7 @@ export class Project {
     public language: Language | null,
     public location: Location | null,
     public description: string,
-    public assignedUserId: string[] | null,
+    public organizationId: string,
     public createdAt: string,
     public updatedAt: string,
   ) {}

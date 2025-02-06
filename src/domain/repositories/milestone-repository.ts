@@ -7,12 +7,11 @@ import {
 export interface MilestoneRepository {
   addMilestone(milestone: CreateMilestoneDTO): Promise<Milestone>;
   getAll(): Promise<Milestone[]>;
-  getByParent(parent: Milestone): Promise<Milestone[]>;
-  save(milestone: Milestone): Promise<Milestone>;
+  getByParentId(parentId: string | null): Promise<Milestone[]>;
+  update(
+    milestone: UpdateMilestoneDTO
+  ): Promise<Milestone>;
   getById(milestoneID: string): Promise<Milestone | null>;
   getByName(milestoneName: string): Promise<Milestone | null>;
-  update(
-    milestone: UpdateMilestoneDTO & { milestoneID: string },
-  ): Promise<Milestone>;
   delete(milestoneID: string): Promise<void>;
 }

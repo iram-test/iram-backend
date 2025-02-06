@@ -4,10 +4,12 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn
 } from "typeorm";
 import { MilestoneEntity } from "./milestone-entity";
 import { UserEntity } from "./user-entity";
-import { FolderEntity } from "./folder-entity";
+import { SectionEntity } from "./section-entity";
 
 @Entity()
 export class TestReportEntity {
@@ -17,15 +19,8 @@ export class TestReportEntity {
   @Column()
   name!: string;
 
-  @Column({
-    type: "text", // Use 'text' to store JSON string
-    nullable: true,
-    transformer: {
-      to: (value: any) => (value ? JSON.stringify(value) : null),
-      from: (value: string) => (value ? JSON.parse(value) : null),
-    },
-  })
-  reference!: any | null;
+  @Column({ type: "text", nullable: true })
+  reference!: string | null;
 
   @Column({ nullable: true })
   milestoneId!: string | null;
@@ -39,27 +34,33 @@ export class TestReportEntity {
   @Column({ type: "text", array: true })
   testCaseId!: string[];
 
-  @Column({ nullable: true })
-  folderId!: string | null;
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
   @ManyToOne(
     () => MilestoneEntity,
     (milestone) => milestone.testReports,
+    { nullable: true }
   )
   @JoinColumn({ name: "milestoneId" })
-  milestone?: MilestoneEntity;
+  milestone?: MilestoneEntity | null;
 
   @ManyToOne(
     () => UserEntity,
     (user) => user.testReports,
+    { nullable: true }
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedUser?: UserEntity;
+  assignedUser?: UserEntity | null;
 
   @ManyToOne(
-    () => FolderEntity,
-    (folder) => folder.testReports,
+    () => SectionEntity,
+    (section) => section.testReports,
+    { nullable: true }
   )
-  @JoinColumn({ name: "folderId" })
-  folder?: FolderEntity;
+  @JoinColumn({ name: "sectionId" })
+  section?: SectionEntity | null;
 }

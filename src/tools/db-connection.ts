@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { UserEntity } from "../infrastructure/db/entities/user-entity";
-import { FolderEntity } from "../infrastructure/db/entities/folder-entity";
+import { FolderEntity } from "../infrastructure/db/entities/section-entity";
 import { MilestoneEntity } from "../infrastructure/db/entities/milestone-entity";
 import { OrganizationEntity } from "../infrastructure/db/entities/organization-entity";
 import { OrganizationUserAssociationEntity } from "../infrastructure/db/entities/organization-user-association-entity";

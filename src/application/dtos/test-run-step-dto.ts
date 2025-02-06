@@ -17,7 +17,7 @@ export interface CreateTestRunStepDTO {
   step: TestType;
   priority: Priority;
   assignedUserId?: string[] | null;
-  estimatedTime: string;
+  estimatedTime?: string;
   status: Status;
 }
 

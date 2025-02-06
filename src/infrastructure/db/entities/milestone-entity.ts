@@ -17,15 +17,8 @@ export class MilestoneEntity {
   @Column()
   name!: string;
 
-  @Column({
-    type: "text", // Use 'text' to store JSON string
-    nullable: true,
-    transformer: {
-      to: (value: any) => (value ? JSON.stringify(value) : null),
-      from: (value: string) => (value ? JSON.parse(value) : null),
-    },
-  })
-  parentId!: any | null;
+  @Column({ nullable: true })
+  parentId!: string | null;
 
   @Column()
   description!: string;

@@ -9,17 +9,15 @@ export interface ProjectUserAssociationRepository {
     association: CreateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation>;
   getAll(): Promise<ProjectUserAssociation[]>;
-  save(
-    association: CreateProjectUserAssociationDTO,
+  update(
+    association: UpdateProjectUserAssociationDTO
   ): Promise<ProjectUserAssociation>;
   getById(associationId: string): Promise<ProjectUserAssociation | null>;
-  getByUserId(userId: string): Promise<ProjectUserAssociation | null>;
-  update(
-    association: UpdateProjectUserAssociationDTO & { associationId: string },
-  ): Promise<ProjectUserAssociation>;
+  getByUserId(userId: string): Promise<ProjectUserAssociation[]>;
   delete(associationId: string): Promise<void>;
   getAssociationByUserIdAndProjectId(
     userId: string,
     projectId: string,
   ): Promise<ProjectUserAssociation | null>;
+  getAssociationsByProjectId(projectId:string):Promise<ProjectUserAssociation[]>
 }

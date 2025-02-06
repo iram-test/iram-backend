@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { UserRole } from "../../../domain/entities/enums/user-role";
-import { UserPermission } from "../../../domain/entities/enums/user-permission";
 import { UserEntity } from "./user-entity";
 import { OrganizationEntity } from "./organization-entity";
 
@@ -25,9 +24,6 @@ export class OrganizationUserAssociationEntity {
   @Column({ type: "enum", enum: UserRole })
   role!: UserRole;
 
-  @Column({ type: "enum", enum: UserPermission })
-  permission!: UserPermission;
-
   @CreateDateColumn()
   assignedAt!: Date;
 
@@ -36,12 +32,12 @@ export class OrganizationUserAssociationEntity {
     (user) => user.organizationAssociations,
   )
   @JoinColumn({ name: "userId" })
-  user?: UserEntity;
+  user!: UserEntity;
 
   @ManyToOne(
     () => OrganizationEntity,
     (organization) => organization.userAssociations,
   )
   @JoinColumn({ name: "organizationId" })
-  organization?: OrganizationEntity;
+  organization!: OrganizationEntity;
 }

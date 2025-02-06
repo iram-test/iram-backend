@@ -14,52 +14,98 @@ export class ProjectPostgresRepository implements ProjectRepository {
   constructor() {
     this.repository = PostgresDataSource.getRepository(ProjectEntity);
   }
-  async addProject(project: CreateProjectDTO): Promise<Project> {
-    const createdProject = this.repository.create({
-      ...project,
-      projectId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    return await this.repository.save(createdProject);
+  async addProject(projectDto: CreateProjectDTO): Promise<Project> {
+      const projectEntity = this.repository.create({
+          projectId: v4(),
+          name: projectDto.name,
+          language: projectDto.language,
+          location: projectDto.location,
+          description: projectDto.description,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+      });
+    const savedProject = await this.repository.save(projectEntity);
+    return new Project(
+      savedProject.projectId,
+      savedProject.name,
+      savedProject.language,
+      savedProject.location,
+      savedProject.description,
+      null,
+      savedProject.createdAt.toISOString(),
+      savedProject.updatedAt.toISOString(),
+    );
   }
 
   async getAll(): Promise<Project[]> {
-    return await this.repository.find();
+      const entities = await this.repository.find();
+    return entities.map((entity) => new Project(
+      entity.projectId,
+      entity.name,
+      entity.language,
+      entity.location,
+      entity.description,
+      null,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+    ));
   }
   async getById(projectId: string): Promise<Project | null> {
-    return await this.repository.findOneBy({ projectId });
+      const entity = await this.repository.findOneBy({ projectId });
+      if (!entity) return null;
+    return new Project(
+      entity.projectId,
+      entity.name,
+      entity.language,
+      entity.location,
+      entity.description,
+      null,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+    );
   }
   async getByName(name: string): Promise<Project | null> {
-    return await this.repository.findOneBy({ name });
+      const entity = await this.repository.findOneBy({ name });
+      if (!entity) return null;
+    return new Project(
+      entity.projectId,
+      entity.name,
+        entity.language,
+        entity.location,
+      entity.description,
+      null,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+    );
   }
 
-  async update(
-    project: UpdateProjectDTO & { projectId: string },
-  ): Promise<Project> {
-    const existingProject = await this.repository.findOneBy({
-      projectId: project.projectId,
-    });
-    if (!existingProject) {
-      throw new Error(`Project with id: ${project.projectId} was not found`);
-    }
-    await this.repository.update(project.projectId, {
-      ...project,
-      updatedAt: new Date(),
-    });
-    return (await this.repository.findOneBy({
-      projectId: project.projectId,
-    })) as Project;
+  async update(projectDto: UpdateProjectDTO): Promise<Project> {
+      const projectEntity = await this.repository.findOneBy({ projectId: projectDto.projectId });
+
+      if (!projectEntity) {
+          throw new Error(`Project with id: ${projectDto.projectId} was not found`);
+      }
+
+      projectEntity.name = projectDto.name ?? projectEntity.name;
+      projectEntity.language = projectDto.language ?? projectEntity.language;
+      projectEntity.location = projectDto.location ?? projectEntity.location;
+      projectEntity.description = projectDto.description ?? projectEntity.description;
+      projectEntity.updatedAt = new Date();
+
+    const updatedProject = await this.repository.save(projectEntity);
+    return new Project(
+      updatedProject.projectId,
+      updatedProject.name,
+        updatedProject.language,
+        updatedProject.location,
+      updatedProject.description,
+      null,
+      updatedProject.createdAt.toISOString(),
+      updatedProject.updatedAt.toISOString(),
+    );
   }
 
   async delete(projectId: string): Promise<void> {
     await this.repository.delete({ projectId });
-  }
-  async save(project: Project): Promise<Project> {
-    return await this.repository.save(project);
-  }
-
-  async getBy(options: FindOptionsWhere<Project>): Promise<Project | null> {
-    return await this.repository.findOneBy(options);
   }
 }

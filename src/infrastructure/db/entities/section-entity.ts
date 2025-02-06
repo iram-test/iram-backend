@@ -13,9 +13,9 @@ import { TestCaseEntity } from "./test-case-entity";
 import { TestReportEntity } from "./test-report-entity";
 
 @Entity()
-export class FolderEntity {
+export class SectionEntity {
   @PrimaryGeneratedColumn("uuid")
-  folderId!: string;
+  sectionId!: string;
 
   @Column()
   name!: string;
@@ -23,31 +23,31 @@ export class FolderEntity {
   @Column()
   description!: string;
 
+  @Column({ type: "text", nullable: true })
+  subsectionId!: string[] | null;
+
   @CreateDateColumn()
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @Column()
-  projectId!: string;
-
   @ManyToOne(
     () => ProjectEntity,
-    (project) => project.folders,
+    (project) => project.sections,
   )
   @JoinColumn({ name: "projectId" })
-  project?: ProjectEntity;
+  project!: ProjectEntity;
 
   @OneToMany(
     () => TestCaseEntity,
-    (testCase) => testCase.folder,
+    (testCase) => testCase.section,
   )
   testCases?: TestCaseEntity[];
 
   @OneToMany(
     () => TestReportEntity,
-    (testReport) => testReport.folder,
+    (testReport) => testReport.section,
   )
   testReports?: TestReportEntity[];
 }

@@ -20,7 +20,7 @@ export class StepEntity {
   @Column()
   expectedResult!: string;
 
-  @Column({ type: "text", nullable: true }) // Вказано тип text
+  @Column({ type: "text", nullable: true })
   image!: string | null;
 
   @CreateDateColumn()
@@ -34,5 +34,5 @@ export class StepEntity {
     (testCase) => testCase.steps,
   )
   @JoinColumn({ name: "testCaseId" })
-  testCase?: TestCaseEntity;
+  testCase!: TestCaseEntity;
 }

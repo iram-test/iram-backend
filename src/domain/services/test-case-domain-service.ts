@@ -9,6 +9,20 @@ export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
   addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
+      const testCase = new TestCase(
+          '',
+          testCaseDto.title,
+          testCaseDto.sectionId,
+          testCaseDto.templateType,
+          testCaseDto.testType,
+          testCaseDto.priority,
+          testCaseDto.assignedUserId,
+          testCaseDto.timeEstimation,
+          testCaseDto.description,
+          testCaseDto.stepsId,
+          new Date().toISOString(),
+          new Date().toISOString(),
+      );
     return this.testCaseRepository.addTestCase(testCaseDto);
   }
 
@@ -16,22 +30,18 @@ export class TestCaseDomainService implements TestCaseRepository {
     return this.testCaseRepository.getAll();
   }
 
-  save(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
-    return this.testCaseRepository.save(testCaseDto);
+  getByTitle(title: string): Promise<TestCase | null> {
+    return this.testCaseRepository.getByTitle(title);
   }
 
   getById(testCaseId: string): Promise<TestCase | null> {
     return this.testCaseRepository.getById(testCaseId);
   }
 
-  getByTitle(title: string): Promise<TestCase | null> {
-    return this.testCaseRepository.getByTitle(title);
-  }
-
   update(
-    testCase: UpdateTestCaseDTO & { testCaseId: string },
+    testCaseDto: UpdateTestCaseDTO
   ): Promise<TestCase> {
-    return this.testCaseRepository.update(testCase);
+    return this.testCaseRepository.update(testCaseDto);
   }
 
   delete(testCaseId: string): Promise<void> {

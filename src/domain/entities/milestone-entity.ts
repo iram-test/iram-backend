@@ -9,7 +9,8 @@ export class Milestone {
     public startDate: string | null,
     public endDate: string | null,
     public status: MilestoneStatus,
+    public projectId: string,
     public createdAt: string,
-    public updatedAt: string, // ISO8601 -> new Date().toISOString();
+    public updatedAt: string,
   ) {}
 }
