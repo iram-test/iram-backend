@@ -15,21 +15,20 @@ export class ProjectUserAssociationDomainService
   addAssociation(
     associationDto: CreateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
-    const association:ProjectUserAssociation = new ProjectUserAssociation(
-      '',
+    const association: ProjectUserAssociation = new ProjectUserAssociation(
+      "",
       associationDto.projectId,
       associationDto.userId,
       associationDto.role,
       new Date().toISOString(),
       new Date().toISOString(),
-    )
+    );
     return this.associationRepository.addAssociation(associationDto);
   }
 
   getAll(): Promise<ProjectUserAssociation[]> {
     return this.associationRepository.getAll();
   }
-
 
   getById(associationId: string): Promise<ProjectUserAssociation | null> {
     return this.associationRepository.getById(associationId);
@@ -40,7 +39,7 @@ export class ProjectUserAssociationDomainService
   }
 
   update(
-    associationDto: UpdateProjectUserAssociationDTO
+    associationDto: UpdateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
     return this.associationRepository.update(associationDto);
   }
@@ -57,7 +56,9 @@ export class ProjectUserAssociationDomainService
       projectId,
     );
   }
-  async getAssociationsByProjectId(projectId:string):Promise<ProjectUserAssociation[]> {
-        return this.associationRepository.getAssociationsByProjectId(projectId)
+  async getAssociationsByProjectId(
+    projectId: string,
+  ): Promise<ProjectUserAssociation[]> {
+    return this.associationRepository.getAssociationsByProjectId(projectId);
   }
 }

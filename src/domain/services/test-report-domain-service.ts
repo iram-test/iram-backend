@@ -9,24 +9,23 @@ export class TestReportDomainService implements TestReportRepository {
   constructor(private testReportRepository: TestReportRepository) {}
 
   addTestReport(testReportDto: CreateTestReportDTO): Promise<TestReport> {
-      const testReport = new TestReport(
-          '',
-          testReportDto.name,
-          testReportDto.reference ?? null,
-          testReportDto.milestoneId ?? null,
-          testReportDto.description,
-          testReportDto.assignedUserId ?? null,
-          testReportDto.testCaseId,
-          new Date().toISOString(),
-          new Date().toISOString(),
-      );
+    const testReport = new TestReport(
+      "",
+      testReportDto.name,
+      testReportDto.reference ?? null,
+      testReportDto.milestoneId ?? null,
+      testReportDto.description,
+      testReportDto.assignedUserId ?? null,
+      testReportDto.testCaseId,
+      new Date().toISOString(),
+      new Date().toISOString(),
+    );
     return this.testReportRepository.addTestReport(testReportDto);
   }
 
   getAll(): Promise<TestReport[]> {
     return this.testReportRepository.getAll();
   }
-
 
   getById(testReportId: string): Promise<TestReport | null> {
     return this.testReportRepository.getById(testReportId);
@@ -36,9 +35,7 @@ export class TestReportDomainService implements TestReportRepository {
     return this.testReportRepository.getByName(reportName);
   }
 
-  update(
-    testReportDto: UpdateTestReportDTO
-  ): Promise<TestReport> {
+  update(testReportDto: UpdateTestReportDTO): Promise<TestReport> {
     return this.testReportRepository.update(testReportDto);
   }
 

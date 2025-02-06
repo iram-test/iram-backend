@@ -9,8 +9,8 @@ export class ProjectDomainService implements ProjectRepository {
   constructor(private projectRepository: ProjectRepository) {}
 
   addProject(projectDto: CreateProjectDTO): Promise<Project> {
-    const project:Project = new Project(
-      '',
+    const project: Project = new Project(
+      "",
       projectDto.name,
       projectDto.language ?? null,
       projectDto.location ?? null,
@@ -18,14 +18,13 @@ export class ProjectDomainService implements ProjectRepository {
       projectDto.assignedUserId ?? null,
       new Date().toISOString(),
       new Date().toISOString(),
-    )
+    );
     return this.projectRepository.addProject(projectDto);
   }
 
   getAll(): Promise<Project[]> {
     return this.projectRepository.getAll();
   }
-
 
   getById(projectId: string): Promise<Project | null> {
     return this.projectRepository.getById(projectId);

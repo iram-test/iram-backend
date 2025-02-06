@@ -12,14 +12,14 @@ export class OrganizationDomainService implements OrganizationRepository {
     organizationDto: CreateOrganizationDTO,
   ): Promise<Organization> {
     const organization: Organization = new Organization(
-      '',
+      "",
       organizationDto.associationId ?? null,
       organizationDto.name,
       organizationDto.description,
       new Date().toISOString(),
       new Date().toISOString(),
-      organizationDto.projectId
-    )
+      organizationDto.projectId,
+    );
     return this.organizationRepository.addOrganization(organizationDto);
   }
 
@@ -35,9 +35,7 @@ export class OrganizationDomainService implements OrganizationRepository {
     return this.organizationRepository.getByName(organizationName);
   }
 
-  update(
-    organizationDto: UpdateOrganizationDTO
-  ): Promise<Organization> {
+  update(organizationDto: UpdateOrganizationDTO): Promise<Organization> {
     return this.organizationRepository.update(organizationDto);
   }
 

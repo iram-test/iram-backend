@@ -9,20 +9,20 @@ export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
   addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
-      const testCase = new TestCase(
-          '',
-          testCaseDto.title,
-          testCaseDto.sectionId,
-          testCaseDto.templateType,
-          testCaseDto.testType,
-          testCaseDto.priority,
-          testCaseDto.assignedUserId,
-          testCaseDto.timeEstimation,
-          testCaseDto.description,
-          testCaseDto.stepsId,
-          new Date().toISOString(),
-          new Date().toISOString(),
-      );
+    const testCase = new TestCase(
+      "",
+      testCaseDto.title,
+      testCaseDto.sectionId,
+      testCaseDto.templateType,
+      testCaseDto.testType,
+      testCaseDto.priority,
+      testCaseDto.assignedUserId,
+      testCaseDto.timeEstimation,
+      testCaseDto.description,
+      testCaseDto.stepsId,
+      new Date().toISOString(),
+      new Date().toISOString(),
+    );
     return this.testCaseRepository.addTestCase(testCaseDto);
   }
 
@@ -38,9 +38,7 @@ export class TestCaseDomainService implements TestCaseRepository {
     return this.testCaseRepository.getById(testCaseId);
   }
 
-  update(
-    testCaseDto: UpdateTestCaseDTO
-  ): Promise<TestCase> {
+  update(testCaseDto: UpdateTestCaseDTO): Promise<TestCase> {
     return this.testCaseRepository.update(testCaseDto);
   }
 

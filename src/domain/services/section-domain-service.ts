@@ -9,21 +9,20 @@ export class SectionDomainService implements SectionRepository {
   constructor(private sectionRepository: SectionRepository) {}
 
   addSection(sectionDto: CreateSectionDTO): Promise<Section> {
-      const section = new Section(
-          '',
-          sectionDto.subsectionId ?? null,
-          sectionDto.name,
-          sectionDto.description,
-          new Date().toISOString(),
-          new Date().toISOString(),
-      );
+    const section = new Section(
+      "",
+      sectionDto.subsectionId ?? null,
+      sectionDto.name,
+      sectionDto.description,
+      new Date().toISOString(),
+      new Date().toISOString(),
+    );
     return this.sectionRepository.addSection(sectionDto);
   }
 
   getAll(): Promise<Section[]> {
     return this.sectionRepository.getAll();
   }
-
 
   getById(sectionId: string): Promise<Section | null> {
     return this.sectionRepository.getById(sectionId);

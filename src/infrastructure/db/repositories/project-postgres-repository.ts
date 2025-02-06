@@ -15,15 +15,15 @@ export class ProjectPostgresRepository implements ProjectRepository {
     this.repository = PostgresDataSource.getRepository(ProjectEntity);
   }
   async addProject(projectDto: CreateProjectDTO): Promise<Project> {
-      const projectEntity = this.repository.create({
-          projectId: v4(),
-          name: projectDto.name,
-          language: projectDto.language,
-          location: projectDto.location,
-          description: projectDto.description,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-      });
+    const projectEntity = this.repository.create({
+      projectId: v4(),
+      name: projectDto.name,
+      language: projectDto.language,
+      location: projectDto.location,
+      description: projectDto.description,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     const savedProject = await this.repository.save(projectEntity);
     return new Project(
       savedProject.projectId,
@@ -38,21 +38,24 @@ export class ProjectPostgresRepository implements ProjectRepository {
   }
 
   async getAll(): Promise<Project[]> {
-      const entities = await this.repository.find();
-    return entities.map((entity) => new Project(
-      entity.projectId,
-      entity.name,
-      entity.language,
-      entity.location,
-      entity.description,
-      null,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
-    ));
+    const entities = await this.repository.find();
+    return entities.map(
+      (entity) =>
+        new Project(
+          entity.projectId,
+          entity.name,
+          entity.language,
+          entity.location,
+          entity.description,
+          null,
+          entity.createdAt.toISOString(),
+          entity.updatedAt.toISOString(),
+        ),
+    );
   }
   async getById(projectId: string): Promise<Project | null> {
-      const entity = await this.repository.findOneBy({ projectId });
-      if (!entity) return null;
+    const entity = await this.repository.findOneBy({ projectId });
+    if (!entity) return null;
     return new Project(
       entity.projectId,
       entity.name,
@@ -65,13 +68,13 @@ export class ProjectPostgresRepository implements ProjectRepository {
     );
   }
   async getByName(name: string): Promise<Project | null> {
-      const entity = await this.repository.findOneBy({ name });
-      if (!entity) return null;
+    const entity = await this.repository.findOneBy({ name });
+    if (!entity) return null;
     return new Project(
       entity.projectId,
       entity.name,
-        entity.language,
-        entity.location,
+      entity.language,
+      entity.location,
       entity.description,
       null,
       entity.createdAt.toISOString(),
@@ -80,24 +83,27 @@ export class ProjectPostgresRepository implements ProjectRepository {
   }
 
   async update(projectDto: UpdateProjectDTO): Promise<Project> {
-      const projectEntity = await this.repository.findOneBy({ projectId: projectDto.projectId });
+    const projectEntity = await this.repository.findOneBy({
+      projectId: projectDto.projectId,
+    });
 
-      if (!projectEntity) {
-          throw new Error(`Project with id: ${projectDto.projectId} was not found`);
-      }
+    if (!projectEntity) {
+      throw new Error(`Project with id: ${projectDto.projectId} was not found`);
+    }
 
-      projectEntity.name = projectDto.name ?? projectEntity.name;
-      projectEntity.language = projectDto.language ?? projectEntity.language;
-      projectEntity.location = projectDto.location ?? projectEntity.location;
-      projectEntity.description = projectDto.description ?? projectEntity.description;
-      projectEntity.updatedAt = new Date();
+    projectEntity.name = projectDto.name ?? projectEntity.name;
+    projectEntity.language = projectDto.language ?? projectEntity.language;
+    projectEntity.location = projectDto.location ?? projectEntity.location;
+    projectEntity.description =
+      projectDto.description ?? projectEntity.description;
+    projectEntity.updatedAt = new Date();
 
     const updatedProject = await this.repository.save(projectEntity);
     return new Project(
       updatedProject.projectId,
       updatedProject.name,
-        updatedProject.language,
-        updatedProject.location,
+      updatedProject.language,
+      updatedProject.location,
       updatedProject.description,
       null,
       updatedProject.createdAt.toISOString(),

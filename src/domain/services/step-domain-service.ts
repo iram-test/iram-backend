@@ -6,21 +6,20 @@ export class StepDomainService implements StepRepository {
   constructor(private stepRepository: StepRepository) {}
 
   addStep(stepDto: CreateStepDTO): Promise<Step> {
-      const step = new Step(
-          '',
-          stepDto.stepDescription,
-          stepDto.expectedResult,
-          stepDto.image ?? null,
-          new Date().toISOString(),
-          new Date().toISOString(),
-      );
+    const step = new Step(
+      "",
+      stepDto.stepDescription,
+      stepDto.expectedResult,
+      stepDto.image ?? null,
+      new Date().toISOString(),
+      new Date().toISOString(),
+    );
     return this.stepRepository.addStep(stepDto);
   }
 
   getAll(): Promise<Step[]> {
     return this.stepRepository.getAll();
   }
-
 
   getById(stepId: string): Promise<Step | null> {
     return this.stepRepository.getById(stepId);

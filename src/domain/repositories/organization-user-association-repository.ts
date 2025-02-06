@@ -10,10 +10,12 @@ export interface OrganizationUserAssociationRepository {
   ): Promise<OrganizationUserAssociation>;
   getAll(): Promise<OrganizationUserAssociation[]>;
   update(
-    association: UpdateOrganizationUserAssociationDTO
+    association: UpdateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation>;
   getById(associationId: string): Promise<OrganizationUserAssociation | null>;
   getByUserId(userId: string): Promise<OrganizationUserAssociation | null>;
   delete(associationId: string): Promise<void>;
-  getByOrganizationId(organizationId:string):Promise<OrganizationUserAssociation[]>
+  getByOrganizationId(
+    organizationId: string,
+  ): Promise<OrganizationUserAssociation[]>;
 }

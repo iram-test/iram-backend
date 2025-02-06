@@ -1,27 +1,30 @@
 export interface TestRunDTO {
   testRunId: string;
   name: string;
-  milestone: string[]; // Array of Milestone IDs
-  assignedUserId: string[] | null;
+  milestoneIds: string[]; // Changed milestone to milestoneIds, array of Milestone IDs
+  assignedUserIds: string[] | null; // Changed assignedUserId to assignedUserIds, array of user IDs
+  projectId: string;
+  testCaseIds: string[];
   description: string;
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
-  testRunSteps: string[]; // Array of TestRunStep IDs
 }
 
 export interface CreateTestRunDTO {
   name: string;
-  milestone: string[]; // Array of Milestone IDs
-  assignedUserId?: string[] | null;
+  milestoneIds: string[]; // Changed milestone to milestoneIds, array of Milestone IDs
+  assignedUserIds?: string[] | null; // Changed assignedUserId to assignedUserIds, array of user IDs
+  projectId: string;
+  testCaseIds: string[];
   description: string;
-  testRunSteps?: string[]; // Array of TestRunStep IDs
 }
 
 export interface UpdateTestRunDTO {
   testRunId: string;
   name?: string;
-  milestone?: string[]; // Array of Milestone IDs
-  assignedUserId?: string[] | null;
+  milestoneIds?: string[]; // Changed milestone to milestoneIds, array of Milestone IDs
+  assignedUserIds?: string[] | null; // Changed assignedUserId to assignedUserIds, array of user IDs
+  projectId?: string;
+  testCaseIds?: string[];
   description?: string;
-  testRunSteps?: string[]; // Array of TestRunStep IDs
 }

@@ -15,15 +15,15 @@ export class SectionPostgresRepository implements SectionRepository {
     this.repository = PostgresDataSource.getRepository(SectionEntity);
   }
   async addSection(sectionDto: CreateSectionDTO): Promise<Section> {
-      const sectionEntity = this.repository.create({
-          sectionId: v4(),
-          name: sectionDto.name,
-          description: sectionDto.description,
-          subsectionId: sectionDto.subsectionId ?? null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          projectId: sectionDto.projectId,
-      });
+    const sectionEntity = this.repository.create({
+      sectionId: v4(),
+      name: sectionDto.name,
+      description: sectionDto.description,
+      subsectionId: sectionDto.subsectionId ?? null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      projectId: sectionDto.projectId,
+    });
     const savedSection = await this.repository.save(sectionEntity);
     return new Section(
       savedSection.sectionId,
@@ -35,24 +35,27 @@ export class SectionPostgresRepository implements SectionRepository {
     );
   }
   async getAll(): Promise<Section[]> {
-      const entities = await this.repository.find({
-          relations: ['project'], // Eagerly load the related project
-      });
-    return entities.map((entity) => new Section(
-      entity.sectionId,
-      entity.subsectionId,
-      entity.name,
-      entity.description,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
-    ));
+    const entities = await this.repository.find({
+      relations: ["project"], // Eagerly load the related project
+    });
+    return entities.map(
+      (entity) =>
+        new Section(
+          entity.sectionId,
+          entity.subsectionId,
+          entity.name,
+          entity.description,
+          entity.createdAt.toISOString(),
+          entity.updatedAt.toISOString(),
+        ),
+    );
   }
   async getById(sectionId: string): Promise<Section | null> {
-      const entity = await this.repository.findOne({
-          where: { sectionId },
-          relations: ['project'], // Eagerly load the related project
-      });
-      if (!entity) return null;
+    const entity = await this.repository.findOne({
+      where: { sectionId },
+      relations: ["project"], // Eagerly load the related project
+    });
+    if (!entity) return null;
     return new Section(
       entity.sectionId,
       entity.subsectionId,
@@ -63,11 +66,11 @@ export class SectionPostgresRepository implements SectionRepository {
     );
   }
   async getByName(sectionName: string): Promise<Section | null> {
-      const entity = await this.repository.findOne({
-          where: { name: sectionName },
-          relations: ['project'], // Eagerly load the related project
-      });
-      if (!entity) return null;
+    const entity = await this.repository.findOne({
+      where: { name: sectionName },
+      relations: ["project"], // Eagerly load the related project
+    });
+    if (!entity) return null;
     return new Section(
       entity.sectionId,
       entity.subsectionId,
@@ -79,16 +82,20 @@ export class SectionPostgresRepository implements SectionRepository {
   }
 
   async update(sectionDto: UpdateSectionDTO): Promise<Section> {
-      const sectionEntity = await this.repository.findOneBy({ sectionId: sectionDto.sectionId });
+    const sectionEntity = await this.repository.findOneBy({
+      sectionId: sectionDto.sectionId,
+    });
 
-      if (!sectionEntity) {
-          throw new Error(`Section with id: ${sectionDto.sectionId} was not found`);
-      }
+    if (!sectionEntity) {
+      throw new Error(`Section with id: ${sectionDto.sectionId} was not found`);
+    }
 
-      sectionEntity.name = sectionDto.name ?? sectionEntity.name;
-      sectionEntity.description = sectionDto.description ?? sectionEntity.description;
-      sectionEntity.subsectionId = sectionDto.subsectionId ?? sectionEntity.subsectionId;
-      sectionEntity.updatedAt = new Date();
+    sectionEntity.name = sectionDto.name ?? sectionEntity.name;
+    sectionEntity.description =
+      sectionDto.description ?? sectionEntity.description;
+    sectionEntity.subsectionId =
+      sectionDto.subsectionId ?? sectionEntity.subsectionId;
+    sectionEntity.updatedAt = new Date();
 
     const updatedSection = await this.repository.save(sectionEntity);
     return new Section(

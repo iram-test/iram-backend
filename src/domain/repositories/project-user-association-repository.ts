@@ -10,7 +10,7 @@ export interface ProjectUserAssociationRepository {
   ): Promise<ProjectUserAssociation>;
   getAll(): Promise<ProjectUserAssociation[]>;
   update(
-    association: UpdateProjectUserAssociationDTO
+    association: UpdateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation>;
   getById(associationId: string): Promise<ProjectUserAssociation | null>;
   getByUserId(userId: string): Promise<ProjectUserAssociation[]>;
@@ -19,5 +19,7 @@ export interface ProjectUserAssociationRepository {
     userId: string,
     projectId: string,
   ): Promise<ProjectUserAssociation | null>;
-  getAssociationsByProjectId(projectId:string):Promise<ProjectUserAssociation[]>
+  getAssociationsByProjectId(
+    projectId: string,
+  ): Promise<ProjectUserAssociation[]>;
 }

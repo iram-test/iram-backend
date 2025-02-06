@@ -48,33 +48,33 @@ export class UserEntity {
   refreshToken!: string | null;
 
   @Column({
-      type: "enum",
-      enum: UserRole,
-      default: UserRole.USER,
+    type: "enum",
+    enum: UserRole,
+    default: UserRole.USER,
   })
   role!: UserRole;
 
   @OneToMany(
-      () => ProjectUserAssociationEntity,
-      (projectUserAssociation) => projectUserAssociation.user,
+    () => ProjectUserAssociationEntity,
+    (projectUserAssociation) => projectUserAssociation.user,
   )
   projectAssociations?: ProjectUserAssociationEntity[];
 
   @OneToMany(
-      () => OrganizationUserAssociationEntity,
-      (organizationUserAssociation) => organizationUserAssociation.user,
+    () => OrganizationUserAssociationEntity,
+    (organizationUserAssociation) => organizationUserAssociation.user,
   )
   organizationAssociations?: OrganizationUserAssociationEntity[];
 
   @OneToMany(
-      () => TestCaseEntity,
-      (testCase) => testCase.assignedUser,
+    () => TestCaseEntity,
+    (testCase) => testCase.assignedUser,
   )
   testCases?: TestCaseEntity[];
 
   @OneToMany(
-      () => TestReportEntity,
-      (testReport) => testReport.assignedUser,
+    () => TestReportEntity,
+    (testReport) => testReport.assignedUser,
   )
   testReports?: TestReportEntity[];
 }

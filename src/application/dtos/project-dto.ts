@@ -6,7 +6,7 @@ export interface ProjectDTO {
   language: Language | null;
   location: Location | null; // Assuming Location is a defined type
   description: string;
-  assignedUserId: string[] | null;
+  organizationId: string; // Change assignedUserId to organizationId
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }
@@ -16,7 +16,7 @@ export interface CreateProjectDTO {
   language?: Language | null;
   location?: Location | null;
   description: string;
-  assignedUserId?: string[] | null;
+  organizationId: string; // Change assignedUserId to organizationId
 }
 
 export interface UpdateProjectDTO {
@@ -25,5 +25,5 @@ export interface UpdateProjectDTO {
   language?: Language | null;
   location?: Location | null;
   description?: string;
-  assignedUserId?: string[] | null;
+  organizationId?: string; // Change assignedUserId to organizationId
 }

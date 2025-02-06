@@ -7,9 +7,7 @@ import {
 export interface TestReportRepository {
   addTestReport(testReport: CreateTestReportDTO): Promise<TestReport>;
   getAll(): Promise<TestReport[]>;
-  update(
-    testReport: UpdateTestReportDTO
-  ): Promise<TestReport>;
+  update(testReport: UpdateTestReportDTO): Promise<TestReport>;
   getById(testReportId: string): Promise<TestReport | null>;
   getByName(reportName: string): Promise<TestReport | null>;
   delete(testReportId: string): Promise<void>;

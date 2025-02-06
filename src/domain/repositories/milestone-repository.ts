@@ -8,9 +8,7 @@ export interface MilestoneRepository {
   addMilestone(milestone: CreateMilestoneDTO): Promise<Milestone>;
   getAll(): Promise<Milestone[]>;
   getByParentId(parentId: string | null): Promise<Milestone[]>;
-  update(
-    milestone: UpdateMilestoneDTO
-  ): Promise<Milestone>;
+  update(milestone: UpdateMilestoneDTO): Promise<Milestone>;
   getById(milestoneID: string): Promise<Milestone | null>;
   getByName(milestoneName: string): Promise<Milestone | null>;
   delete(milestoneID: string): Promise<void>;

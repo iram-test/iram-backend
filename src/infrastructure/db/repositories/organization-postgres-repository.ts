@@ -17,14 +17,14 @@ export class OrganizationPostgresRepository implements OrganizationRepository {
   async addOrganization(
     organizationDto: CreateOrganizationDTO,
   ): Promise<Organization> {
-      const organizationEntity = this.repository.create({
-          organizationId: v4(),
-          name: organizationDto.name,
-          description: organizationDto.description,
-          projectId: organizationDto.projectId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-      });
+    const organizationEntity = this.repository.create({
+      organizationId: v4(),
+      name: organizationDto.name,
+      description: organizationDto.description,
+      projectId: organizationDto.projectId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     const savedOrganization = await this.repository.save(organizationEntity);
     return new Organization(
       savedOrganization.organizationId,
@@ -37,25 +37,28 @@ export class OrganizationPostgresRepository implements OrganizationRepository {
     );
   }
   async getAll(): Promise<Organization[]> {
-      const entities = await this.repository.find({
-          relations: ['project'], // Eagerly load the related project
-      });
-    return entities.map((entity) => new Organization(
-      entity.organizationId,
-      null, //assignedUserId
-      entity.name,
-      entity.description,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
-      entity.projectId,
-    ));
+    const entities = await this.repository.find({
+      relations: ["project"], // Eagerly load the related project
+    });
+    return entities.map(
+      (entity) =>
+        new Organization(
+          entity.organizationId,
+          null, //assignedUserId
+          entity.name,
+          entity.description,
+          entity.createdAt.toISOString(),
+          entity.updatedAt.toISOString(),
+          entity.projectId,
+        ),
+    );
   }
   async getById(organizationId: string): Promise<Organization | null> {
-      const entity = await this.repository.findOne({
-          where: { organizationId },
-          relations: ['project'], // Eagerly load the related project
-      });
-      if (!entity) return null;
+    const entity = await this.repository.findOne({
+      where: { organizationId },
+      relations: ["project"], // Eagerly load the related project
+    });
+    if (!entity) return null;
     return new Organization(
       entity.organizationId,
       null, //entity.assignedUserId,
@@ -68,11 +71,11 @@ export class OrganizationPostgresRepository implements OrganizationRepository {
   }
 
   async getByName(name: string): Promise<Organization | null> {
-      const entity = await this.repository.findOne({
-          where: { name },
-          relations: ['project'], // Eagerly load the related project
-      });
-      if (!entity) return null;
+    const entity = await this.repository.findOne({
+      where: { name },
+      relations: ["project"], // Eagerly load the related project
+    });
+    if (!entity) return null;
     return new Organization(
       entity.organizationId,
       null, //entity.assignedUserId,
@@ -85,28 +88,33 @@ export class OrganizationPostgresRepository implements OrganizationRepository {
   }
 
   async update(organizationDto: UpdateOrganizationDTO): Promise<Organization> {
-      const organizationEntity = await this.repository.findOneBy({ organizationId: organizationDto.organizationId });
+    const organizationEntity = await this.repository.findOneBy({
+      organizationId: organizationDto.organizationId,
+    });
 
-      if (!organizationEntity) {
-          throw new Error(`Organization with id ${organizationDto.organizationId} was not found`);
-      }
-
-      organizationEntity.name = organizationDto.name ?? organizationEntity.name;
-      organizationEntity.description = organizationDto.description ?? organizationEntity.description;
-      organizationEntity.updatedAt = new Date();
-
-
-      const updatedOrganizationEntity = await this.repository.save(organizationEntity);
-
-      return new Organization(
-          updatedOrganizationEntity.organizationId,
-          null,
-          updatedOrganizationEntity.name,
-          updatedOrganizationEntity.description,
-          updatedOrganizationEntity.createdAt.toISOString(),
-          updatedOrganizationEntity.updatedAt.toISOString(),
-          updatedOrganizationEntity.projectId,
+    if (!organizationEntity) {
+      throw new Error(
+        `Organization with id ${organizationDto.organizationId} was not found`,
       );
+    }
+
+    organizationEntity.name = organizationDto.name ?? organizationEntity.name;
+    organizationEntity.description =
+      organizationDto.description ?? organizationEntity.description;
+    organizationEntity.updatedAt = new Date();
+
+    const updatedOrganizationEntity =
+      await this.repository.save(organizationEntity);
+
+    return new Organization(
+      updatedOrganizationEntity.organizationId,
+      null,
+      updatedOrganizationEntity.name,
+      updatedOrganizationEntity.description,
+      updatedOrganizationEntity.createdAt.toISOString(),
+      updatedOrganizationEntity.updatedAt.toISOString(),
+      updatedOrganizationEntity.projectId,
+    );
   }
 
   async delete(organizationId: string): Promise<void> {

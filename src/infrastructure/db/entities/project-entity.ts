@@ -10,7 +10,7 @@ import { ProjectUserAssociationEntity } from "./project-user-association-entity"
 import { SectionEntity } from "./section-entity";
 import { OrganizationEntity } from "./organization-entity";
 import { TestCaseEntity } from "./test-case-entity";
-import {Language} from "../../../domain/entities/enums/language";
+import { Language } from "../../../domain/entities/enums/language";
 
 @Entity()
 export class ProjectEntity {

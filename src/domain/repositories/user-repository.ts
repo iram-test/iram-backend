@@ -9,8 +9,8 @@ export interface UserRepository {
   deleteUser(userId: string): Promise<void>;
   getByEmail(email: string): Promise<User | null>;
   getByUsername(username: string): Promise<User | null>;
-  saveRefreshToken(userId: string, refreshToken:string): Promise<void>;
+  saveRefreshToken(userId: string, refreshToken: string): Promise<void>;
   getRefreshToken(userId: string): Promise<string | null>;
   deleteRefreshToken(userId: string): Promise<void>;
-  updateLastLogin(userId:string, lastLogin:string):Promise<void>
+  updateLastLogin(userId: string, lastLogin: string): Promise<void>;
 }

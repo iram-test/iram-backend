@@ -6,20 +6,20 @@ export class UserDomainService {
   constructor(private userRepository: UserRepository) {}
 
   async addUser(userDto: CreateUserDTO): Promise<User> {
-        const user: User = new User(
-            '',
-            userDto.firstName,
-            userDto.lastName,
-            userDto.username,
-            userDto.email,
-            userDto.password ?? '',
-            userDto.isVerified,
-            new Date().toISOString(),
-            new Date().toISOString(),
-            userDto.lastLoginAt ?? null,
-            userDto.refreshToken ?? null,
-            userDto.role,
-        );
+    const user: User = new User(
+      "",
+      userDto.firstName,
+      userDto.lastName,
+      userDto.username,
+      userDto.email,
+      userDto.password ?? "",
+      userDto.isVerified,
+      new Date().toISOString(),
+      new Date().toISOString(),
+      userDto.lastLoginAt ?? null,
+      userDto.refreshToken ?? null,
+      userDto.role,
+    );
     return await this.userRepository.addUser(userDto);
   }
 
@@ -38,7 +38,6 @@ export class UserDomainService {
   async deleteUser(userId: string): Promise<void> {
     return await this.userRepository.deleteUser(userId);
   }
-
 
   async getUserByEmail(email: string): Promise<User | null> {
     return await this.userRepository.getByEmail(email);

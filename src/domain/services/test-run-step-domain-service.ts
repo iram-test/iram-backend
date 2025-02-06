@@ -11,16 +11,16 @@ export class TestRunStepDomainService implements TestRunStepRepository {
   async addTestRunStep(
     testRunStepDto: CreateTestRunStepDTO,
   ): Promise<TestRunStep> {
-      const testRunStep = new TestRunStep(
-          '',
-          testRunStepDto.step,
-          testRunStepDto.priority,
-          testRunStepDto.assignedUserId ?? null,
-          testRunStepDto.estimatedTime ?? null,
-          testRunStepDto.status,
-          new Date().toISOString(),
-          new Date().toISOString(),
-      );
+    const testRunStep = new TestRunStep(
+      "",
+      testRunStepDto.step,
+      testRunStepDto.priority,
+      testRunStepDto.assignedUserId ?? null,
+      testRunStepDto.estimatedTime ?? null,
+      testRunStepDto.status,
+      new Date().toISOString(),
+      new Date().toISOString(),
+    );
     return await this.testRunStepRepository.addTestRunStep(testRunStepDto);
   }
 
@@ -32,10 +32,7 @@ export class TestRunStepDomainService implements TestRunStepRepository {
     return this.testRunStepRepository.getById(testRunStepId);
   }
 
-
-  update(
-    testRunStepDto: UpdateTestRunStepDTO
-  ): Promise<TestRunStep> {
+  update(testRunStepDto: UpdateTestRunStepDTO): Promise<TestRunStep> {
     return this.testRunStepRepository.update(testRunStepDto);
   }
 

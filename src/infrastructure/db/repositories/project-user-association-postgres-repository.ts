@@ -23,14 +23,14 @@ export class ProjectUserAssociationPostgresRepository
   async addAssociation(
     associationDto: CreateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
-      const associationEntity = this.repository.create({
-          associationId: v4(),
-          projectId: associationDto.projectId,
-          userId: associationDto.userId,
-          role: associationDto.role,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-      });
+    const associationEntity = this.repository.create({
+      associationId: v4(),
+      projectId: associationDto.projectId,
+      userId: associationDto.userId,
+      role: associationDto.role,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     const savedAssociation = await this.repository.save(associationEntity);
 
     return new ProjectUserAssociation(
@@ -43,25 +43,28 @@ export class ProjectUserAssociationPostgresRepository
     );
   }
   async getAll(): Promise<ProjectUserAssociation[]> {
-      const entities = await this.repository.find({
-          relations: ['user', 'project'], // Eagerly load the related user and project
-      });
-    return entities.map((entity) => new ProjectUserAssociation(
-      entity.associationId,
-      entity.projectId,
-      entity.userId,
-      entity.role,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
-    ));
+    const entities = await this.repository.find({
+      relations: ["user", "project"], // Eagerly load the related user and project
+    });
+    return entities.map(
+      (entity) =>
+        new ProjectUserAssociation(
+          entity.associationId,
+          entity.projectId,
+          entity.userId,
+          entity.role,
+          entity.createdAt.toISOString(),
+          entity.updatedAt.toISOString(),
+        ),
+    );
   }
 
   async getById(associationId: string): Promise<ProjectUserAssociation | null> {
-      const entity = await this.repository.findOne({
-          where: { associationId },
-          relations: ['user', 'project'], // Eagerly load the related user and project
-      });
-      if (!entity) return null;
+    const entity = await this.repository.findOne({
+      where: { associationId },
+      relations: ["user", "project"], // Eagerly load the related user and project
+    });
+    if (!entity) return null;
     return new ProjectUserAssociation(
       entity.associationId,
       entity.projectId,
@@ -73,33 +76,40 @@ export class ProjectUserAssociationPostgresRepository
   }
 
   async getByUserId(userId: string): Promise<ProjectUserAssociation[]> {
-      const entities = await this.repository.find({
-          where: { userId },
-          relations: ['user', 'project'], // Eagerly load the related user and project
-      });
-    return entities.map((entity) => new ProjectUserAssociation(
-      entity.associationId,
-      entity.projectId,
-      entity.userId,
-      entity.role,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
-    ));
+    const entities = await this.repository.find({
+      where: { userId },
+      relations: ["user", "project"], // Eagerly load the related user and project
+    });
+    return entities.map(
+      (entity) =>
+        new ProjectUserAssociation(
+          entity.associationId,
+          entity.projectId,
+          entity.userId,
+          entity.role,
+          entity.createdAt.toISOString(),
+          entity.updatedAt.toISOString(),
+        ),
+    );
   }
 
   async update(
-    associationDto: UpdateProjectUserAssociationDTO
+    associationDto: UpdateProjectUserAssociationDTO,
   ): Promise<ProjectUserAssociation> {
-      const associationEntity = await this.repository.findOneBy({ associationId: associationDto.associationId });
+    const associationEntity = await this.repository.findOneBy({
+      associationId: associationDto.associationId,
+    });
 
-      if (!associationEntity) {
-          throw new Error(`Association with id ${associationDto.associationId} was not found`);
-      }
+    if (!associationEntity) {
+      throw new Error(
+        `Association with id ${associationDto.associationId} was not found`,
+      );
+    }
 
-      associationEntity.role = associationDto.role ?? associationEntity.role;
-      associationEntity.updatedAt = new Date();
+    associationEntity.role = associationDto.role ?? associationEntity.role;
+    associationEntity.updatedAt = new Date();
 
-      const updatedAssociation = await this.repository.save(associationEntity);
+    const updatedAssociation = await this.repository.save(associationEntity);
     return new ProjectUserAssociation(
       updatedAssociation.associationId,
       updatedAssociation.projectId,
@@ -118,11 +128,11 @@ export class ProjectUserAssociationPostgresRepository
     userId: string,
     projectId: string,
   ): Promise<ProjectUserAssociation | null> {
-      const entity = await this.repository.findOne({
-          where: { userId, projectId },
-          relations: ['user', 'project'], // Eagerly load the related user and project
-      });
-      if (!entity) return null;
+    const entity = await this.repository.findOne({
+      where: { userId, projectId },
+      relations: ["user", "project"], // Eagerly load the related user and project
+    });
+    if (!entity) return null;
     return new ProjectUserAssociation(
       entity.associationId,
       entity.projectId,
@@ -133,18 +143,23 @@ export class ProjectUserAssociationPostgresRepository
     );
   }
 
-    async getAssociationsByProjectId(projectId: string): Promise<ProjectUserAssociation[]> {
-        const entities = await this.repository.find({
-            where: { projectId },
-            relations: ['user', 'project'], // Eagerly load the related user and project
-        });
-        return entities.map((entity) => new ProjectUserAssociation(
-            entity.associationId,
-            entity.projectId,
-            entity.userId,
-            entity.role,
-            entity.createdAt.toISOString(),
-            entity.updatedAt.toISOString(),
-        ));
-    }
+  async getAssociationsByProjectId(
+    projectId: string,
+  ): Promise<ProjectUserAssociation[]> {
+    const entities = await this.repository.find({
+      where: { projectId },
+      relations: ["user", "project"], // Eagerly load the related user and project
+    });
+    return entities.map(
+      (entity) =>
+        new ProjectUserAssociation(
+          entity.associationId,
+          entity.projectId,
+          entity.userId,
+          entity.role,
+          entity.createdAt.toISOString(),
+          entity.updatedAt.toISOString(),
+        ),
+    );
+  }
 }

@@ -32,8 +32,8 @@ export class TestRunEntity {
   updatedAt!: Date;
 
   @OneToMany(
-      () => TestRunStepEntity,
-      (testRunStep) => testRunStep.testRun,
+    () => TestRunStepEntity,
+    (testRunStep) => testRunStep.testRun,
   )
   testRunSteps?: TestRunStepEntity[];
 }

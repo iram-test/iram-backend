@@ -9,7 +9,10 @@ export class AuthorizationDomainService implements AuthRepository {
     return this.authorizationRepository.registration(user);
   }
 
-  login(username:string, password:string): Promise<{ accessToken: string; refreshToken: string }> {
+  login(
+    username: string,
+    password: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authorizationRepository.login(username, password);
   }
 

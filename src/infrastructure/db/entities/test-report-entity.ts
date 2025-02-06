@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from "typeorm";
 import { MilestoneEntity } from "./milestone-entity";
 import { UserEntity } from "./user-entity";
@@ -43,7 +43,7 @@ export class TestReportEntity {
   @ManyToOne(
     () => MilestoneEntity,
     (milestone) => milestone.testReports,
-    { nullable: true }
+    { nullable: true },
   )
   @JoinColumn({ name: "milestoneId" })
   milestone?: MilestoneEntity | null;
@@ -51,7 +51,7 @@ export class TestReportEntity {
   @ManyToOne(
     () => UserEntity,
     (user) => user.testReports,
-    { nullable: true }
+    { nullable: true },
   )
   @JoinColumn({ name: "assignedUserId" })
   assignedUser?: UserEntity | null;
@@ -59,7 +59,7 @@ export class TestReportEntity {
   @ManyToOne(
     () => SectionEntity,
     (section) => section.testReports,
-    { nullable: true }
+    { nullable: true },
   )
   @JoinColumn({ name: "sectionId" })
   section?: SectionEntity | null;
