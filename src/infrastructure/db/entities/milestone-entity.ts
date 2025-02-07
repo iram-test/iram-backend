@@ -4,10 +4,15 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToOne,
   OneToMany,
 } from "typeorm";
 import { MilestoneStatus } from "../../../domain/entities/enums/milestone-status";
+import { ProjectEntity } from "./project-entity";
 import { TestReportEntity } from "./test-report-entity";
+import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
 export class MilestoneEntity {
@@ -24,10 +29,10 @@ export class MilestoneEntity {
   description!: string;
 
   @Column({ type: "date", nullable: true })
-  startDate!: Date | null;
+  startDate!: string | null;
 
   @Column({ type: "date", nullable: true })
-  endDate!: Date | null;
+  endDate!: string | null;
 
   @Column({ type: "enum", enum: MilestoneStatus })
   status!: MilestoneStatus;
@@ -38,9 +43,29 @@ export class MilestoneEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(
-    () => TestReportEntity,
-    (testReport) => testReport.milestone,
+  @ManyToOne(
+    () => ProjectEntity,
+    (project) => project.milestones, // змінено на milestones
   )
-  testReports?: TestReportEntity[];
+  @JoinColumn({ name: "projectId" })
+  project!: ProjectEntity;
+
+  @OneToOne(() => MilestoneEntity, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "parentId" })
+  parentMilestone!: MilestoneEntity | null;
+
+  @ManyToOne(
+    () => TestReportEntity,
+    (testReport) => testReport.milestones,
+    { nullable: true }
+  )
+  @JoinColumn({ name: "testReportId" })
+  testReport?: TestReportEntity | null;
+
+    @ManyToOne(
+    () => TestRunEntity,
+    (testRun) => testRun.milestones,
+  )
+  @JoinColumn({ name: "testRunId" })
+  testRun!: TestRunEntity;
 }

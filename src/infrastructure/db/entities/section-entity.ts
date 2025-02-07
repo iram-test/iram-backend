@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { ProjectEntity } from "./project-entity";
 import { TestCaseEntity } from "./test-case-entity";
-import { TestReportEntity } from "./test-report-entity";
+import { SubSectionEntity } from "./subsection-entity";
 
 @Entity()
 export class SectionEntity {
@@ -22,9 +22,6 @@ export class SectionEntity {
 
   @Column()
   description!: string;
-
-  @Column({ type: "text", nullable: true })
-  subsectionId!: string[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -46,8 +43,8 @@ export class SectionEntity {
   testCases?: TestCaseEntity[];
 
   @OneToMany(
-    () => TestReportEntity,
-    (testReport) => testReport.section,
+    () => SubSectionEntity,
+    (subsection) => subsection.section,
   )
-  testReports?: TestReportEntity[];
+  subsections?: SubSectionEntity[];
 }

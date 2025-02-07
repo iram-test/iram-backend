@@ -5,8 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
-import { TestRunStepEntity } from "./test-run-step-entity";
+import { TestCaseEntity } from "./test-case-entity";
+import { Milestone } from "../../../domain/entities/milestone-entity";
+import { MilestoneEntity } from "./milestone-entity";
+import { ProjectEntity } from "./project-entity";
+import { TestReportEntity } from './test-report-entity';
 
 @Entity()
 export class TestRunEntity {
@@ -15,12 +21,6 @@ export class TestRunEntity {
 
   @Column()
   name!: string;
-
-  @Column({ type: "text", array: true, nullable: true })
-  milestone!: string[] | null;
-
-  @Column({ type: "text", array: true, nullable: true })
-  assignedUserId!: string[] | null;
 
   @Column()
   description!: string;
@@ -32,8 +32,28 @@ export class TestRunEntity {
   updatedAt!: Date;
 
   @OneToMany(
-    () => TestRunStepEntity,
-    (testRunStep) => testRunStep.testRun,
+    () => TestCaseEntity,
+    (testCase) => testCase.testRun,
   )
-  testRunSteps?: TestRunStepEntity[];
+  testCase?: TestCaseEntity[];
+
+  @OneToMany(
+    () => MilestoneEntity,
+    (milestone) => milestone.testRun,
+  )
+  milestones?: MilestoneEntity[];
+
+  @ManyToOne(
+    () => ProjectEntity,
+    (project) => project.testRuns,
+  )
+  @JoinColumn({ name: "projectId" })
+  project!: ProjectEntity;
+
+  @ManyToOne(
+    () => TestReportEntity,
+    (testReport) => testReport.testRuns,
+  )
+  @JoinColumn({ name: "testReportId" })
+  testReport!: TestReportEntity;
 }

@@ -4,12 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
   OneToMany,
 } from "typeorm";
-import { ProjectEntity } from "./project-entity";
 import { OrganizationUserAssociationEntity } from "./organization-user-association-entity";
+import { ProjectEntity } from "./project-entity";
 
 @Entity()
 export class OrganizationEntity {
@@ -28,19 +26,15 @@ export class OrganizationEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @Column()
-  projectId!: string;
-
-  @ManyToOne(
-    () => ProjectEntity,
-    (project) => project.organizations,
-  )
-  @JoinColumn({ name: "projectId" })
-  project!: ProjectEntity; // project is not optional
-
   @OneToMany(
     () => OrganizationUserAssociationEntity,
     (organizationUserAssociation) => organizationUserAssociation.organization,
   )
   userAssociations?: OrganizationUserAssociationEntity[];
+
+    @OneToMany(
+    () => ProjectEntity,
+    (project) => project.organization,
+  )
+  projects?: ProjectEntity[];
 }

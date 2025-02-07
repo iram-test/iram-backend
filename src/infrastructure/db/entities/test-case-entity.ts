@@ -15,6 +15,8 @@ import { ProjectEntity } from "./project-entity";
 import { StepEntity } from "./step-entity";
 import { UserEntity } from "./user-entity";
 import { SectionEntity } from "./section-entity";
+import { SubSectionEntity } from './subsection-entity';
+import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
 export class TestCaseEntity {
@@ -26,6 +28,9 @@ export class TestCaseEntity {
 
   @Column()
   sectionId!: string;
+
+  @Column()
+  projectId!: string;
 
   @Column({ type: "enum", enum: TemplateType })
   templateType!: TemplateType;
@@ -44,9 +49,6 @@ export class TestCaseEntity {
 
   @Column()
   description!: string;
-
-  @Column({ type: "text", array: true, nullable: true })
-  stepsId!: string[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -80,4 +82,18 @@ export class TestCaseEntity {
     (step) => step.testCase,
   )
   steps?: StepEntity[];
+
+  @ManyToOne(
+    () => SubSectionEntity,
+    (subsection) => subsection.testCases,
+  )
+  @JoinColumn({ name: "subsectionId" })
+  subsection!: SubSectionEntity;
+
+  @ManyToOne(
+    () => TestRunEntity,
+    (testRun) => testRun.testCase,
+  )
+  @JoinColumn({ name: "testRunId" })
+  testRun!: TestRunEntity;
 }

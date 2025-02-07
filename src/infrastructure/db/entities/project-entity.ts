@@ -5,12 +5,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
-import { ProjectUserAssociationEntity } from "./project-user-association-entity";
+import { OrganizationEntity } from './organization-entity';
 import { SectionEntity } from "./section-entity";
-import { OrganizationEntity } from "./organization-entity";
 import { TestCaseEntity } from "./test-case-entity";
 import { Language } from "../../../domain/entities/enums/language";
+import { MilestoneEntity } from './milestone-entity';
+import { TestReportEntity } from './test-report-entity';
+import { TestRunEntity } from './test-run-entity';
+import { UserEntity } from './user-entity';
 
 @Entity()
 export class ProjectEntity {
@@ -35,27 +40,48 @@ export class ProjectEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(
-    () => ProjectUserAssociationEntity,
-    (projectUserAssociation) => projectUserAssociation.project,
-  )
-  userAssociations?: ProjectUserAssociationEntity[];
+  @Column({ nullable: true })
+  assignedUserId!: string | null;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: "assignedUserId" })
+  assignedUser?: UserEntity;
 
   @OneToMany(
     () => SectionEntity,
-    (folder) => folder.project,
+    (section) => section.project,
   )
   sections?: SectionEntity[];
-
-  @OneToMany(
-    () => OrganizationEntity,
-    (organization) => organization.project,
-  )
-  organizations?: OrganizationEntity[];
 
   @OneToMany(
     () => TestCaseEntity,
     (testCase) => testCase.project,
   )
   testCases?: TestCaseEntity[];
+
+  // багато проектів може належати одній організації
+  @ManyToOne(
+      () => OrganizationEntity,
+      (organization) => organization.projects, // змінено на projects
+    )
+    @JoinColumn({ name: "organizationId" })
+    organization!: OrganizationEntity;
+
+  @OneToMany(
+    () => MilestoneEntity,
+    (milestone) => milestone.project,
+  )
+  milestones?: MilestoneEntity[];
+
+  @OneToMany(
+      () => TestReportEntity,
+      (testReport) => testReport.project,
+    )
+    testReports?: TestReportEntity[];
+
+  @OneToMany(
+      () => TestRunEntity,
+      (testRun) => testRun.project,
+    )
+    testRuns?: TestRunEntity[];
 }

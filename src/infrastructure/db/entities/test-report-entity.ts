@@ -6,10 +6,13 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
 import { MilestoneEntity } from "./milestone-entity";
 import { UserEntity } from "./user-entity";
 import { SectionEntity } from "./section-entity";
+import { ProjectEntity } from './project-entity';
+import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
 export class TestReportEntity {
@@ -22,17 +25,8 @@ export class TestReportEntity {
   @Column({ type: "text", nullable: true })
   reference!: string | null;
 
-  @Column({ nullable: true })
-  milestoneId!: string | null;
-
   @Column()
   description!: string;
-
-  @Column({ nullable: true })
-  assignedUserId!: string | null;
-
-  @Column({ type: "text", array: true })
-  testCaseId!: string[];
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -41,12 +35,11 @@ export class TestReportEntity {
   updatedAt!: Date;
 
   @ManyToOne(
-    () => MilestoneEntity,
-    (milestone) => milestone.testReports,
-    { nullable: true },
-  )
-  @JoinColumn({ name: "milestoneId" })
-  milestone?: MilestoneEntity | null;
+      () => ProjectEntity,
+      (project) => project.testReports,
+    )
+    @JoinColumn({ name: "projectId" })
+    project!: ProjectEntity;
 
   @ManyToOne(
     () => UserEntity,
@@ -56,11 +49,15 @@ export class TestReportEntity {
   @JoinColumn({ name: "assignedUserId" })
   assignedUser?: UserEntity | null;
 
-  @ManyToOne(
-    () => SectionEntity,
-    (section) => section.testReports,
-    { nullable: true },
+  @OneToMany(
+    () => TestRunEntity,
+    (testRun) => testRun.testReport,
   )
-  @JoinColumn({ name: "sectionId" })
-  section?: SectionEntity | null;
+  testRuns?: TestRunEntity[];
+
+  @OneToMany(
+    () => MilestoneEntity,
+    (milestone) => milestone.testReport,
+  )
+  milestones?: MilestoneEntity[];
 }

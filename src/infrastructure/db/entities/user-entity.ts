@@ -6,11 +6,11 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { ProjectUserAssociationEntity } from "./project-user-association-entity";
 import { OrganizationUserAssociationEntity } from "./organization-user-association-entity";
 import { TestCaseEntity } from "./test-case-entity";
 import { TestReportEntity } from "./test-report-entity";
 import { UserRole } from "../../../domain/entities/enums/user-role";
+import { ProjectEntity } from './project-entity';
 
 @Entity()
 export class UserEntity {
@@ -42,7 +42,7 @@ export class UserEntity {
   updatedAt!: Date;
 
   @Column({ nullable: true })
-  lastLoginAt!: Date | null;
+  lastLoginAt!: string | null;
 
   @Column({ nullable: true })
   refreshToken!: string | null;
@@ -53,12 +53,6 @@ export class UserEntity {
     default: UserRole.USER,
   })
   role!: UserRole;
-
-  @OneToMany(
-    () => ProjectUserAssociationEntity,
-    (projectUserAssociation) => projectUserAssociation.user,
-  )
-  projectAssociations?: ProjectUserAssociationEntity[];
 
   @OneToMany(
     () => OrganizationUserAssociationEntity,
@@ -77,4 +71,10 @@ export class UserEntity {
     (testReport) => testReport.assignedUser,
   )
   testReports?: TestReportEntity[];
+
+  @OneToMany(
+    () => ProjectEntity,
+    (project) => project.assignedUser,
+  )
+  project?: ProjectEntity[];
 }
