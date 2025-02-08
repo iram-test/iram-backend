@@ -1,97 +1,110 @@
-import { TestRunStep } from "../../../domain/entities/test-run-step-entity";
-import { TestRunStepEntity } from "../entities/test-run-step-entity";
-import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
-import { TestRunStepRepository } from "../../../domain/repositories/test-run-step-repository";
+import { DataSource, Repository } from "typeorm";
+import { TestRunEntity } from "../entities/test-run-entity";
+import { TestRun } from "../../../domain/entities/test-run-entity";
 import {
-  CreateTestRunStepDTO,
-  UpdateTestRunStepDTO,
-} from "../../../application/dtos/test-run-step-dto";
-import { v4 } from "uuid";
+  CreateTestRunDTO,
+  UpdateTestRunDTO,
+} from "../../../application/dtos/test-run-dto";
+import { TestRunRepository } from "../../../domain/repositories/test-run-repository";
+import { PostgresDataSource } from "../../../tools/db-connection";
 
-export class TestRunStepPostgresRepository implements TestRunStepRepository {
-  private repository: Repository<TestRunStepEntity>;
-  constructor() {
-    this.repository = PostgresDataSource.getRepository(TestRunStepEntity);
+export class TestRunPostgresRepository implements TestRunRepository {
+  private repository: Repository<TestRunEntity>;
+
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(TestRunEntity);
   }
 
-  private mapToTestRunStep(entity: TestRunStepEntity): TestRunStep {
-    return new TestRunStep(
-      entity.testRunStepId,
-      entity.step.stepId, // Assuming StepEntity has a 'stepId' property
-      entity.status,
-      entity.resultDescription,
-      entity.createdAt,
-      entity.updatedAt,
+  async addTestRun(createDto: CreateTestRunDTO): Promise<TestRun> {
+    const testRun = this.repository.create(createDto);
+    const savedTestRun = await this.repository.save(testRun);
+    return this.toDomainEntity(savedTestRun);
+  }
+
+  async getAll(): Promise<TestRun[]> {
+    const testRuns = await this.repository.find({
+      relations: [
+        "project",
+        "testReport",
+        "testCase",
+        "milestones",
+        "assignedUser",
+      ],
+    });
+    return testRuns.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getById(testRunId: string): Promise<TestRun | null> {
+    const testRun = await this.repository.findOne({
+      where: { testRunId },
+      relations: [
+        "project",
+        "testReport",
+        "testCase",
+        "milestones",
+        "assignedUser",
+      ],
+    });
+    return testRun ? this.toDomainEntity(testRun) : null;
+  }
+
+  async update(updateDto: UpdateTestRunDTO): Promise<TestRun> {
+    const { testRunId, ...updateData } = updateDto;
+    await this.repository.update(testRunId, updateData);
+    const updatedTestRun = await this.repository.findOneOrFail({
+      where: { testRunId },
+      relations: [
+        "project",
+        "testReport",
+        "testCase",
+        "milestones",
+        "assignedUser",
+      ],
+    });
+    return this.toDomainEntity(updatedTestRun);
+  }
+
+  async delete(testRunId: string): Promise<void> {
+    await this.repository.delete(testRunId);
+  }
+
+  async getByProjectId(projectId: string): Promise<TestRun[]> {
+    const testRuns = await this.repository.find({
+      where: { project: { projectId } },
+      relations: [
+        "project",
+        "testReport",
+        "testCase",
+        "milestones",
+        "assignedUser",
+      ],
+    });
+    return testRuns.map((entity) => this.toDomainEntity(entity));
+  }
+
+  private toDomainEntity(entity: TestRunEntity): TestRun {
+    const milestoneIds = entity.milestones
+      ? entity.milestones.map((milestone) => milestone.milestoneID)
+      : [];
+
+    const assignedUserIds = entity.assignedUser
+      ? [entity.assignedUser.userId]
+      : null;
+
+    const testCaseIds: string[] = entity.testCase
+      ? entity.testCase.map((testCase) => testCase.testCaseId)
+      : [];
+
+    return new TestRun(
+      entity.testRunId,
+      entity.name,
+      milestoneIds,
+      assignedUserIds,
+      entity.project.projectId,
+      testCaseIds,
+      entity.description,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
     );
-  }
-
-  async addTestRunStep(
-    testRunStep: CreateTestRunStepDTO,
-  ): Promise<TestRunStep> {
-    const createdTestRunStep = this.repository.create({
-      ...testRunStep,
-      testRunStepId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    const savedEntity = await this.repository.save(createdTestRunStep);
-    return this.mapToTestRunStep(savedEntity);
-  }
-  async getAll(): Promise<TestRunStep[]> {
-    const entities = await this.repository.find();
-    return entities.map((entity) => this.mapToTestRunStep(entity));
-  }
-  async getById(testRunStepId: string): Promise<TestRunStep | null> {
-    const entity = await this.repository.findOneBy({ testRunStepId });
-    return entity ? this.mapToTestRunStep(entity) : null;
-  }
-
-  async update(
-    testRunStep: UpdateTestRunStepDTO & { testRunStepId: string },
-  ): Promise<TestRunStep> {
-    const existingTestRunStep = await this.repository.findOneBy({
-      testRunStepId: testRunStep.testRunStepId,
-    });
-    if (!existingTestRunStep) {
-      throw new Error(
-        `Test Run Step with id ${testRunStep.testRunStepId} was not found`,
-      );
-    }
-    await this.repository.update(testRunStep.testRunStepId, {
-      ...testRunStep,
-      updatedAt: new Date(),
-    });
-    const updatedEntity = await this.repository.findOneBy({
-      testRunStepId: testRunStep.testRunStepId,
-    });
-
-    return updatedEntity
-      ? this.mapToTestRunStep(updatedEntity)
-      : ({} as TestRunStep);
-  }
-
-  async save(testRunStep: TestRunStep): Promise<TestRunStep> {
-    const entity = this.repository.create({
-      ...testRunStep,
-      step: { stepId: testRunStep.stepId }, // assuming you have stepId in TestRunStep object
-    });
-
-    const savedEntity = await this.repository.save(entity);
-
-    return this.mapToTestRunStep(savedEntity);
-  }
-
-  async delete(testRunStepId: string): Promise<void> {
-    await this.repository.delete({ testRunStepId });
-  }
-
-  async getBy(
-    options: FindOptionsWhere<TestRunStep>,
-  ): Promise<TestRunStep | null> {
-    const entity = await this.repository.findOneBy(
-      options as FindOptionsWhere<TestRunStepEntity>,
-    );
-    return entity ? this.mapToTestRunStep(entity) : null;
   }
 }

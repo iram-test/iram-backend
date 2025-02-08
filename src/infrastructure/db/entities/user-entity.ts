@@ -10,7 +10,8 @@ import { OrganizationUserAssociationEntity } from "./organization-user-associati
 import { TestCaseEntity } from "./test-case-entity";
 import { TestReportEntity } from "./test-report-entity";
 import { UserRole } from "../../../domain/entities/enums/user-role";
-import { ProjectEntity } from './project-entity';
+import { ProjectEntity } from "./project-entity";
+import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
 export class UserEntity {
@@ -77,4 +78,10 @@ export class UserEntity {
     (project) => project.assignedUser,
   )
   project?: ProjectEntity[];
+
+  @OneToMany(
+    () => TestRunEntity,
+    (testRun) => testRun.assignedUser,
+  )
+  testRuns?: TestRunEntity[];
 }

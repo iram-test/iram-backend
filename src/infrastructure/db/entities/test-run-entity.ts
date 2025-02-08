@@ -9,10 +9,10 @@ import {
   JoinColumn,
 } from "typeorm";
 import { TestCaseEntity } from "./test-case-entity";
-import { Milestone } from "../../../domain/entities/milestone-entity";
 import { MilestoneEntity } from "./milestone-entity";
 import { ProjectEntity } from "./project-entity";
-import { TestReportEntity } from './test-report-entity';
+import { TestReportEntity } from "./test-report-entity";
+import { UserEntity } from "./user-entity";
 
 @Entity()
 export class TestRunEntity {
@@ -56,4 +56,12 @@ export class TestRunEntity {
   )
   @JoinColumn({ name: "testReportId" })
   testReport!: TestReportEntity;
+
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.testRuns,
+    { nullable: true },
+  )
+  @JoinColumn({ name: "assignedUserId" })
+  assignedUser?: UserEntity;
 }

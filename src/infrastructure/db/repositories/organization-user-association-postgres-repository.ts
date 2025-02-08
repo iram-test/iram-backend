@@ -1,136 +1,92 @@
-import { OrganizationUserAssociation } from "../../../domain/entities/organization-user-association";
+import { DataSource, Repository } from "typeorm";
 import { OrganizationUserAssociationEntity } from "../entities/organization-user-association-entity";
-import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository } from "typeorm";
-import { OrganizationUserAssociationRepository } from "../../../domain/repositories/organization-user-association-repository";
+import { OrganizationUserAssociation } from "../../../domain/entities/organization-user-association";
 import {
   CreateOrganizationUserAssociationDTO,
   UpdateOrganizationUserAssociationDTO,
 } from "../../../application/dtos/organization-user-association-dto";
-import { v4 } from "uuid";
+import { OrganizationUserAssociationRepository } from "../../../domain/repositories/organization-user-association-repository";
+import { PostgresDataSource } from "../../../tools/db-connection";
 
 export class OrganizationUserAssociationPostgresRepository
   implements OrganizationUserAssociationRepository
 {
   private repository: Repository<OrganizationUserAssociationEntity>;
-  constructor() {
-    this.repository = PostgresDataSource.getRepository(
+
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(
       OrganizationUserAssociationEntity,
     );
   }
+
   async addAssociation(
-    associationDto: CreateOrganizationUserAssociationDTO,
+    createDto: CreateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation> {
-    const associationEntity = this.repository.create({
-      associationId: v4(),
-      userId: associationDto.userId,
-      organizationId: associationDto.organizationId,
-      role: associationDto.role,
-      assignedAt: new Date(),
-    });
-    const savedAssociation = await this.repository.save(associationEntity);
-    return new OrganizationUserAssociation(
-      savedAssociation.associationId,
-      savedAssociation.userId,
-      savedAssociation.organizationId,
-      savedAssociation.role,
-      savedAssociation.assignedAt.toISOString(),
-    );
+    const association = this.repository.create(createDto);
+    const savedAssociation = await this.repository.save(association);
+    return this.toDomainEntity(savedAssociation);
   }
 
   async getAll(): Promise<OrganizationUserAssociation[]> {
-    const entities = await this.repository.find({
-      relations: ["user", "organization"], // Eagerly load the related user and organization
+    const associations = await this.repository.find({
+      relations: ["user", "organization"],
     });
-    return entities.map(
-      (entity) =>
-        new OrganizationUserAssociation(
-          entity.associationId,
-          entity.userId,
-          entity.organizationId,
-          entity.role,
-          entity.assignedAt.toISOString(),
-        ),
-    );
+    return associations.map((entity) => this.toDomainEntity(entity));
   }
+
+  async update(
+    updateDto: UpdateOrganizationUserAssociationDTO,
+  ): Promise<OrganizationUserAssociation> {
+    const { associationId, ...updateData } = updateDto;
+    await this.repository.update(associationId, updateData);
+    const updatedAssociation = await this.repository.findOneOrFail({
+      where: { associationId },
+      relations: ["user", "organization"],
+    });
+    return this.toDomainEntity(updatedAssociation);
+  }
+
   async getById(
     associationId: string,
   ): Promise<OrganizationUserAssociation | null> {
-    const entity = await this.repository.findOne({
+    const association = await this.repository.findOne({
       where: { associationId },
-      relations: ["user", "organization"], // Eagerly load the related user and organization
+      relations: ["user", "organization"],
     });
-    if (!entity) return null;
-    return new OrganizationUserAssociation(
-      entity.associationId,
-      entity.userId,
-      entity.organizationId,
-      entity.role,
-      entity.assignedAt.toISOString(),
-    );
+    return association ? this.toDomainEntity(association) : null;
   }
-  async getByUserId(
-    userId: string,
-  ): Promise<OrganizationUserAssociation | null> {
-    const entity = await this.repository.findOne({
+
+  async getByUserId(userId: string): Promise<OrganizationUserAssociation[]> {
+    const associations = await this.repository.find({
       where: { userId },
-      relations: ["user", "organization"], // Eagerly load the related user and organization
+      relations: ["user", "organization"],
     });
-    if (!entity) return null;
-    return new OrganizationUserAssociation(
-      entity.associationId,
-      entity.userId,
-      entity.organizationId,
-      entity.role,
-      entity.assignedAt.toISOString(),
-    );
+    return associations.map((entity) => this.toDomainEntity(entity));
   }
 
   async getByOrganizationId(
     organizationId: string,
   ): Promise<OrganizationUserAssociation[]> {
-    const entities = await this.repository.find({
+    const associations = await this.repository.find({
       where: { organizationId },
-      relations: ["user", "organization"], // Eagerly load the related user and organization
+      relations: ["user", "organization"],
     });
-    return entities.map(
-      (entity) =>
-        new OrganizationUserAssociation(
-          entity.associationId,
-          entity.userId,
-          entity.organizationId,
-          entity.role,
-          entity.assignedAt.toISOString(),
-        ),
-    );
-  }
-
-  async update(
-    associationDto: UpdateOrganizationUserAssociationDTO,
-  ): Promise<OrganizationUserAssociation> {
-    const associationEntity = await this.repository.findOneBy({
-      associationId: associationDto.associationId,
-    });
-
-    if (!associationEntity) {
-      throw new Error(
-        `Association with id ${associationDto.associationId} was not found`,
-      );
-    }
-
-    associationEntity.role = associationDto.role ?? associationEntity.role;
-
-    const updatedAssociation = await this.repository.save(associationEntity);
-    return new OrganizationUserAssociation(
-      updatedAssociation.associationId,
-      updatedAssociation.userId,
-      updatedAssociation.organizationId,
-      updatedAssociation.role,
-      updatedAssociation.assignedAt.toISOString(),
-    );
+    return associations.map((entity) => this.toDomainEntity(entity));
   }
 
   async delete(associationId: string): Promise<void> {
-    await this.repository.delete({ associationId });
+    await this.repository.delete(associationId);
+  }
+
+  private toDomainEntity(
+    entity: OrganizationUserAssociationEntity,
+  ): OrganizationUserAssociation {
+    return new OrganizationUserAssociation(
+      entity.associationId,
+      entity.userId,
+      entity.organizationId,
+      entity.role,
+      entity.assignedAt.toISOString(),
+    );
   }
 }

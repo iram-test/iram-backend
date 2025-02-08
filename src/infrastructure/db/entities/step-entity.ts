@@ -20,8 +20,8 @@ export class StepEntity {
   @Column()
   expectedResult!: string;
 
-  @Column({ type: "text", nullable: true })
-  image!: string | null;
+  @Column("text", { array: true, nullable: true })
+  images!: string[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;

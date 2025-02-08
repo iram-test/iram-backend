@@ -9,8 +9,10 @@ export class Milestone {
     public startDate: string | null,
     public endDate: string | null,
     public status: MilestoneStatus,
-    public projectId: string,
-    public createdAt: string,
-    public updatedAt: string,
+    public createdAt: Date,
+    public updatedAt: Date,
+    public testReport: unknown,
+    public testRun: unknown,
+    public project: unknown,
   ) {}
 }

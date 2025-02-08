@@ -7,7 +7,6 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
-  OneToMany,
 } from "typeorm";
 import { MilestoneStatus } from "../../../domain/entities/enums/milestone-status";
 import { ProjectEntity } from "./project-entity";
@@ -45,7 +44,7 @@ export class MilestoneEntity {
 
   @ManyToOne(
     () => ProjectEntity,
-    (project) => project.milestones, // змінено на milestones
+    (project) => project.milestones,
   )
   @JoinColumn({ name: "projectId" })
   project!: ProjectEntity;
@@ -57,12 +56,12 @@ export class MilestoneEntity {
   @ManyToOne(
     () => TestReportEntity,
     (testReport) => testReport.milestones,
-    { nullable: true }
+    { nullable: true },
   )
   @JoinColumn({ name: "testReportId" })
-  testReport?: TestReportEntity | null;
+  testReport!: TestReportEntity | null;
 
-    @ManyToOne(
+  @ManyToOne(
     () => TestRunEntity,
     (testRun) => testRun.milestones,
   )

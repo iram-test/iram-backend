@@ -1,135 +1,119 @@
-import { User } from "../../../domain/entities/user-entity";
+import { DataSource, Repository } from "typeorm";
 import { UserEntity } from "../entities/user-entity";
-import { UserRepository } from "../../../domain/repositories/user-repository";
+import { User } from "../../../domain/entities/user-entity";
 import {
   CreateUserDTO,
   UpdateUserDTO,
 } from "../../../application/dtos/user-dto";
+import { UserRepository } from "../../../domain/repositories/user-repository";
 import { PostgresDataSource } from "../../../tools/db-connection";
-import { hashPassword } from "../../../tools/password-utils";
-import { config } from "../../../configs";
-import { UserRole } from "../../../domain/entities/enums/user-role";
-import { FindOneOptions } from "typeorm";
 
 export class UserPostgresRepository implements UserRepository {
-  private repository = PostgresDataSource.getRepository(UserEntity);
+  private repository: Repository<UserEntity>;
 
-  async addUser(user: CreateUserDTO): Promise<User> {
-    const { email, username, password, firstName, lastName } = user;
-    const hashedPassword = password
-      ? await hashPassword(password, config.hash.salt)
-      : undefined;
-    const newUser = this.repository.create({
-      username,
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      role: UserRole.USER,
-      lastLoginAt: new Date().toISOString(),
-    });
-    return this.mapDbEntityToUser(await this.repository.save(newUser));
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(UserEntity);
+  }
+
+  async addUser(createUserDTO: CreateUserDTO): Promise<User> {
+    const userEntity = this.repository.create(createUserDTO);
+    const savedUserEntity = await this.repository.save(userEntity);
+    return this.toDomainEntity(savedUserEntity);
   }
 
   async getAll(): Promise<User[]> {
-    return (await this.repository.find()).map(this.mapDbEntityToUser);
+    const users = await this.repository.find({
+      relations: [
+        "organizationAssociations",
+        "testCases",
+        "testReports",
+        "project",
+        "testRuns",
+      ],
+    });
+    return users.map((userEntity) => this.toDomainEntity(userEntity));
   }
 
   async getUserById(userId: string): Promise<User | null> {
-    const options: FindOneOptions<UserEntity> = {
+    const userEntity = await this.repository.findOne({
       where: { userId },
-    };
-    const user = await this.repository.findOne(options);
-    return user ? this.mapDbEntityToUser(user) : null;
+      relations: [
+        "organizationAssociations",
+        "testCases",
+        "testReports",
+        "project",
+        "testRuns",
+      ],
+    });
+    return userEntity ? this.toDomainEntity(userEntity) : null;
   }
 
-  async getByUsername(username: string): Promise<User | null> {
-    const options: FindOneOptions<UserEntity> = {
-      where: { username },
-    };
-    const user = await this.repository.findOne(options);
-    return user ? this.mapDbEntityToUser(user) : null;
-  }
-
-  async getByEmail(email: string): Promise<User | null> {
-    const options: FindOneOptions<UserEntity> = {
-      where: { email },
-    };
-    const user = await this.repository.findOne(options);
-    return user ? this.mapDbEntityToUser(user) : null;
-  }
-
-  async updateUser(user: UpdateUserDTO & { userId: string }): Promise<User> {
-    const { userId, username, email, password, firstName, lastName } = user;
-    const hashedPassword = password
-      ? await hashPassword(password, config.hash.salt)
-      : undefined;
-    const existingUser = await this.repository.findOneBy({ userId });
-
-    if (!existingUser) {
-      throw new Error("User not found");
-    }
-    existingUser.username = username || "";
-    existingUser.email = email || "";
-    existingUser.password = hashedPassword!;
-    existingUser.firstName = firstName || "";
-    existingUser.lastName = lastName || "";
-    existingUser.updatedAt = new Date().toISOString();
-    await this.repository.save(existingUser);
-    return this.mapDbEntityToUser(
-      (await this.repository.findOneBy({ userId })) as UserEntity,
-    );
+  async updateUser(updateUserDTO: UpdateUserDTO): Promise<User> {
+    const { userId, ...updateData } = updateUserDTO;
+    await this.repository.update(userId, updateData);
+    const updatedUserEntity = await this.repository.findOneOrFail({
+      where: { userId },
+      relations: [
+        "organizationAssociations",
+        "testCases",
+        "testReports",
+        "project",
+        "testRuns",
+      ],
+    });
+    return this.toDomainEntity(updatedUserEntity);
   }
 
   async deleteUser(userId: string): Promise<void> {
-    await this.repository.delete({ userId });
+    await this.repository.delete(userId);
   }
 
-  async updateRefreshToken(userId: string, refreshToken: string) {
-    const existingUser = await this.repository.findOneBy({ userId });
-    if (!existingUser) {
-      throw new Error("User not found");
-    }
-    existingUser.refreshToken = refreshToken;
-    existingUser.updatedAt = new Date().toISOString();
-    await this.repository.save(existingUser);
+  async getByEmail(email: string): Promise<User | null> {
+    const userEntity = await this.repository.findOne({
+      where: { email },
+      relations: [
+        "organizationAssociations",
+        "testCases",
+        "testReports",
+        "project",
+        "testRuns",
+      ],
+    });
+    return userEntity ? this.toDomainEntity(userEntity) : null;
+  }
+
+  async getByUsername(username: string): Promise<User | null> {
+    const userEntity = await this.repository.findOne({
+      where: { username },
+      relations: [
+        "organizationAssociations",
+        "testCases",
+        "testReports",
+        "project",
+        "testRuns",
+      ],
+    });
+    return userEntity ? this.toDomainEntity(userEntity) : null;
+  }
+
+  async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    await this.repository.update(userId, { refreshToken });
   }
 
   async getRefreshToken(userId: string): Promise<string | null> {
-    const existingUser = await this.repository.findOneBy({ userId });
-    return existingUser?.refreshToken || null;
+    const userEntity = await this.repository.findOne({ where: { userId } });
+    return userEntity?.refreshToken ?? null;
   }
 
   async deleteRefreshToken(userId: string): Promise<void> {
-    const existingUser = await this.repository.findOneBy({ userId });
-    if (!existingUser) {
-      throw new Error("User not found");
-    }
-    existingUser.refreshToken = null;
-    existingUser.updatedAt = new Date().toISOString();
-    await this.repository.save(existingUser);
+    await this.repository.update(userId, { refreshToken: null });
   }
 
-  async save(
-    user: User,
-    refreshToken: string,
-    lastLoginAt: string,
-  ): Promise<User> {
-    const existingUser = await this.repository.findOneBy({
-      userId: user.userId,
-    });
-    if (!existingUser) {
-      throw new Error("User not found");
-    }
-    existingUser.refreshToken = refreshToken;
-    existingUser.lastLoginAt = lastLoginAt;
-    existingUser.updatedAt = new Date().toISOString();
-    await this.repository.save(existingUser);
-
-    return this.mapDbEntityToUser(existingUser);
+  async updateLastLogin(userId: string, lastLogin: string): Promise<void> {
+    await this.repository.update(userId, { lastLoginAt: lastLogin });
   }
 
-  private mapDbEntityToUser(userEntity: UserEntity): User {
+  private toDomainEntity(userEntity: UserEntity): User {
     return new User(
       userEntity.userId,
       userEntity.firstName,
@@ -138,11 +122,11 @@ export class UserPostgresRepository implements UserRepository {
       userEntity.email,
       userEntity.password,
       userEntity.isVerified,
-      userEntity.createdAt,
-      userEntity.updatedAt,
+      userEntity.createdAt.toISOString(),
+      userEntity.updatedAt.toISOString(),
       userEntity.lastLoginAt,
       userEntity.refreshToken,
-      userEntity.role as UserRole,
+      userEntity.role,
     );
   }
 }

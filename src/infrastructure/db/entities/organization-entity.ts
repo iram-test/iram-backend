@@ -32,7 +32,7 @@ export class OrganizationEntity {
   )
   userAssociations?: OrganizationUserAssociationEntity[];
 
-    @OneToMany(
+  @OneToMany(
     () => ProjectEntity,
     (project) => project.organization,
   )

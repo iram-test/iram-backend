@@ -15,7 +15,7 @@ import { ProjectEntity } from "./project-entity";
 import { StepEntity } from "./step-entity";
 import { UserEntity } from "./user-entity";
 import { SectionEntity } from "./section-entity";
-import { SubSectionEntity } from './subsection-entity';
+import { SubSectionEntity } from "./subsection-entity";
 import { TestRunEntity } from "./test-run-entity";
 
 @Entity()

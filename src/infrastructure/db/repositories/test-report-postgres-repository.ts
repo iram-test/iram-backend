@@ -1,83 +1,91 @@
-import { TestReport } from "../../../domain/entities/test-report-entity";
+import { DataSource, Repository } from "typeorm";
 import { TestReportEntity } from "../entities/test-report-entity";
-import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
-import { TestReportRepository } from "../../../domain/repositories/test-report-repository";
+import { TestReport } from "../../../domain/entities/test-report-entity";
 import {
   CreateTestReportDTO,
   UpdateTestReportDTO,
 } from "../../../application/dtos/test-report-dto";
-import { v4 } from "uuid";
+import { TestReportRepository } from "../../../domain/repositories/test-report-repository";
+import { PostgresDataSource } from "../../../tools/db-connection";
 
 export class TestReportPostgresRepository implements TestReportRepository {
   private repository: Repository<TestReportEntity>;
-  constructor() {
-    this.repository = PostgresDataSource.getRepository(TestReportEntity);
+
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(TestReportEntity);
   }
-  async addTestReport(testReport: CreateTestReportDTO): Promise<TestReport> {
-    const createdTestReport = this.repository.create({
-      testReportId: v4(),
-      name: testReport.name,
-      reference: testReport.reference === null ? null : testReport.reference,
-      milestoneId:
-        testReport.milestoneId === null ? null : testReport.milestoneId,
-      description: testReport.description,
-      assignedUserId:
-        testReport.assignedUserId === null ? null : testReport.assignedUserId,
-      testCaseId: testReport.testCaseId,
-      folderId: testReport.folderId === null ? null : testReport.folderId,
-    });
-    return await this.repository.save(createdTestReport);
+
+  async addTestReport(createDto: CreateTestReportDTO): Promise<TestReport> {
+    const testReport = this.repository.create(createDto);
+    const savedTestReport = await this.repository.save(testReport);
+    return this.toDomainEntity(savedTestReport);
   }
+
   async getAll(): Promise<TestReport[]> {
-    return await this.repository.find();
-  }
-  async getById(testReportId: string): Promise<TestReport | null> {
-    return await this.repository.findOneBy({ testReportId });
-  }
-  async getByName(reportName: string): Promise<TestReport | null> {
-    return await this.repository.findOneBy({ name: reportName });
-  }
-  async update(
-    testReport: UpdateTestReportDTO & { testReportId: string },
-  ): Promise<TestReport> {
-    const existingTestReport = await this.repository.findOneBy({
-      testReportId: testReport.testReportId,
+    const testReports = await this.repository.find({
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
     });
-    if (!existingTestReport) {
-      throw new Error(
-        `Test report with id ${testReport.testReportId} was not found`,
-      );
-    }
-
-    const updateTestReport: any = {
-      name: testReport.name,
-      reference: testReport.reference === null ? null : testReport.reference,
-      milestoneId:
-        testReport.milestoneId === null ? null : testReport.milestoneId,
-      description: testReport.description,
-      assignedUserId:
-        testReport.assignedUserId === null ? null : testReport.assignedUserId,
-      testCaseId: testReport.testCaseId,
-      folderId: testReport.folderId === null ? null : testReport.folderId,
-    };
-
-    await this.repository.update(testReport.testReportId, updateTestReport);
-    return (await this.repository.findOneBy({
-      testReportId: testReport.testReportId,
-    })) as TestReport;
+    return testReports.map((entity) => this.toDomainEntity(entity));
   }
+
+  async update(updateDto: UpdateTestReportDTO): Promise<TestReport> {
+    const { testReportId, ...updateData } = updateDto;
+    await this.repository.update(testReportId, updateData);
+    const updatedTestReport = await this.repository.findOneOrFail({
+      where: { testReportId },
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
+    });
+    return this.toDomainEntity(updatedTestReport);
+  }
+
+  async getById(testReportId: string): Promise<TestReport | null> {
+    const testReport = await this.repository.findOne({
+      where: { testReportId },
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
+    });
+    return testReport ? this.toDomainEntity(testReport) : null;
+  }
+
+  async getByName(reportName: string): Promise<TestReport | null> {
+    const testReport = await this.repository.findOne({
+      where: { name: reportName },
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
+    });
+    return testReport ? this.toDomainEntity(testReport) : null;
+  }
+
   async delete(testReportId: string): Promise<void> {
-    await this.repository.delete({ testReportId });
+    await this.repository.delete(testReportId);
   }
 
-  async save(testReport: TestReport): Promise<TestReport> {
-    return await this.repository.save(testReport);
+  async getByAssignedUserId(assignedUserId: string): Promise<TestReport[]> {
+    const testReports = await this.repository.find({
+      where: { assignedUser: { userId: assignedUserId } },
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
+    });
+    return testReports.map((entity) => this.toDomainEntity(entity));
   }
 
-  async getBy(
-    options: FindOptionsWhere<TestReport>,
-  ): Promise<TestReport | null> {
-    return await this.repository.findOneBy(options);
+  private toDomainEntity(entity: TestReportEntity): TestReport {
+    const testCaseIds: string[] = [];
+    const milestoneIds = entity.milestones
+      ? entity.milestones.map((milestone) => milestone.milestoneID)
+      : [];
+    const testRunIds = entity.testRuns
+      ? entity.testRuns.map((testRun) => testRun.testRunId)
+      : [];
+
+    return new TestReport(
+      entity.testReportId,
+      entity.name,
+      entity.reference,
+      entity.description,
+      entity.assignedUser ? entity.assignedUser.userId : null,
+      testCaseIds,
+      milestoneIds,
+      testRunIds,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+    );
   }
 }

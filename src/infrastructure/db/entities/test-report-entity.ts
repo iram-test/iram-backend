@@ -11,7 +11,7 @@ import {
 import { MilestoneEntity } from "./milestone-entity";
 import { UserEntity } from "./user-entity";
 import { SectionEntity } from "./section-entity";
-import { ProjectEntity } from './project-entity';
+import { ProjectEntity } from "./project-entity";
 import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
@@ -35,11 +35,11 @@ export class TestReportEntity {
   updatedAt!: Date;
 
   @ManyToOne(
-      () => ProjectEntity,
-      (project) => project.testReports,
-    )
-    @JoinColumn({ name: "projectId" })
-    project!: ProjectEntity;
+    () => ProjectEntity,
+    (project) => project.testReports,
+  )
+  @JoinColumn({ name: "projectId" })
+  project!: ProjectEntity;
 
   @ManyToOne(
     () => UserEntity,

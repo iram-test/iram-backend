@@ -8,14 +8,14 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { OrganizationEntity } from './organization-entity';
+import { OrganizationEntity } from "./organization-entity";
 import { SectionEntity } from "./section-entity";
 import { TestCaseEntity } from "./test-case-entity";
 import { Language } from "../../../domain/entities/enums/language";
-import { MilestoneEntity } from './milestone-entity';
-import { TestReportEntity } from './test-report-entity';
-import { TestRunEntity } from './test-run-entity';
-import { UserEntity } from './user-entity';
+import { MilestoneEntity } from "./milestone-entity";
+import { TestReportEntity } from "./test-report-entity";
+import { TestRunEntity } from "./test-run-entity";
+import { UserEntity } from "./user-entity";
 
 @Entity()
 export class ProjectEntity {
@@ -59,13 +59,12 @@ export class ProjectEntity {
   )
   testCases?: TestCaseEntity[];
 
-  // багато проектів може належати одній організації
   @ManyToOne(
-      () => OrganizationEntity,
-      (organization) => organization.projects, // змінено на projects
-    )
-    @JoinColumn({ name: "organizationId" })
-    organization!: OrganizationEntity;
+    () => OrganizationEntity,
+    (organization) => organization.projects,
+  )
+  @JoinColumn({ name: "organizationId" })
+  organization!: OrganizationEntity;
 
   @OneToMany(
     () => MilestoneEntity,
@@ -74,14 +73,14 @@ export class ProjectEntity {
   milestones?: MilestoneEntity[];
 
   @OneToMany(
-      () => TestReportEntity,
-      (testReport) => testReport.project,
-    )
-    testReports?: TestReportEntity[];
+    () => TestReportEntity,
+    (testReport) => testReport.project,
+  )
+  testReports?: TestReportEntity[];
 
   @OneToMany(
-      () => TestRunEntity,
-      (testRun) => testRun.project,
-    )
-    testRuns?: TestRunEntity[];
+    () => TestRunEntity,
+    (testRun) => testRun.project,
+  )
+  testRuns?: TestRunEntity[];
 }

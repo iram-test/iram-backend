@@ -1,125 +1,154 @@
-import { TestCase } from "../../../domain/entities/test-case-entity";
+import { DataSource, Repository } from "typeorm";
 import { TestCaseEntity } from "../entities/test-case-entity";
-import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
-import { TestCaseRepository } from "../../../domain/repositories/test-case-repository";
+import { TestCase } from "../../../domain/entities/test-case-entity";
 import {
   CreateTestCaseDTO,
   UpdateTestCaseDTO,
 } from "../../../application/dtos/test-case-dto";
-import { v4 } from "uuid";
-import { StepDTO } from "../../../application/dtos/step-dto";
+import { TestCaseRepository } from "../../../domain/repositories/test-case-repository";
+import { PostgresDataSource } from "../../../tools/db-connection";
 
 export class TestCasePostgresRepository implements TestCaseRepository {
   private repository: Repository<TestCaseEntity>;
 
-  constructor() {
-    this.repository = PostgresDataSource.getRepository(TestCaseEntity);
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(TestCaseEntity);
   }
 
-  private entityToTestCase(entity: TestCaseEntity): TestCase {
-    return new TestCase(
-      entity.testCaseId,
-      entity.title,
-      entity.collection,
-      entity.folderId,
-      entity.templateType,
-      entity.testType,
-      entity.priority,
-      entity.description,
-      entity.timeEstimation,
-      entity.reference,
-      entity.createdAt,
-      entity.updatedAt,
-      entity.projectId,
-      entity.status,
-      entity.assignedUserId,
-      entity.comment,
-      entity.elapsedTime,
-      entity.defects,
-      entity.version,
-      (entity.steps || []).map((step) => ({
-        ...step,
-        image: step.image === null ? undefined : step.image,
-      })),
-    );
-  }
-
-  async addTestCase(testCase: CreateTestCaseDTO): Promise<TestCase> {
-    const createdTestCase = this.repository.create({
-      ...testCase,
-      testCaseId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    const savedTestCase = await this.repository.save(createdTestCase);
-    return this.entityToTestCase(savedTestCase);
+  async addTestCase(createDto: CreateTestCaseDTO): Promise<TestCase> {
+    const testCase = this.repository.create(createDto);
+    const savedTestCase = await this.repository.save(testCase);
+    return this.toDomainEntity(savedTestCase);
   }
 
   async getAll(): Promise<TestCase[]> {
-    const entities = await this.repository.find();
-    return entities.map(this.entityToTestCase);
+    const testCases = await this.repository.find({
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async update(updateDto: UpdateTestCaseDTO): Promise<TestCase> {
+    const { testCaseId, ...updateData } = updateDto;
+    await this.repository.update(testCaseId, updateData);
+    const updatedTestCase = await this.repository.findOneOrFail({
+      where: { testCaseId },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return this.toDomainEntity(updatedTestCase);
   }
 
   async getById(testCaseId: string): Promise<TestCase | null> {
-    const entity = await this.repository.findOneBy({ testCaseId });
-    return entity ? this.entityToTestCase(entity) : null;
+    const testCase = await this.repository.findOne({
+      where: { testCaseId },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return testCase ? this.toDomainEntity(testCase) : null;
   }
 
   async getByTitle(title: string): Promise<TestCase | null> {
-    const entity = await this.repository.findOneBy({ title });
-    return entity ? this.entityToTestCase(entity) : null;
-  }
-
-  async update(
-    testCase: UpdateTestCaseDTO & { testCaseId: string },
-  ): Promise<TestCase> {
-    const existingTestCase = await this.repository.findOneBy({
-      testCaseId: testCase.testCaseId,
+    const testCase = await this.repository.findOne({
+      where: { title },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
     });
-
-    if (!existingTestCase) {
-      throw new Error(
-        `Test case with id: ${testCase.testCaseId} was not found`,
-      );
-    }
-
-    const updateData: Partial<TestCaseEntity> = {
-      ...testCase,
-      updatedAt: new Date(),
-      steps: testCase.steps?.map((step) => ({
-        ...step,
-        image: step.image ?? null,
-      })),
-    };
-
-    await this.repository.update(testCase.testCaseId, updateData);
-
-    const updatedTestCase = await this.repository.findOneBy({
-      testCaseId: testCase.testCaseId,
-    });
-    return updatedTestCase
-      ? this.entityToTestCase(updatedTestCase)
-      : ({} as TestCase);
+    return testCase ? this.toDomainEntity(testCase) : null;
   }
 
   async delete(testCaseId: string): Promise<void> {
-    await this.repository.delete({ testCaseId });
+    await this.repository.delete(testCaseId);
   }
 
-  async save(testCase: CreateTestCaseDTO): Promise<TestCase> {
-    const createdTestCase = this.repository.create({
-      ...testCase,
-      testCaseId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  async getByProjectId(projectId: string): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { project: { projectId } },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
     });
-    const savedTestCase = await this.repository.save(createdTestCase);
-    return this.entityToTestCase(savedTestCase);
+    return testCases.map((entity) => this.toDomainEntity(entity));
   }
 
-  async getBy(options: FindOptionsWhere<TestCase>): Promise<TestCase | null> {
-    const entity = await this.repository.findOneBy(options);
-    return entity ? this.entityToTestCase(entity) : null;
+  async getBySectionId(sectionId: string): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { sectionId: sectionId },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getByAssignedUserId(assignedUserId: string): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { assignedUserId: assignedUserId },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
+  private toDomainEntity(entity: TestCaseEntity): TestCase {
+    const stepIds = entity.steps
+      ? entity.steps.map((step) => step.stepId)
+      : null;
+    return new TestCase(
+      entity.testCaseId,
+      entity.title,
+      [entity.sectionId],
+      entity.projectId,
+      entity.assignedUserId,
+      entity.templateType,
+      entity.testType,
+      entity.priority,
+      entity.timeEstimation,
+      entity.description,
+      stepIds,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+    );
   }
 }

@@ -1,61 +1,63 @@
-import { Step } from "../../../domain/entities/step-entity";
+import { DataSource, Repository } from "typeorm";
 import { StepEntity } from "../entities/step-entity";
-import { PostgresDataSource } from "../../../tools/db-connection";
-import { Repository, FindOptionsWhere } from "typeorm";
-import { StepRepository } from "../../../domain/repositories/step-repository";
+import { Step } from "../../../domain/entities/step-entity";
 import {
   CreateStepDTO,
   UpdateStepDTO,
 } from "../../../application/dtos/step-dto";
-import { v4 } from "uuid";
+import { StepRepository } from "../../../domain/repositories/step-repository";
+import { PostgresDataSource } from "../../../tools/db-connection";
 
 export class StepPostgresRepository implements StepRepository {
   private repository: Repository<StepEntity>;
-  constructor() {
-    this.repository = PostgresDataSource.getRepository(StepEntity);
+
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(StepEntity);
   }
-  async addStep(step: CreateStepDTO): Promise<Step> {
-    const createdStep = this.repository.create({
-      ...step,
-      stepId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    return await this.repository.save(createdStep);
+
+  async addStep(createDto: CreateStepDTO): Promise<Step> {
+    const step = this.repository.create(createDto);
+    const savedStep = await this.repository.save(step);
+    return this.toDomainEntity(savedStep);
   }
+
   async getAll(): Promise<Step[]> {
-    return await this.repository.find();
+    const steps = await this.repository.find({
+      relations: ["testCase"],
+    });
+    return steps.map((entity) => this.toDomainEntity(entity));
   }
+
+  async update(updateDto: UpdateStepDTO): Promise<Step> {
+    const { stepId, ...updateData } = updateDto;
+    await this.repository.update(stepId, updateData);
+    const updatedStep = await this.repository.findOneOrFail({
+      where: { stepId },
+      relations: ["testCase"],
+    });
+    return this.toDomainEntity(updatedStep);
+  }
+
   async getById(stepId: string): Promise<Step | null> {
-    return await this.repository.findOneBy({ stepId });
-  }
-  async update(step: UpdateStepDTO & { stepId: string }): Promise<Step> {
-    const existingStep = await this.repository.findOneBy({
-      stepId: step.stepId,
+    const step = await this.repository.findOne({
+      where: { stepId },
+      relations: ["testCase"],
     });
-    if (!existingStep) {
-      throw new Error(`Step with id: ${step.stepId} was not found`);
-    }
-    await this.repository.update(step.stepId, {
-      ...step,
-      updatedAt: new Date(),
-    });
-    return (await this.repository.findOneBy({ stepId: step.stepId })) as Step;
+    return step ? this.toDomainEntity(step) : null;
   }
 
   async delete(stepId: string): Promise<void> {
-    await this.repository.delete({ stepId });
+    await this.repository.delete(stepId);
   }
-  async save(step: CreateStepDTO): Promise<Step> {
-    const createdStep = this.repository.create({
-      ...step,
-      stepId: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    return await this.repository.save(createdStep);
-  }
-  async getBy(options: FindOptionsWhere<Step>): Promise<Step | null> {
-    return await this.repository.findOneBy(options);
+
+  private toDomainEntity(entity: StepEntity): Step {
+    return new Step(
+      entity.stepId,
+      entity.stepDescription,
+      entity.expectedResult,
+      entity.images,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+    );
   }
 }
