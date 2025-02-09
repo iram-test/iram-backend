@@ -5,6 +5,7 @@ import {
   UpdateProjectDTO,
 } from "../../application/dtos/project-dto";
 import logger from "../../tools/logger";
+import { CustomError } from "../../tools/custom-error";
 
 export const addProject = async (
   request: FastifyRequest,
@@ -13,10 +14,14 @@ export const addProject = async (
   try {
     const projectDto = request.body as CreateProjectDTO;
     const newProject = await ProjectService.addProject(projectDto);
-    reply.code(201).send(newProject);
+    reply.status(201).send(newProject);
   } catch (error) {
     logger.error(`Error creating project: ${error}`);
-    reply.code(500).send({ message: "Error creating project" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error creating project" });
+    }
   }
 };
 
@@ -25,11 +30,15 @@ export const getAllProjects = async (
   reply: FastifyReply,
 ) => {
   try {
-    const projects = await ProjectService.getAllProjects();
-    reply.code(200).send(projects);
+    const projects = await ProjectService.getAll();
+    reply.status(200).send(projects);
   } catch (error) {
     logger.error(`Error getting all projects: ${error}`);
-    reply.code(500).send({ message: "Error getting projects" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting projects" });
+    }
   }
 };
 
@@ -39,17 +48,18 @@ export const getProjectById = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    const project = await ProjectService.getProjectById(projectId);
-    reply.code(200).send(project);
+    const project = await ProjectService.getById(projectId);
+    reply.status(200).send(project);
   } catch (error) {
     logger.error(`Error getting project by id: ${error}`);
-    if (error instanceof Error && error.message === "Project not found") {
-      reply.code(404).send({ message: "Project not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error getting project" });
+      reply.status(500).send({ message: "Error getting project" });
     }
   }
 };
+
 export const updateProject = async (
   request: FastifyRequest,
   reply: FastifyReply,
@@ -57,19 +67,16 @@ export const updateProject = async (
   try {
     const { projectId } = request.params as { projectId: string };
     const projectDto = request.body as UpdateProjectDTO;
-    const updatedProject = await ProjectService.updateProject(
-      projectId,
-      projectDto,
-    );
-    reply.code(200).send(updatedProject);
+    const updatedProject = await ProjectService.update(projectId, projectDto);
+    reply.status(200).send(updatedProject);
   } catch (error) {
     logger.error(
       `Error during update project with id ${request.params}: ${error}`,
     );
-    if (error instanceof Error && error.message === "Project not found") {
-      reply.code(404).send({ message: "Project not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error updating project" });
+      reply.status(500).send({ message: "Error updating project" });
     }
   }
 };
@@ -80,16 +87,16 @@ export const deleteProject = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    await ProjectService.deleteProject(projectId);
-    reply.code(204).send();
+    await ProjectService.delete(projectId);
+    reply.status(204).send();
   } catch (error) {
     logger.error(
       `Error during delete project with id: ${request.params}: ${error}`,
     );
-    if (error instanceof Error && error.message === "Project not found") {
-      reply.code(404).send({ message: "Project not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error deleting project" });
+      reply.status(500).send({ message: "Error deleting project" });
     }
   }
 };

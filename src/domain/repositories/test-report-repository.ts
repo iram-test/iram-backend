@@ -12,4 +12,6 @@ export interface TestReportRepository {
   getByName(reportName: string): Promise<TestReport | null>;
   delete(testReportId: string): Promise<void>;
   getByAssignedUserId(assignedUserId: string): Promise<TestReport[]>;
+  getTestReportsByProjectId(projectId: string): Promise<TestReport[]>;
+  getTestReportsByUserId(userId: string): Promise<TestReport[]>;
 }

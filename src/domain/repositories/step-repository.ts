@@ -7,4 +7,5 @@ export interface StepRepository {
   update(step: UpdateStepDTO): Promise<Step>;
   getById(stepId: string): Promise<Step | null>;
   delete(stepId: string): Promise<void>;
+  getStepsByTestCaseId(testCaseId: string): Promise<Step[]>;
 }

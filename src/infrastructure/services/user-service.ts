@@ -18,7 +18,7 @@ class UserService {
     }
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAll(): Promise<User[]> {
     try {
       logger.info(`Get all users`);
       return await userRepository.getAll();
@@ -28,7 +28,7 @@ class UserService {
     }
   }
 
-  async getUserById(userId: string): Promise<User> {
+  async getById(userId: string): Promise<User> {
     try {
       const user = await userRepository.getUserById(userId);
       if (!user) {
@@ -62,7 +62,7 @@ class UserService {
     }
   }
 
-  async deleteUser(userId: string): Promise<void> {
+  async delete(userId: string): Promise<void> {
     try {
       const user = await userRepository.getUserById(userId);
       if (!user) {
@@ -77,7 +77,7 @@ class UserService {
     }
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
+  async getByEmail(email: string): Promise<User | null> {
     try {
       logger.info(`Get User by email`);
       return await userRepository.getByEmail(email);
@@ -87,7 +87,7 @@ class UserService {
     }
   }
 
-  async getUserByUsername(username: string): Promise<User | null> {
+  async getByUsername(username: string): Promise<User | null> {
     try {
       logger.info(`Get User by username`);
       return await userRepository.getByUsername(username);

@@ -80,6 +80,16 @@ class MilestoneService {
       throw new CustomError("Failed to delete milestone", 500);
     }
   }
+
+  async getByProjectId(projectId: string) {
+    try {
+      logger.info(`Get milestones by project id`);
+      return await milestoneService.getByProjectId(projectId);
+    } catch (error) {
+      logger.error(`Error getting milestones by project id:`, error);
+      throw new CustomError("Failed to get milestones", 500);
+    }
+  }
 }
 
 export default new MilestoneService();

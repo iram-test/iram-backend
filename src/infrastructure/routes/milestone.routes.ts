@@ -5,6 +5,7 @@ import {
   getMilestoneById,
   updateMilestone,
   deleteMilestone,
+  getMilestonesByProjectId,
 } from "../controllers/milestone-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
@@ -12,27 +13,48 @@ import { UserRole } from "../../domain/entities/enums/user-role";
 export async function milestoneRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/milestones",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     addMilestone,
   );
+
   fastify.get(
     "/milestones",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     getAllMilestones,
   );
+
   fastify.get(
     "/milestones/:milestoneID",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     getMilestoneById,
   );
+
   fastify.put(
     "/milestones/:milestoneID",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     updateMilestone,
   );
+
   fastify.delete(
     "/milestones/:milestoneID",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     deleteMilestone,
+  );
+  fastify.get(
+    "/projects/:projectId/milestones",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    getMilestonesByProjectId,
   );
 }

@@ -102,6 +102,21 @@ class SubsectionService {
       throw new CustomError("Failed to delete subsection", 500);
     }
   }
+
+  async getSubsectionsBySectionId(sectionId: string) {
+    try {
+      const subsections =
+        await subsectionRepository.getSubsectionsBySectionId(sectionId);
+      logger.info(`Get subsections by sectionId ${sectionId}`);
+      return subsections;
+    } catch (error) {
+      logger.error(
+        `Error getting subsections by sectionId ${sectionId}:`,
+        error,
+      );
+      throw new CustomError("Failed to get subsections by sectionId", 500);
+    }
+  }
 }
 
 export default new SubsectionService();

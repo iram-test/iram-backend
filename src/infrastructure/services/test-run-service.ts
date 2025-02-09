@@ -20,7 +20,7 @@ class TestRunService {
     }
   }
 
-  async getAllTestRuns() {
+  async getAll() {
     try {
       logger.info(`Get all test runs`);
       return await testRunRepository.getAll();
@@ -30,7 +30,7 @@ class TestRunService {
     }
   }
 
-  async getTestRunById(testRunId: string) {
+  async getById(testRunId: string) {
     try {
       const testRun = await testRunRepository.getById(testRunId);
       if (!testRun) {
@@ -45,7 +45,7 @@ class TestRunService {
     }
   }
 
-  async updateTestRun(testRunId: string, testRunDto: UpdateTestRunDTO) {
+  async update(testRunId: string, testRunDto: UpdateTestRunDTO) {
     try {
       const testRun = await testRunRepository.getById(testRunId);
       if (!testRun) {
@@ -65,7 +65,7 @@ class TestRunService {
     }
   }
 
-  async deleteTestRun(testRunId: string) {
+  async delete(testRunId: string) {
     try {
       const testRun = await testRunRepository.getById(testRunId);
       if (!testRun) {
@@ -80,12 +80,42 @@ class TestRunService {
     }
   }
 
-  async getTestRunsByProjectId(projectId: string) {
+  async getByProjectId(projectId: string) {
     try {
       logger.info(`Get TestRuns by project id`);
       return await testRunRepository.getByProjectId(projectId);
     } catch (error) {
       logger.error(`Error getting TestRuns by project id:`, error);
+      throw new CustomError("Failed to get test runs", 500);
+    }
+  }
+
+  async getTestRunByProjectId(projectId: string) {
+    try {
+      logger.info(`Get TestRuns by project id`);
+      return await testRunRepository.getTestRunByProjectId(projectId);
+    } catch (error) {
+      logger.error(`Error getting TestRuns by project id:`, error);
+      throw new CustomError("Failed to get test runs", 500);
+    }
+  }
+
+  async getTestRunByUserId(userId: string) {
+    try {
+      logger.info(`Get TestRuns by user id`);
+      return await testRunRepository.getTestRunByUserId(userId);
+    } catch (error) {
+      logger.error(`Error getting TestRuns by user id:`, error);
+      throw new CustomError("Failed to get test runs", 500);
+    }
+  }
+
+  async getTestRunByTestReportId(testReportId: string) {
+    try {
+      logger.info(`Get TestRuns by test report id`);
+      return await testRunRepository.getTestRunByTestReportId(testReportId);
+    } catch (error) {
+      logger.error(`Error getting TestRuns by test report id:`, error);
       throw new CustomError("Failed to get test runs", 500);
     }
   }

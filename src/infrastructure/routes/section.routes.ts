@@ -1,68 +1,73 @@
 import { FastifyInstance } from "fastify";
 import {
-  addStep,
-  getAllSteps,
-  getStepById,
-  updateStep,
-  deleteStep,
-  getStepsByTestCaseId,
-} from "../controllers/step-controller";
+  addSection,
+  getAll,
+  getById,
+  update,
+  deleteSection,
+  getSectionsByProjectId,
+} from "../controllers/section-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
 
-export async function stepRoutes(fastify: FastifyInstance) {
+export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/steps",
+    "/sections",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    addStep,
+    addSection,
   );
+
   fastify.get(
-    "/steps",
+    "/sections",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    getAllSteps,
+    getAll,
   );
+
   fastify.get(
-    "/steps/:stepId",
+    "/sections/:sectionId",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    getStepById,
+    getById,
   );
+
   fastify.put(
-    "/steps/:stepId",
+    "/sections/:sectionId",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    updateStep,
+    update,
   );
+
   fastify.delete(
-    "/steps/:stepId",
+    "/sections/:sectionId",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    deleteStep,
+    deleteSection,
   );
+
   fastify.get(
-    "/test-cases/:testCaseId/steps",
+    "/projects/:projectId/sections",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    getStepsByTestCaseId,
+    getSectionsByProjectId,
   );
 }

@@ -131,6 +131,36 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
 
+  async getTestCasesByProjectId(projectId: string): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { project: { projectId: projectId } },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getTestCasesByUserId(userId: string): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { assignedUser: { userId: userId } },
+      relations: [
+        "project",
+        "assignedUser",
+        "section",
+        "steps",
+        "subsection",
+        "testRun",
+      ],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
   private toDomainEntity(entity: TestCaseEntity): TestCase {
     const stepIds = entity.steps
       ? entity.steps.map((step) => step.stepId)

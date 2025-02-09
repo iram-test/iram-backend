@@ -96,6 +96,32 @@ class OrganizationUserAssociationService {
       throw new CustomError("Failed to delete association", 500);
     }
   }
+
+  async getOrganizationsByUserId(userId: string) {
+    try {
+      logger.info(`Get organizations for user with id: ${userId}`);
+      return await associationRepository.getOrganizationsByUserId(userId);
+    } catch (error) {
+      logger.error(
+        `Error getting organizations for user with id ${userId}:`,
+        error,
+      );
+      throw new CustomError("Failed to get organizations", 500);
+    }
+  }
+
+  async getOrganizationsByProjectId(projectId: string) {
+    try {
+      logger.info(`Get users for project with id: ${projectId}`);
+      return await associationRepository.getOrganizationsByProjectId(projectId);
+    } catch (error) {
+      logger.error(
+        `Error getting users for project with id ${projectId}:`,
+        error,
+      );
+      throw new CustomError("Failed to get users for project", 500);
+    }
+  }
 }
 
 export default new OrganizationUserAssociationService();

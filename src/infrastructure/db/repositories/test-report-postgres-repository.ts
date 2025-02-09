@@ -66,6 +66,22 @@ export class TestReportPostgresRepository implements TestReportRepository {
     return testReports.map((entity) => this.toDomainEntity(entity));
   }
 
+  async getTestReportsByProjectId(projectId: string): Promise<TestReport[]> {
+    const testReports = await this.repository.find({
+      where: { project: { projectId: projectId } },
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
+    });
+    return testReports.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getTestReportsByUserId(userId: string): Promise<TestReport[]> {
+    const testReports = await this.repository.find({
+      where: { assignedUser: { userId: userId } },
+      relations: ["project", "assignedUser", "testRuns", "milestones"],
+    });
+    return testReports.map((entity) => this.toDomainEntity(entity));
+  }
+
   private toDomainEntity(entity: TestReportEntity): TestReport {
     const testCaseIds: string[] = [];
     const milestoneIds = entity.milestones

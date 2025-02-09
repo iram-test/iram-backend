@@ -5,6 +5,7 @@ import {
   UpdateTestCaseDTO,
 } from "../../application/dtos/test-case-dto";
 import logger from "../../tools/logger";
+import { CustomError } from "../../tools/custom-error";
 
 export const addTestCase = async (
   request: FastifyRequest,
@@ -13,10 +14,14 @@ export const addTestCase = async (
   try {
     const testCaseDto = request.body as CreateTestCaseDTO;
     const newTestCase = await TestCaseService.addTestCase(testCaseDto);
-    reply.code(201).send(newTestCase);
+    reply.status(201).send(newTestCase);
   } catch (error) {
     logger.error(`Error creating test case: ${error}`);
-    reply.code(500).send({ message: "Error creating test case" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error creating test case" });
+    }
   }
 };
 
@@ -25,11 +30,15 @@ export const getAllTestCases = async (
   reply: FastifyReply,
 ) => {
   try {
-    const testCases = await TestCaseService.getAllTestCases();
-    reply.code(200).send(testCases);
+    const testCases = await TestCaseService.getAll();
+    reply.status(200).send(testCases);
   } catch (error) {
     logger.error(`Error during getting all test cases: ${error}`);
-    reply.code(500).send({ message: "Error getting test cases" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
   }
 };
 
@@ -39,14 +48,14 @@ export const getTestCaseById = async (
 ) => {
   try {
     const { testCaseId } = request.params as { testCaseId: string };
-    const testCase = await TestCaseService.getTestCaseById(testCaseId);
-    reply.code(200).send(testCase);
+    const testCase = await TestCaseService.getById(testCaseId);
+    reply.status(200).send(testCase);
   } catch (error) {
     logger.error(`Error getting test case by id: ${error}`);
-    if (error instanceof Error && error.message === "Test case not found") {
-      reply.code(404).send({ message: "Test case not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error getting test case" });
+      reply.status(500).send({ message: "Error getting test case" });
     }
   }
 };
@@ -58,19 +67,19 @@ export const updateTestCase = async (
   try {
     const { testCaseId } = request.params as { testCaseId: string };
     const testCaseDto = request.body as UpdateTestCaseDTO;
-    const updatedTestCase = await TestCaseService.updateTestCase(
+    const updatedTestCase = await TestCaseService.update(
       testCaseId,
       testCaseDto,
     );
-    reply.code(200).send(updatedTestCase);
+    reply.status(200).send(updatedTestCase);
   } catch (error) {
     logger.error(
       `Error during updating test case with id: ${request.params}: ${error}`,
     );
-    if (error instanceof Error && error.message === "Test case not found") {
-      reply.code(404).send({ message: "Test case not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error updating test case" });
+      reply.status(500).send({ message: "Error updating test case" });
     }
   }
 };
@@ -81,16 +90,90 @@ export const deleteTestCase = async (
 ) => {
   try {
     const { testCaseId } = request.params as { testCaseId: string };
-    await TestCaseService.deleteTestCase(testCaseId);
-    reply.code(204).send();
+    await TestCaseService.delete(testCaseId);
+    reply.status(204).send();
   } catch (error) {
     logger.error(
       `Error deleting test case with id: ${request.params}: ${error}`,
     );
-    if (error instanceof Error && error.message === "Test case not found") {
-      reply.code(404).send({ message: "Test case not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error deleting test case" });
+      reply.status(500).send({ message: "Error deleting test case" });
+    }
+  }
+};
+
+export const getTestCasesByProjectId = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { projectId } = request.params as { projectId: string };
+    const testCases = await TestCaseService.getTestCasesByProjectId(projectId);
+    reply.status(200).send(testCases);
+  } catch (error) {
+    logger.error(`Error during getting test cases by project ID: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
+  }
+};
+
+export const getTestCasesBySectionId = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { sectionId } = request.params as { sectionId: string };
+    const testCases = await TestCaseService.getBySectionId(sectionId);
+    reply.status(200).send(testCases);
+  } catch (error) {
+    logger.error(`Error during getting test cases by section ID: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
+  }
+};
+
+export const getTestCasesByAssignedUserId = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { assignedUserId } = request.params as { assignedUserId: string };
+    const testCases = await TestCaseService.getByAssignedUserId(assignedUserId);
+    reply.status(200).send(testCases);
+  } catch (error) {
+    logger.error(
+      `Error during getting test cases by assigned user ID: ${error}`,
+    );
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
+  }
+};
+
+export const getTestCaseByTitle = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { title } = request.params as { title: string };
+    const testCase = await TestCaseService.getByTitle(title);
+    reply.status(200).send(testCase);
+  } catch (error) {
+    logger.error(`Error during getting test case by title: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test case" });
     }
   }
 };

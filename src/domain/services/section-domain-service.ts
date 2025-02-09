@@ -17,7 +17,7 @@ export class SectionDomainService implements SectionRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.sectionRepository.addSection(section); // Pass the constructed entity
+    return await this.sectionRepository.addSection(section);
   }
 
   getAll(): Promise<Section[]> {
@@ -38,5 +38,9 @@ export class SectionDomainService implements SectionRepository {
 
   delete(sectionId: string): Promise<void> {
     return this.sectionRepository.delete(sectionId);
+  }
+
+  getSectionsByProjectId(projectId: string): Promise<Section[]> {
+    return this.sectionRepository.getSectionsByProjectId(projectId);
   }
 }

@@ -11,4 +11,7 @@ export interface TestRunRepository {
   update(testRun: UpdateTestRunDTO): Promise<TestRun>;
   delete(testRunId: string): Promise<void>;
   getByProjectId(projectId: string): Promise<TestRun[]>;
+  getTestRunByProjectId(projectId: string): Promise<TestRun[]>;
+  getTestRunByUserId(userId: string): Promise<TestRun[]>;
+  getTestRunByTestReportId(testReportId: string): Promise<TestRun[]>;
 }

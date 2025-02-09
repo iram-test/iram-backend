@@ -58,6 +58,14 @@ export class SubsectionPostgresRepository implements SubsectionRepository {
     await this.repository.delete(subsectionId);
   }
 
+  async getSubsectionsBySectionId(sectionId: string): Promise<Subsection[]> {
+    const subsections = await this.repository.find({
+      where: { section: { sectionId: sectionId } },
+      relations: ["section", "testCases"],
+    });
+    return subsections.map((entity) => this.toDomainEntity(entity));
+  }
+
   private toDomainEntity(entity: SubSectionEntity): Subsection {
     return new Subsection(
       entity.subsectionId,

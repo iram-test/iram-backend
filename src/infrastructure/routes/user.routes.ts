@@ -16,42 +16,47 @@ export async function userRoutes(fastify: FastifyInstance) {
     { preHandler: [authorize([UserRole.ADMIN]), isAdmin()] },
     addUser,
   );
+
   fastify.get(
     "/users",
     { preHandler: [authorize([UserRole.ADMIN]), isAdmin()] },
     getAllUsers,
   );
 
+  fastify.get(
+    "/users/:userId",
+    {
+      preHandler: [
+        authorize([UserRole.USER, UserRole.MANAGER, UserRole.ADMIN], "userId"),
+      ],
+    },
+    getUserById,
+  );
+
+  fastify.put(
+    "/users/:userId",
+    {
+      preHandler: [
+        authorize([UserRole.USER, UserRole.MANAGER, UserRole.ADMIN], "userId"),
+      ],
+    },
+    updateUser,
+  );
+
   fastify.delete(
     "/users/:userId",
-    { preHandler: [authorize([UserRole.ADMIN]), isAdmin()] },
+    {
+      preHandler: [
+        authorize([UserRole.USER, UserRole.MANAGER, UserRole.ADMIN], "userId"),
+      ],
+    },
     deleteUser,
   );
 
   fastify.get(
-    "/users/:userId",
-    {
-      preHandler: [
-        authorize([UserRole.USER, UserRole.MANAGER], null, "userId"),
-      ],
-    },
-    getUserById,
-  );
-
-  fastify.put(
-    "/users/:userId",
-    {
-      preHandler: [
-        authorize([UserRole.USER, UserRole.MANAGER], null, "userId"),
-      ],
-    },
-    updateUser,
-  );
-
-  fastify.get(
     "/admin/users/:userId",
     {
-      preHandler: [authorize([UserRole.ADMIN], null, null)],
+      preHandler: [authorize([UserRole.ADMIN])],
     },
     getUserById,
   );
@@ -59,8 +64,16 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.put(
     "/admin/users/:userId",
     {
-      preHandler: [authorize([UserRole.ADMIN], null, null)],
+      preHandler: [authorize([UserRole.ADMIN])],
     },
     updateUser,
+  );
+
+  fastify.delete(
+    "/admin/users/:userId",
+    {
+      preHandler: [authorize([UserRole.ADMIN])],
+    },
+    deleteUser,
   );
 }

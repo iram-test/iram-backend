@@ -20,7 +20,7 @@ export interface CreateMilestoneDTO {
   startDate?: string | null; // ISO string
   endDate?: string | null; // ISO string
   status: MilestoneStatus;
-  projectId: string | null; // Add projectId
+  projectId: string | null;
 }
 
 export interface UpdateMilestoneDTO {
@@ -31,5 +31,5 @@ export interface UpdateMilestoneDTO {
   startDate?: string | null; // ISO string
   endDate?: string | null; // ISO string
   status?: MilestoneStatus;
-  projectId?: string; // Add projectId
+  projectId?: string;
 }

@@ -53,4 +53,16 @@ export class OrganizationUserAssociationDomainService
   delete(associationId: string): Promise<void> {
     return this.associationRepository.delete(associationId);
   }
+
+  async getOrganizationsByUserId(
+    userId: string,
+  ): Promise<OrganizationUserAssociation[]> {
+    return this.associationRepository.getOrganizationsByUserId(userId);
+  }
+
+  async getOrganizationsByProjectId(
+    projectId: string,
+  ): Promise<OrganizationUserAssociation[]> {
+    return this.associationRepository.getOrganizationsByProjectId(projectId);
+  }
 }

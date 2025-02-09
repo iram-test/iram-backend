@@ -17,7 +17,7 @@ class StepService {
     }
   }
 
-  async getAllSteps() {
+  async getAll() {
     try {
       logger.info(`Get all steps`);
       return await stepRepository.getAll();
@@ -27,7 +27,7 @@ class StepService {
     }
   }
 
-  async getStepById(stepId: string) {
+  async getById(stepId: string) {
     try {
       const step = await stepRepository.getById(stepId);
       if (!step) {
@@ -42,7 +42,7 @@ class StepService {
     }
   }
 
-  async updateStep(stepId: string, stepDto: UpdateStepDTO) {
+  async update(stepId: string, stepDto: UpdateStepDTO) {
     try {
       const step = await stepRepository.getById(stepId);
       if (!step) {
@@ -58,7 +58,7 @@ class StepService {
     }
   }
 
-  async deleteStep(stepId: string) {
+  async delete(stepId: string) {
     try {
       const step = await stepRepository.getById(stepId);
       if (!step) {
@@ -70,6 +70,17 @@ class StepService {
     } catch (error) {
       logger.error(`Error deleting step with id ${stepId}:`, error);
       throw new CustomError("Failed to delete step", 500);
+    }
+  }
+
+  async getStepsByTestCaseId(testCaseId: string) {
+    try {
+      const steps = await stepRepository.getStepsByTestCaseId(testCaseId);
+      logger.info(`Get steps by testCaseId ${testCaseId}`);
+      return steps;
+    } catch (error) {
+      logger.error(`Error getting steps by testCaseId ${testCaseId}:`, error);
+      throw new CustomError("Failed to get steps by testCaseId", 500);
     }
   }
 }

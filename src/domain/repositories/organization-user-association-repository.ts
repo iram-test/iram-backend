@@ -13,9 +13,15 @@ export interface OrganizationUserAssociationRepository {
     association: UpdateOrganizationUserAssociationDTO,
   ): Promise<OrganizationUserAssociation>;
   getById(associationId: string): Promise<OrganizationUserAssociation | null>;
-  getByUserId(userId: string): Promise<OrganizationUserAssociation[]>; // Changed to array
+  getByUserId(userId: string): Promise<OrganizationUserAssociation[]>;
   delete(associationId: string): Promise<void>;
   getByOrganizationId(
     organizationId: string,
+  ): Promise<OrganizationUserAssociation[]>;
+  getOrganizationsByUserId(
+    userId: string,
+  ): Promise<OrganizationUserAssociation[]>;
+  getOrganizationsByProjectId(
+    projectId: string,
   ): Promise<OrganizationUserAssociation[]>;
 }

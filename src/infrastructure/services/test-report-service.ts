@@ -90,7 +90,7 @@ class TestReportService {
     }
   }
 
-  async getTestReportsByAssignedUserId(assignedUserId: string) {
+  async getByAssignedUserId(assignedUserId: string) {
     try {
       logger.info(`Get test reports by assigned user id`);
       return await testReportRepository.getByAssignedUserId(assignedUserId);
@@ -100,7 +100,7 @@ class TestReportService {
     }
   }
 
-  async getTestReportByName(reportName: string) {
+  async getByName(reportName: string) {
     try {
       const testReport = await testReportRepository.getByName(reportName);
       if (!testReport) {
@@ -112,6 +112,26 @@ class TestReportService {
     } catch (error) {
       logger.error(`Error getting test report by name:`, error);
       throw new CustomError("Failed to get test report", 500);
+    }
+  }
+
+  async getTestReportsByProjectId(projectId: string) {
+    try {
+      logger.info(`Get test reports by project id`);
+      return await testReportRepository.getTestReportsByProjectId(projectId);
+    } catch (error) {
+      logger.error(`Error getting test reports by project id:`, error);
+      throw new CustomError("Failed to get test reports", 500);
+    }
+  }
+
+  async getTestReportsByUserId(userId: string) {
+    try {
+      logger.info(`Get test reports by user id`);
+      return await testReportRepository.getTestReportsByUserId(userId);
+    } catch (error) {
+      logger.error(`Error getting test reports by user id:`, error);
+      throw new CustomError("Failed to get test reports", 500);
     }
   }
 }

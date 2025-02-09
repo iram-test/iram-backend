@@ -7,16 +7,19 @@ import {
 } from "../../../application/dtos/organization-user-association-dto";
 import { OrganizationUserAssociationRepository } from "../../../domain/repositories/organization-user-association-repository";
 import { PostgresDataSource } from "../../../tools/db-connection";
+import { ProjectEntity } from "../entities/project-entity";
 
 export class OrganizationUserAssociationPostgresRepository
   implements OrganizationUserAssociationRepository
 {
   private repository: Repository<OrganizationUserAssociationEntity>;
+  private projectRepository: Repository<ProjectEntity>;
 
   constructor(private readonly dataSource: DataSource = PostgresDataSource) {
     this.repository = this.dataSource.getRepository(
       OrganizationUserAssociationEntity,
     );
+    this.projectRepository = this.dataSource.getRepository(ProjectEntity);
   }
 
   async addAssociation(
@@ -76,6 +79,38 @@ export class OrganizationUserAssociationPostgresRepository
 
   async delete(associationId: string): Promise<void> {
     await this.repository.delete(associationId);
+  }
+
+  async getOrganizationsByUserId(
+    userId: string,
+  ): Promise<OrganizationUserAssociation[]> {
+    const associations = await this.repository.find({
+      where: { userId: userId },
+      relations: ["organization"],
+    });
+    return associations.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getOrganizationsByProjectId(
+    projectId: string,
+  ): Promise<OrganizationUserAssociation[]> {
+    const project = await this.projectRepository.findOne({
+      where: { projectId: projectId },
+      relations: ["organization"],
+    });
+
+    if (!project || !project.organization) {
+      return [];
+    }
+
+    const organizationId = project.organization.organizationId;
+
+    const associations = await this.repository.find({
+      where: { organizationId: organizationId },
+      relations: ["user", "organization"],
+    });
+
+    return associations.map((entity) => this.toDomainEntity(entity));
   }
 
   private toDomainEntity(

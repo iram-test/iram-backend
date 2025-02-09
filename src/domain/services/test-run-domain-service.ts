@@ -20,7 +20,7 @@ export class TestRunDomainService implements TestRunRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.testRunRepository.addTestRun(testRun); // Pass the constructed entity
+    return await this.testRunRepository.addTestRun(testRun);
   }
 
   getAll(): Promise<TestRun[]> {
@@ -41,5 +41,19 @@ export class TestRunDomainService implements TestRunRepository {
 
   getByProjectId(projectId: string): Promise<TestRun[]> {
     return this.testRunRepository.getByProjectId(projectId);
+  }
+  getTestRunByProjectId(projectId: string): Promise<TestRun[]> {
+    // NEW
+    return this.testRunRepository.getTestRunByProjectId(projectId);
+  }
+
+  getTestRunByUserId(userId: string): Promise<TestRun[]> {
+    // NEW
+    return this.testRunRepository.getTestRunByUserId(userId);
+  }
+
+  getTestRunByTestReportId(testReportId: string): Promise<TestRun[]> {
+    // NEW
+    return this.testRunRepository.getTestRunByTestReportId(testReportId);
   }
 }

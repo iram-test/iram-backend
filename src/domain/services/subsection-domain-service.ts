@@ -38,4 +38,8 @@ export class SubsectionDomainService implements SubsectionRepository {
   delete(subsectionId: string): Promise<void> {
     return this.subsectionRepository.delete(subsectionId);
   }
+
+  getSubsectionsBySectionId(sectionId: string): Promise<Subsection[]> {
+    return this.subsectionRepository.getSubsectionsBySectionId(sectionId);
+  }
 }

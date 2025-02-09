@@ -94,6 +94,18 @@ class SectionService {
       throw new CustomError("Failed to delete section", 500);
     }
   }
+
+  async getSectionsByProjectId(projectId: string) {
+    try {
+      const sections =
+        await sectionRepository.getSectionsByProjectId(projectId);
+      logger.info(`Get all sections by project ID: ${projectId}`);
+      return sections;
+    } catch (error) {
+      logger.error(`Error getting sections by project ID ${projectId}:`, error);
+      throw new CustomError("Failed to get sections by project ID", 500);
+    }
+  }
 }
 
 export default new SectionService();

@@ -32,4 +32,8 @@ export class StepDomainService implements StepRepository {
   delete(stepId: string): Promise<void> {
     return this.stepRepository.delete(stepId);
   }
+
+  getStepsByTestCaseId(testCaseId: string): Promise<Step[]> {
+    return this.stepRepository.getStepsByTestCaseId(testCaseId);
+  }
 }

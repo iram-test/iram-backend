@@ -50,6 +50,14 @@ export class StepPostgresRepository implements StepRepository {
     await this.repository.delete(stepId);
   }
 
+  async getStepsByTestCaseId(testCaseId: string): Promise<Step[]> {
+    const steps = await this.repository.find({
+      where: { testCase: { testCaseId: testCaseId } },
+      relations: ["testCase"],
+    });
+    return steps.map((entity) => this.toDomainEntity(entity));
+  }
+
   private toDomainEntity(entity: StepEntity): Step {
     return new Step(
       entity.stepId,

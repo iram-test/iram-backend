@@ -11,4 +11,5 @@ export interface SubsectionRepository {
   getById(subsectionId: string): Promise<Subsection | null>;
   getByName(subsectionName: string): Promise<Subsection | null>;
   delete(subsectionId: string): Promise<void>;
+  getSubsectionsBySectionId(sectionId: string): Promise<Subsection[]>; // NEW
 }

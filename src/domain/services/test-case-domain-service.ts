@@ -24,7 +24,7 @@ export class TestCaseDomainService implements TestCaseRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.testCaseRepository.addTestCase(testCase); // Pass the constructed entity
+    return await this.testCaseRepository.addTestCase(testCase);
   }
 
   getAll(): Promise<TestCase[]> {
@@ -55,5 +55,13 @@ export class TestCaseDomainService implements TestCaseRepository {
   }
   getByAssignedUserId(assignedUserId: string): Promise<TestCase[]> {
     return this.testCaseRepository.getByAssignedUserId(assignedUserId);
+  }
+  getTestCasesByProjectId(projectId: string): Promise<TestCase[]> {
+    // NEW
+    return this.testCaseRepository.getTestCasesByProjectId(projectId);
+  }
+  getTestCasesByUserId(userId: string): Promise<TestCase[]> {
+    // NEW
+    return this.testCaseRepository.getTestCasesByUserId(userId);
   }
 }

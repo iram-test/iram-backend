@@ -11,4 +11,5 @@ export interface SectionRepository {
   getById(sectionId: string): Promise<Section | null>;
   getByName(sectionName: string): Promise<Section | null>;
   delete(sectionId: string): Promise<void>;
+  getSectionsByProjectId(projectId: string): Promise<Section[]>;
 }

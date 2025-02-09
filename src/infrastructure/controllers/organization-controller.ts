@@ -5,6 +5,7 @@ import {
   UpdateOrganizationDTO,
 } from "../../application/dtos/organization-dto";
 import logger from "../../tools/logger";
+import { CustomError } from "../../tools/custom-error";
 
 export const addOrganization = async (
   request: FastifyRequest,
@@ -14,24 +15,34 @@ export const addOrganization = async (
     const organizationDto = request.body as CreateOrganizationDTO;
     const newOrganization =
       await OrganizationService.addOrganization(organizationDto);
-    reply.code(201).send(newOrganization);
+    reply.status(201).send(newOrganization);
   } catch (error) {
     logger.error(`Error during creating organization: ${error}`);
-    reply.code(500).send({ message: "Error creating organization" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error creating organization" });
+    }
   }
 };
+
 export const getAllOrganizations = async (
   _: FastifyRequest,
   reply: FastifyReply,
 ) => {
   try {
     const organizations = await OrganizationService.getAllOrganizations();
-    reply.code(200).send(organizations);
+    reply.status(200).send(organizations);
   } catch (error) {
     logger.error(`Error getting all organizations: ${error}`);
-    reply.code(500).send({ message: "Error getting organizations" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting organizations" });
+    }
   }
 };
+
 export const getOrganizationById = async (
   request: FastifyRequest,
   reply: FastifyReply,
@@ -40,16 +51,17 @@ export const getOrganizationById = async (
     const { organizationId } = request.params as { organizationId: string };
     const organization =
       await OrganizationService.getOrganizationById(organizationId);
-    reply.code(200).send(organization);
+    reply.status(200).send(organization);
   } catch (error) {
     logger.error(`Error during getting organization by id: ${error}`);
-    if (error instanceof Error && error.message === "Organization not found") {
-      reply.code(404).send({ message: "Organization not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error getting organization" });
+      reply.status(500).send({ message: "Error getting organization" });
     }
   }
 };
+
 export const updateOrganization = async (
   request: FastifyRequest,
   reply: FastifyReply,
@@ -61,16 +73,17 @@ export const updateOrganization = async (
       organizationId,
       organizationDto,
     );
-    reply.code(200).send(updatedOrganization);
+    reply.status(200).send(updatedOrganization);
   } catch (error) {
     logger.error(`Error updating organization ${request.params}: ${error}`);
-    if (error instanceof Error && error.message === "Organization not found") {
-      reply.code(404).send({ message: "Organization not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error updating organization" });
+      reply.status(500).send({ message: "Error updating organization" });
     }
   }
 };
+
 export const deleteOrganization = async (
   request: FastifyRequest,
   reply: FastifyReply,
@@ -78,13 +91,13 @@ export const deleteOrganization = async (
   try {
     const { organizationId } = request.params as { organizationId: string };
     await OrganizationService.deleteOrganization(organizationId);
-    reply.code(204).send();
+    reply.status(204).send();
   } catch (error) {
     logger.error(`Error during delete organization: ${error}`);
-    if (error instanceof Error && error.message === "Organization not found") {
-      reply.code(404).send({ message: "Organization not found" });
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
     } else {
-      reply.code(500).send({ message: "Error deleting organization" });
+      reply.status(500).send({ message: "Error deleting organization" });
     }
   }
 };

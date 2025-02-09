@@ -20,7 +20,7 @@ class TestCaseService {
     }
   }
 
-  async getAllTestCases() {
+  async getAll() {
     try {
       logger.info(`Get all test cases`);
       return await testCaseRepository.getAll();
@@ -30,7 +30,7 @@ class TestCaseService {
     }
   }
 
-  async getTestCaseById(testCaseId: string) {
+  async getById(testCaseId: string) {
     try {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
@@ -45,7 +45,7 @@ class TestCaseService {
     }
   }
 
-  async updateTestCase(testCaseId: string, testCaseDto: UpdateTestCaseDTO) {
+  async update(testCaseId: string, testCaseDto: UpdateTestCaseDTO) {
     try {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
@@ -66,7 +66,7 @@ class TestCaseService {
     }
   }
 
-  async deleteTestCase(testCaseId: string) {
+  async delete(testCaseId: string) {
     try {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
@@ -83,7 +83,7 @@ class TestCaseService {
     }
   }
 
-  async getTestCasesByProjectId(projectId: string) {
+  async getByProjectId(projectId: string) {
     try {
       logger.info(`Get test cases by project id`);
       return await testCaseRepository.getByProjectId(projectId);
@@ -93,7 +93,7 @@ class TestCaseService {
     }
   }
 
-  async getTestCasesBySectionId(sectionId: string) {
+  async getBySectionId(sectionId: string) {
     try {
       logger.info(`Get test cases by section id`);
       return await testCaseRepository.getBySectionId(sectionId);
@@ -103,7 +103,7 @@ class TestCaseService {
     }
   }
 
-  async getTestCasesByAssignedUserId(assignedUserId: string) {
+  async getByAssignedUserId(assignedUserId: string) {
     try {
       logger.info(`Get test cases by assigned user id`);
       return await testCaseRepository.getByAssignedUserId(assignedUserId);
@@ -113,7 +113,7 @@ class TestCaseService {
     }
   }
 
-  async getTestCaseByTitle(title: string) {
+  async getByTitle(title: string) {
     try {
       const testCase = await testCaseRepository.getByTitle(title);
       if (!testCase) {
@@ -125,6 +125,25 @@ class TestCaseService {
     } catch (error) {
       logger.error(`Error getting test case by title:`, error);
       throw new CustomError("Failed to get test case", 500);
+    }
+  }
+  async getTestCasesByProjectId(projectId: string) {
+    try {
+      logger.info(`Get test cases by project id`);
+      return await testCaseRepository.getTestCasesByProjectId(projectId);
+    } catch (error) {
+      logger.error(`Error getting test cases by project id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
+  }
+
+  async getTestCasesByUserId(userId: string) {
+    try {
+      logger.info(`Get test cases by user id`);
+      return await testCaseRepository.getTestCasesByUserId(userId);
+    } catch (error) {
+      logger.error(`Error getting test cases by user id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
     }
   }
 }

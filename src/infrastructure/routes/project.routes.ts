@@ -17,12 +17,16 @@ export async function projectRoutes(fastify: FastifyInstance) {
   );
   fastify.get(
     "/projects",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     getAllProjects,
   );
   fastify.get(
     "/projects/:projectId",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     getProjectById,
   );
   fastify.put(
