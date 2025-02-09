@@ -4,13 +4,14 @@ import {
   CreateProjectDTO,
   UpdateProjectDTO,
 } from "../../application/dtos/project-dto";
+import {v4} from "uuid";
 
 export class ProjectDomainService implements ProjectRepository {
   constructor(private projectRepository: ProjectRepository) {}
 
   async addProject(projectDto: CreateProjectDTO): Promise<Project> {
     const project: Project = new Project(
-      "",
+        v4(),
       projectDto.name,
       projectDto.language ?? null,
       projectDto.location ?? null,

@@ -4,13 +4,14 @@ import {
   CreateTestReportDTO,
   UpdateTestReportDTO,
 } from "../../application/dtos/test-report-dto";
+import {v4} from "uuid";
 
 export class TestReportDomainService implements TestReportRepository {
   constructor(private testReportRepository: TestReportRepository) {}
 
   async addTestReport(testReportDto: CreateTestReportDTO): Promise<TestReport> {
     const testReport = new TestReport(
-      "",
+        v4(),
       testReportDto.name,
       testReportDto.reference ?? null,
       testReportDto.description,

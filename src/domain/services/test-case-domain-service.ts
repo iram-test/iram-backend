@@ -4,13 +4,14 @@ import {
   CreateTestCaseDTO,
   UpdateTestCaseDTO,
 } from "../../application/dtos/test-case-dto";
+import {v4} from "uuid";
 
 export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
   async addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
     const testCase = new TestCase(
-      "",
+        v4(),
       testCaseDto.title,
       testCaseDto.sectionIds,
       testCaseDto.projectId,

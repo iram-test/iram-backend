@@ -4,6 +4,7 @@ import {
   CreateOrganizationDTO,
   UpdateOrganizationDTO,
 } from "../../application/dtos/organization-dto";
+import {v4} from "uuid";
 
 export class OrganizationDomainService implements OrganizationRepository {
   constructor(private organizationRepository: OrganizationRepository) {}
@@ -12,7 +13,7 @@ export class OrganizationDomainService implements OrganizationRepository {
     organizationDto: CreateOrganizationDTO,
   ): Promise<Organization> {
     const organization: Organization = new Organization(
-      "",
+        v4(),
       organizationDto.name,
       organizationDto.description,
       new Date().toISOString(),

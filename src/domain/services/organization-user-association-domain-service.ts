@@ -4,6 +4,7 @@ import {
   CreateOrganizationUserAssociationDTO,
   UpdateOrganizationUserAssociationDTO,
 } from "../../application/dtos/organization-user-association-dto";
+import {v4} from "uuid";
 
 export class OrganizationUserAssociationDomainService
   implements OrganizationUserAssociationRepository
@@ -17,7 +18,7 @@ export class OrganizationUserAssociationDomainService
   ): Promise<OrganizationUserAssociation> {
     const association: OrganizationUserAssociation =
       new OrganizationUserAssociation(
-        "",
+          v4(),
         associationDto.userId,
         associationDto.organizationId,
         associationDto.role,

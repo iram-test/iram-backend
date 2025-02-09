@@ -8,7 +8,7 @@ import { UserPostgresRepository } from "../db/repositories/user-postgres-reposit
 import { generateTokens, verifyRefreshToken } from "../../tools/jwt";
 import { CustomError } from "../../tools/custom-error";
 import logger from "../../tools/logger";
-import { validatePassword } from "../../tools/password-utils";
+import {hashPassword, validatePassword} from "../../tools/password-utils";
 import { config } from "../../configs";
 import { UserRole } from "../../domain/entities/enums/user-role";
 import { User } from "../../domain/entities/user-entity";
@@ -31,10 +31,12 @@ class AuthService {
       userRole = UserRole.MANAGER;
     }
 
+    const hashedPassword = hashPassword(registerDto.password, config.hash.salt);
+
     const newUser = await userService.addUser({
       email: registerDto.email,
       username: registerDto.username,
-      password: registerDto.password,
+      password: hashedPassword,
       firstName: registerDto.firstName,
       lastName: registerDto.lastName,
       isVerified: false,

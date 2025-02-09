@@ -1,13 +1,14 @@
 import { User } from "../entities/user-entity";
 import { CreateUserDTO, UpdateUserDTO } from "../../application/dtos/user-dto";
 import { UserRepository } from "../repositories/user-repository";
+import { v4 } from "uuid";
 
 export class UserDomainService {
   constructor(private userRepository: UserRepository) {}
 
   async addUser(userDto: CreateUserDTO): Promise<User> {
     const user: User = new User(
-      "",
+        v4(),
       userDto.firstName,
       userDto.lastName,
       userDto.username,

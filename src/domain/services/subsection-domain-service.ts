@@ -4,13 +4,14 @@ import {
   CreateSubsectionDTO,
   UpdateSubsectionDTO,
 } from "../../application/dtos/subsection-dto";
+import {v4} from "uuid";
 
 export class SubsectionDomainService implements SubsectionRepository {
   constructor(private subsectionRepository: SubsectionRepository) {}
 
   async addSubsection(subsectionDto: CreateSubsectionDTO): Promise<Subsection> {
     const subsection = new Subsection(
-      "",
+        v4(),
       subsectionDto.name,
       subsectionDto.description,
       new Date().toISOString(),
