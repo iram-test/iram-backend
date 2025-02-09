@@ -37,10 +37,10 @@ export class MilestoneEntity {
   status!: MilestoneStatus;
 
   @CreateDateColumn()
-  createdAt!: Date;
+  createdAt!: string;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+  updatedAt!: string;
 
   @ManyToOne(
     () => ProjectEntity,

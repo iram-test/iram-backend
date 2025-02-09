@@ -18,7 +18,6 @@ const fileFormat = format.combine(
     if (
       metadata &&
       typeof metadata === "object" &&
-      metadata !== null &&
       Object.keys(metadata).length > 0
     ) {
       return `[${timestamp}] ${message} ${JSON.stringify(metadata)}`;

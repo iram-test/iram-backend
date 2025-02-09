@@ -22,7 +22,7 @@ export const PostgresDataSource: DataSource = new DataSource({
   synchronize: true,
   entities: [
     SectionEntity,
-    SubsectionEntity,
+    SubSectionEntity,
     MilestoneEntity,
     OrganizationEntity,
     OrganizationUserAssociationEntity,

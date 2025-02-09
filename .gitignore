@@ -132,3 +132,7 @@ dist
 
 # MacOS Data
 **/.DS_Store
+
+.idea
+
+config.json

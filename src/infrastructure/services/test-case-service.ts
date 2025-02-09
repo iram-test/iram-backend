@@ -1,4 +1,3 @@
-import { TestCaseDomainService } from "../../domain/services/test-case-domain-service";
 import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository";
 import {
   CreateTestCaseDTO,
@@ -8,52 +7,125 @@ import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 
 const testCaseRepository = new TestCasePostgresRepository();
-const testCaseService = new TestCaseDomainService(testCaseRepository);
 
 class TestCaseService {
   async addTestCase(testCaseDto: CreateTestCaseDTO) {
-    const newTestCase = await testCaseService.addTestCase(testCaseDto);
-    logger.info(`Test case created: ${newTestCase.title}`);
-    return newTestCase;
+    try {
+      const newTestCase = await testCaseRepository.addTestCase(testCaseDto);
+      logger.info(`Test case created: ${newTestCase.title}`);
+      return newTestCase;
+    } catch (error) {
+      logger.error(`Error creating test case:`, error);
+      throw new CustomError("Failed to create test case", 500);
+    }
   }
 
   async getAllTestCases() {
-    logger.info(`Get all test cases`);
-    return await testCaseService.getAll();
+    try {
+      logger.info(`Get all test cases`);
+      return await testCaseRepository.getAll();
+    } catch (error) {
+      logger.error(`Error getting all test cases:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
   }
 
   async getTestCaseById(testCaseId: string) {
-    const testCase = await testCaseService.getById(testCaseId);
-    if (!testCase) {
-      logger.warn(`Test case with id: ${testCaseId} was not found`);
-      throw new CustomError("Test case not found", 404);
+    try {
+      const testCase = await testCaseRepository.getById(testCaseId);
+      if (!testCase) {
+        logger.warn(`Test case with id: ${testCaseId} was not found`);
+        throw new CustomError("Test case not found", 404);
+      }
+      logger.info(`Test case with id: ${testCaseId} was found.`);
+      return testCase;
+    } catch (error) {
+      logger.error(`Error getting test case by id ${testCaseId}:`, error);
+      throw new CustomError("Failed to get test case", 500);
     }
-    logger.info(`Test case with id: ${testCaseId} was found.`);
-    return testCase;
   }
 
   async updateTestCase(testCaseId: string, testCaseDto: UpdateTestCaseDTO) {
-    const testCase = await testCaseService.getById(testCaseId);
-    if (!testCase) {
-      logger.warn(`Test case with id ${testCaseId} was not found for update.`);
-      throw new CustomError("Test case not found", 404);
+    try {
+      const testCase = await testCaseRepository.getById(testCaseId);
+      if (!testCase) {
+        logger.warn(
+          `Test case with id ${testCaseId} was not found for update.`,
+        );
+        throw new CustomError("Test case not found", 404);
+      }
+      const updatedTestCase = await testCaseRepository.update({
+        ...testCaseDto,
+        testCaseId,
+      });
+      logger.info(`Test case with id: ${testCaseId} updated successfully.`);
+      return updatedTestCase;
+    } catch (error) {
+      logger.error(`Error updating test case with id ${testCaseId}:`, error);
+      throw new CustomError("Failed to update test case", 500);
     }
-    const updatedTestCase = await testCaseService.update({
-      ...testCaseDto,
-      testCaseId,
-    });
-    logger.info(`Test case with id: ${testCaseId} updated successfully.`);
-    return updatedTestCase;
   }
 
   async deleteTestCase(testCaseId: string) {
-    const testCase = await testCaseService.getById(testCaseId);
-    if (!testCase) {
-      logger.warn(`Test case with id: ${testCaseId} was not found for delete.`);
-      throw new CustomError("Test case not found", 404);
+    try {
+      const testCase = await testCaseRepository.getById(testCaseId);
+      if (!testCase) {
+        logger.warn(
+          `Test case with id: ${testCaseId} was not found for delete.`,
+        );
+        throw new CustomError("Test case not found", 404);
+      }
+      await testCaseRepository.delete(testCaseId);
+      logger.info(`Test case with id: ${testCaseId} deleted successfully.`);
+    } catch (error) {
+      logger.error(`Error deleting test case with id ${testCaseId}:`, error);
+      throw new CustomError("Failed to delete test case", 500);
     }
-    await testCaseService.delete(testCaseId);
-    logger.info(`Test case with id: ${testCaseId} deleted successfully.`);
+  }
+
+  async getTestCasesByProjectId(projectId: string) {
+    try {
+      logger.info(`Get test cases by project id`);
+      return await testCaseRepository.getByProjectId(projectId);
+    } catch (error) {
+      logger.error(`Error getting test cases by project id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
+  }
+
+  async getTestCasesBySectionId(sectionId: string) {
+    try {
+      logger.info(`Get test cases by section id`);
+      return await testCaseRepository.getBySectionId(sectionId);
+    } catch (error) {
+      logger.error(`Error getting test cases by section id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
+  }
+
+  async getTestCasesByAssignedUserId(assignedUserId: string) {
+    try {
+      logger.info(`Get test cases by assigned user id`);
+      return await testCaseRepository.getByAssignedUserId(assignedUserId);
+    } catch (error) {
+      logger.error(`Error getting test cases by assigned user id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
+  }
+
+  async getTestCaseByTitle(title: string) {
+    try {
+      const testCase = await testCaseRepository.getByTitle(title);
+      if (!testCase) {
+        logger.warn(`Test case with title: ${title} was not found`);
+        throw new CustomError("Test case not found", 404);
+      }
+      logger.info(`Test case with title: ${title} was found.`);
+      return testCase;
+    } catch (error) {
+      logger.error(`Error getting test case by title:`, error);
+      throw new CustomError("Failed to get test case", 500);
+    }
   }
 }
 

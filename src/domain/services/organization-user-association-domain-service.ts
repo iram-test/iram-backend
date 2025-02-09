@@ -23,7 +23,7 @@ export class OrganizationUserAssociationDomainService
         associationDto.role,
         new Date().toISOString(),
       );
-    return await this.associationRepository.addAssociation(association); // Pass the constructed entity
+    return await this.associationRepository.addAssociation(association);
   }
 
   getAll(): Promise<OrganizationUserAssociation[]> {

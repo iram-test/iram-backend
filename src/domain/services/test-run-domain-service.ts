@@ -42,13 +42,4 @@ export class TestRunDomainService implements TestRunRepository {
   getByProjectId(projectId: string): Promise<TestRun[]> {
     return this.testRunRepository.getByProjectId(projectId);
   }
-  getByMilestoneId(milestoneId: string): Promise<TestRun[]> {
-    return this.testRunRepository.getByMilestoneId(milestoneId);
-  }
-  getByAssignedUserId(assignedUserId: string): Promise<TestRun[]> {
-    return this.testRunRepository.getByAssignedUserId(assignedUserId);
-  }
-  getByTestCaseId(testCaseId: string): Promise<TestRun[]> {
-    return this.testRunRepository.getByTestCaseId(testCaseId);
-  }
 }

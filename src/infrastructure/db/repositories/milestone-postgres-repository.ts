@@ -85,11 +85,11 @@ export class MilestonePostgresRepository implements MilestoneRepository {
       entity.startDate,
       entity.endDate,
       entity.status,
+      entity.project ? entity.project.projectId : null,
       entity.createdAt,
       entity.updatedAt,
-      entity.testReport,
-      entity.testRun,
-      entity.project,
+      entity.testReport ? entity.testReport.testReportId : null,
+      entity.testRun ? entity.testRun.testRunId : null,
     );
   }
 }

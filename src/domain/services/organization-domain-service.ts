@@ -18,7 +18,7 @@ export class OrganizationDomainService implements OrganizationRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.organizationRepository.addOrganization(organization); // Pass the constructed entity
+    return await this.organizationRepository.addOrganization(organization);
   }
 
   getAll(): Promise<Organization[]> {

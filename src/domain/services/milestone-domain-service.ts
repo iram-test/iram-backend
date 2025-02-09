@@ -17,12 +17,14 @@ export class MilestoneDomainService implements MilestoneRepository {
       milestoneDto.startDate ?? null,
       milestoneDto.endDate ?? null,
       milestoneDto.status,
-      milestoneDto.projectId,
+      "",
       new Date().toISOString(),
       new Date().toISOString(),
+      "",
+      "",
     );
 
-    return await this.milestoneRepository.addMilestone(milestone); // Pass the constructed entity
+    return await this.milestoneRepository.addMilestone(milestone);
   }
 
   getAll(): Promise<Milestone[]> {

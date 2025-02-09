@@ -5,7 +5,7 @@ import { TestType } from "../../domain/entities/enums/test-type";
 export interface TestCaseDTO {
   testCaseId: string;
   title: string;
-  sectionIds: string[]; // Changed sectionId to sectionIds
+  sectionIds: string[];
   projectId: string;
   assignedUserId: string;
   templateType: TemplateType;
@@ -13,14 +13,14 @@ export interface TestCaseDTO {
   priority: Priority;
   timeEstimation: string;
   description: string;
-  stepIds: string[] | null; // Changed stepsId to stepIds
+  stepIds: string[] | null;
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }
 
 export interface CreateTestCaseDTO {
   title: string;
-  sectionIds: string[]; // Changed sectionId to sectionIds
+  sectionIds: string[];
   projectId: string;
   assignedUserId: string;
   templateType: TemplateType;
@@ -34,7 +34,7 @@ export interface CreateTestCaseDTO {
 export interface UpdateTestCaseDTO {
   testCaseId: string;
   title?: string;
-  sectionIds?: string[]; // Changed sectionId to sectionIds
+  sectionIds?: string[];
   projectId?: string;
   assignedUserId?: string;
   templateType?: TemplateType;

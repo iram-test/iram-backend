@@ -11,12 +11,15 @@ import logger from "../../tools/logger";
 import { validatePassword } from "../../tools/password-utils";
 import { config } from "../../configs";
 import { UserRole } from "../../domain/entities/enums/user-role";
+import { User } from "../../domain/entities/user-entity";
 
 const userRepository = new UserPostgresRepository();
 const userService = new UserDomainService(userRepository);
 
 class AuthService {
-  async registration(registerDto: RegisterDTO) {
+  async registration(
+    registerDto: RegisterDTO,
+  ): Promise<{ userId: string; accessToken: string; refreshToken: string }> {
     const candidate = await userService.getUserByEmail(registerDto.email);
     if (candidate) {
       logger.warn(`User with email ${registerDto.email} already exists`);
@@ -24,12 +27,11 @@ class AuthService {
     }
 
     let userRole: UserRole = UserRole.USER;
-
     if (registerDto.role === "Manager") {
       userRole = UserRole.MANAGER;
     }
 
-    let newUser = await userService.addUser({
+    const newUser = await userService.addUser({
       email: registerDto.email,
       username: registerDto.username,
       password: registerDto.password,
@@ -47,20 +49,24 @@ class AuthService {
     );
 
     const lastLogin = new Date().toISOString();
-
-    newUser = await userService.save(newUser, tokens.refreshToken, lastLogin);
+    await userRepository.saveRefreshToken(newUser.userId, tokens.refreshToken);
+    await userRepository.updateLastLogin(newUser.userId, lastLogin);
 
     logger.info(`User registered with id: ${newUser.userId}`);
     return { userId: newUser.userId, ...tokens };
   }
 
-  async login(loginDto: LoginWithUsernameDTO | LoginWithEmailDTO) {
-    let user;
+  async login(
+    loginDto: LoginWithUsernameDTO | LoginWithEmailDTO,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    let user: User | null;
+
     if ("username" in loginDto) {
       user = await userService.getUserByUsername(loginDto.username);
     } else if ("email" in loginDto) {
       user = await userService.getUserByEmail(loginDto.email);
     } else {
+      logger.warn(`Invalid login credentials`);
       throw new CustomError("Invalid login credentials", 400);
     }
 
@@ -80,43 +86,56 @@ class AuthService {
     }
 
     const tokens = generateTokens(user.userId, user.username, user.role);
-    const lastLogin = new Date().toISOString();
 
-    user = await userService.save(user, tokens.refreshToken, lastLogin);
+    const lastLogin = new Date().toISOString();
+    await userRepository.saveRefreshToken(user.userId, tokens.refreshToken);
+    await userRepository.updateLastLogin(user.userId, lastLogin);
 
     logger.info(`User with id ${user.userId} logged in.`);
     return tokens;
   }
 
-  async logout(refreshToken: string) {
+  async logout(refreshToken: string): Promise<void> {
     if (!refreshToken) {
       logger.warn(`Refresh token is required`);
       throw new CustomError("Refresh token is required", 400);
     }
+
     try {
       const payload = verifyRefreshToken(refreshToken);
-      await userService.deleteRefreshToken(payload.userId);
+
+      await userRepository.deleteRefreshToken(payload.userId);
+
       logger.info(`User with id ${payload.userId} logged out.`);
     } catch (error) {
       logger.error(`Invalid refresh token`, error);
       throw new CustomError("Invalid refresh token", 401);
     }
   }
-  async refresh(refreshToken: string) {
+
+  async refresh(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     if (!refreshToken) {
       logger.warn(`Refresh token is required`);
       throw new CustomError("Refresh token is required", 400);
     }
+
     try {
       const payload = verifyRefreshToken(refreshToken);
-      let user = await userService.getUserById(payload.userId);
+
+      const user = await userService.getUserById(payload.userId);
       if (!user) {
         logger.warn(`User with id: ${payload.userId} was not found`);
         throw new CustomError("User not found", 404);
       }
+
       const tokens = generateTokens(payload.userId, user.username, user.role);
+
       const lastLogin = new Date().toISOString();
-      user = await userService.save(user, tokens.refreshToken, lastLogin);
+      await userRepository.saveRefreshToken(user.userId, tokens.refreshToken);
+      await userRepository.updateLastLogin(user.userId, lastLogin);
+
       logger.info(`Token for user id: ${payload.userId} was refreshed.`);
       return tokens;
     } catch (error) {

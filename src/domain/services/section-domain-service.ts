@@ -39,7 +39,4 @@ export class SectionDomainService implements SectionRepository {
   delete(sectionId: string): Promise<void> {
     return this.sectionRepository.delete(sectionId);
   }
-  getBySubsectionId(subsectionId: string): Promise<Section[]> {
-    return this.sectionRepository.getBySubsectionId(subsectionId);
-  }
 }

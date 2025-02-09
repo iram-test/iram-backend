@@ -46,13 +46,4 @@ export class TestReportDomainService implements TestReportRepository {
   getByAssignedUserId(assignedUserId: string): Promise<TestReport[]> {
     return this.testReportRepository.getByAssignedUserId(assignedUserId);
   }
-  getByTestCaseId(testCaseId: string): Promise<TestReport[]> {
-    return this.testReportRepository.getByTestCaseId(testCaseId);
-  }
-  getByMilestoneId(milestoneId: string): Promise<TestReport[]> {
-    return this.testReportRepository.getByMilestoneId(milestoneId);
-  }
-  getByTestRunId(testRunId: string): Promise<TestReport[]> {
-    return this.testReportRepository.getByTestRunId(testRunId);
-  }
 }
