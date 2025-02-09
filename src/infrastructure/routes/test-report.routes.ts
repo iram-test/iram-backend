@@ -89,14 +89,4 @@ export async function testReportRoutes(fastify: FastifyInstance) {
     },
     getTestReportsByProjectId,
   );
-
-  fastify.get(
-    "/users/:userId/test-reports",
-    {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
-    },
-    getTestReportsByUserId,
-  );
 }

@@ -42,10 +42,10 @@ export class UserEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   lastLoginAt!: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   refreshToken!: string | null;
 
   @Column({
