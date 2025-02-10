@@ -4,8 +4,6 @@ import { config } from "../configs/index";
 import { SectionEntity } from "../infrastructure/db/entities/section-entity";
 import { SubSectionEntity } from "../infrastructure/db/entities/subsection-entity";
 import { MilestoneEntity } from "../infrastructure/db/entities/milestone-entity";
-import { OrganizationEntity } from "../infrastructure/db/entities/organization-entity";
-import { OrganizationUserAssociationEntity } from "../infrastructure/db/entities/organization-user-association-entity";
 import { ProjectEntity } from "../infrastructure/db/entities/project-entity";
 import { StepEntity } from "../infrastructure/db/entities/step-entity";
 import { TestCaseEntity } from "../infrastructure/db/entities/test-case-entity";
@@ -24,8 +22,6 @@ export const PostgresDataSource: DataSource = new DataSource({
     SectionEntity,
     SubSectionEntity,
     MilestoneEntity,
-    OrganizationEntity,
-    OrganizationUserAssociationEntity,
     ProjectEntity,
     StepEntity,
     TestCaseEntity,

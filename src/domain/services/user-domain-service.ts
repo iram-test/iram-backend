@@ -8,7 +8,7 @@ export class UserDomainService {
 
   async addUser(userDto: CreateUserDTO): Promise<User> {
     const user: User = new User(
-        v4(),
+      v4(),
       userDto.firstName,
       userDto.lastName,
       userDto.username,

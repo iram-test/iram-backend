@@ -23,13 +23,7 @@ export class UserPostgresRepository implements UserRepository {
 
   async getAll(): Promise<User[]> {
     const users = await this.repository.find({
-      relations: [
-        "organizationAssociations",
-        "testCases",
-        "testReports",
-        "project",
-        "testRuns",
-      ],
+      relations: ["testCases", "testReports", "testRuns"],
     });
     return users.map((userEntity) => this.toDomainEntity(userEntity));
   }
@@ -37,13 +31,7 @@ export class UserPostgresRepository implements UserRepository {
   async getUserById(userId: string): Promise<User | null> {
     const userEntity = await this.repository.findOne({
       where: { userId },
-      relations: [
-        "organizationAssociations",
-        "testCases",
-        "testReports",
-        "project",
-        "testRuns",
-      ],
+      relations: ["testCases", "testReports", "testRuns"],
     });
     return userEntity ? this.toDomainEntity(userEntity) : null;
   }
@@ -53,13 +41,7 @@ export class UserPostgresRepository implements UserRepository {
     await this.repository.update(userId, updateData);
     const updatedUserEntity = await this.repository.findOneOrFail({
       where: { userId },
-      relations: [
-        "organizationAssociations",
-        "testCases",
-        "testReports",
-        "project",
-        "testRuns",
-      ],
+      relations: ["testCases", "testReports", "testRuns"],
     });
     return this.toDomainEntity(updatedUserEntity);
   }
@@ -71,13 +53,7 @@ export class UserPostgresRepository implements UserRepository {
   async getByEmail(email: string): Promise<User | null> {
     const userEntity = await this.repository.findOne({
       where: { email },
-      relations: [
-        "organizationAssociations",
-        "testCases",
-        "testReports",
-        "project",
-        "testRuns",
-      ],
+      relations: ["testCases", "testReports", "testRuns"],
     });
     return userEntity ? this.toDomainEntity(userEntity) : null;
   }
@@ -85,13 +61,7 @@ export class UserPostgresRepository implements UserRepository {
   async getByUsername(username: string): Promise<User | null> {
     const userEntity = await this.repository.findOne({
       where: { username },
-      relations: [
-        "organizationAssociations",
-        "testCases",
-        "testReports",
-        "project",
-        "testRuns",
-      ],
+      relations: ["testCases", "testReports", "testRuns"],
     });
     return userEntity ? this.toDomainEntity(userEntity) : null;
   }

@@ -8,7 +8,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { OrganizationEntity } from "./organization-entity";
 import { SectionEntity } from "./section-entity";
 import { TestCaseEntity } from "./test-case-entity";
 import { Language } from "../../../domain/entities/enums/language";
@@ -16,6 +15,7 @@ import { MilestoneEntity } from "./milestone-entity";
 import { TestReportEntity } from "./test-report-entity";
 import { TestRunEntity } from "./test-run-entity";
 import { UserEntity } from "./user-entity";
+import { Location } from "../../../domain/entities/enums/location";
 
 @Entity()
 export class ProjectEntity {
@@ -28,11 +28,18 @@ export class ProjectEntity {
   @Column({ type: "enum", enum: Language, nullable: true })
   language!: Language | null;
 
-  @Column({ type: "jsonb", nullable: true })
+  @Column({ type: "enum", enum: Location, nullable: true })
   location!: Location | null;
 
   @Column()
   description!: string;
+
+  @Column()
+  managerId!: string;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: "managerId" })
+  manager?: UserEntity;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -40,12 +47,8 @@ export class ProjectEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @Column({ nullable: true })
-  assignedUserId!: string | null;
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: "assignedUserId" })
-  assignedUser?: UserEntity;
+  @Column("text", { array: true, default: [] })
+  users!: string[];
 
   @OneToMany(
     () => SectionEntity,
@@ -58,13 +61,6 @@ export class ProjectEntity {
     (testCase) => testCase.project,
   )
   testCases?: TestCaseEntity[];
-
-  @ManyToOne(
-    () => OrganizationEntity,
-    (organization) => organization.projects,
-  )
-  @JoinColumn({ name: "organizationId" })
-  organization!: OrganizationEntity;
 
   @OneToMany(
     () => MilestoneEntity,

@@ -4,46 +4,61 @@ import {
   CreateProjectDTO,
   UpdateProjectDTO,
 } from "../../application/dtos/project-dto";
-import {v4} from "uuid";
+import { v4 } from "uuid";
 
-export class ProjectDomainService implements ProjectRepository {
+export class ProjectDomainService {
   constructor(private projectRepository: ProjectRepository) {}
 
   async addProject(projectDto: CreateProjectDTO): Promise<Project> {
     const project: Project = new Project(
-        v4(),
+      v4(),
       projectDto.name,
       projectDto.language ?? null,
       projectDto.location ?? null,
       projectDto.description,
-      projectDto.organizationId,
+      projectDto.managerId,
       new Date().toISOString(),
       new Date().toISOString(),
+      [],
     );
-    return await this.projectRepository.addProject(project); // Pass the constructed entity
+
+    return this.projectRepository.addProject(project);
   }
 
-  getAll(): Promise<Project[]> {
+  async getAll(): Promise<Project[]> {
     return this.projectRepository.getAll();
   }
 
-  getById(projectId: string): Promise<Project | null> {
+  async getById(projectId: string): Promise<Project | null> {
     return this.projectRepository.getById(projectId);
   }
 
-  getByName(projectName: string): Promise<Project | null> {
+  async getByName(projectName: string): Promise<Project | null> {
     return this.projectRepository.getByName(projectName);
   }
 
-  update(projectDto: UpdateProjectDTO): Promise<Project> {
-    return this.projectRepository.update(projectDto);
+  async updateProject(
+    projectId: string,
+    projectDto: UpdateProjectDTO,
+  ): Promise<Project | null> {
+    return this.projectRepository.update(projectId, projectDto);
   }
 
-  delete(projectId: string): Promise<void> {
+  async deleteProject(projectId: string): Promise<void> {
     return this.projectRepository.delete(projectId);
   }
 
-  getByOrganizationId(organizationId: string): Promise<Project[]> {
-    return this.projectRepository.getByOrganizationId(organizationId);
+  async addUserToProject(
+    projectId: string,
+    userId: string,
+  ): Promise<Project | null> {
+    return this.projectRepository.addUserToProject(projectId, userId);
+  }
+
+  async removeUserFromProject(
+    projectId: string,
+    userId: string,
+  ): Promise<Project | null> {
+    return this.projectRepository.removeUserFromProject(projectId, userId);
   }
 }

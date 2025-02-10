@@ -4,14 +4,14 @@ import {
   CreateTestRunDTO,
   UpdateTestRunDTO,
 } from "../../application/dtos/test-run-dto";
-import {v4} from "uuid";
+import { v4 } from "uuid";
 
 export class TestRunDomainService implements TestRunRepository {
   constructor(private testRunRepository: TestRunRepository) {}
 
   async addTestRun(testRunDto: CreateTestRunDTO): Promise<TestRun> {
     const testRun: TestRun = new TestRun(
-        v4(),
+      v4(),
       testRunDto.name,
       testRunDto.milestoneIds,
       testRunDto.assignedUserIds ?? null,

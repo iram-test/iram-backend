@@ -100,3 +100,49 @@ export const deleteProject = async (
     }
   }
 };
+
+export const addUserToProject = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { projectId } = request.params as { projectId: string };
+    const { userId } = request.body as { userId: string };
+    const updatedProject = await ProjectService.addUserToProject(
+      projectId,
+      userId,
+    );
+    reply.status(200).send(updatedProject);
+  } catch (error) {
+    logger.error(`Error adding user to project ${request.params}: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error adding user to project" });
+    }
+  }
+};
+
+export const removeUserFromProject = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { projectId } = request.params as { projectId: string };
+    const { userId } = request.body as { userId: string };
+    const updatedProject = await ProjectService.removeUserFromProject(
+      projectId,
+      userId,
+    );
+    reply.status(200).send(updatedProject);
+  } catch (error) {
+    logger.error(
+      `Error removing user from project ${request.params}: ${error}`,
+    );
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error removing user from project" });
+    }
+  }
+};

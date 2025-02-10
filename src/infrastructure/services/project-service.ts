@@ -5,13 +5,15 @@ import {
 } from "../../application/dtos/project-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { ProjectDomainService } from "../../domain/services/project-domain-service";
 
 const projectRepository = new ProjectPostgresRepository();
+const projectDomainService = new ProjectDomainService(projectRepository);
 
 class ProjectService {
   async addProject(projectDto: CreateProjectDTO) {
     try {
-      const newProject = await projectRepository.addProject(projectDto);
+      const newProject = await projectDomainService.addProject(projectDto);
       logger.info(`Project created: ${newProject.name}`);
       return newProject;
     } catch (error) {
@@ -23,7 +25,7 @@ class ProjectService {
   async getAll() {
     try {
       logger.info(`Get all projects`);
-      return await projectRepository.getAll();
+      return await projectDomainService.getAll();
     } catch (error) {
       logger.error(`Error getting all projects:`, error);
       throw new CustomError("Failed to get projects", 500);
@@ -32,7 +34,7 @@ class ProjectService {
 
   async getById(projectId: string) {
     try {
-      const project = await projectRepository.getById(projectId);
+      const project = await projectDomainService.getById(projectId);
       if (!project) {
         logger.warn(`Project with id: ${projectId} not found`);
         throw new CustomError("Project not found", 404);
@@ -47,7 +49,7 @@ class ProjectService {
 
   async getByName(projectName: string) {
     try {
-      const project = await projectRepository.getByName(projectName);
+      const project = await projectDomainService.getByName(projectName);
       if (!project) {
         logger.warn(`Project with name: ${projectName} not found`);
         throw new CustomError("Project not found", 404);
@@ -62,16 +64,15 @@ class ProjectService {
 
   async update(projectId: string, projectDto: UpdateProjectDTO) {
     try {
-      const project = await projectRepository.getById(projectId);
+      const project = await projectDomainService.getById(projectId);
       if (!project) {
         logger.warn(`Project with id: ${projectId} not found for update`);
         throw new CustomError("Project not found", 404);
       }
-
-      const updatedProject = await projectRepository.update({
-        ...projectDto,
+      const updatedProject = await projectDomainService.updateProject(
         projectId,
-      });
+        projectDto,
+      );
       logger.info(`Project with id: ${projectId} updated`);
       return updatedProject;
     } catch (error) {
@@ -82,13 +83,12 @@ class ProjectService {
 
   async delete(projectId: string) {
     try {
-      const project = await projectRepository.getById(projectId);
+      const project = await projectDomainService.getById(projectId);
       if (!project) {
         logger.warn(`Project with id: ${projectId} not found for delete`);
         throw new CustomError("Project not found", 404);
       }
-
-      await projectRepository.delete(projectId);
+      await projectDomainService.deleteProject(projectId);
       logger.info(`Project with id: ${projectId} deleted`);
     } catch (error) {
       logger.error(`Error deleting project with id ${projectId}:`, error);
@@ -96,18 +96,39 @@ class ProjectService {
     }
   }
 
-  async getByOrganizationId(organizationId: string) {
+  async addUserToProject(projectId: string, userId: string) {
     try {
-      const projects =
-        await projectRepository.getByOrganizationId(organizationId);
-      logger.info(`Get projects by organization id: ${organizationId}`);
-      return projects;
-    } catch (error) {
-      logger.error(
-        `Error getting projects by organization id ${organizationId}:`,
-        error,
+      const updatedProject = await projectDomainService.addUserToProject(
+        projectId,
+        userId,
       );
-      throw new CustomError("Failed to get projects", 500);
+      if (!updatedProject) {
+        logger.warn(`Project with id: ${projectId} not found`);
+        throw new CustomError("Project not found", 404);
+      }
+      logger.info(`User ${userId} added to project ${projectId}`);
+      return updatedProject;
+    } catch (error) {
+      logger.error(`Error adding user to project ${projectId}:`, error);
+      throw new CustomError("Failed to add user to project", 500);
+    }
+  }
+
+  async removeUserFromProject(projectId: string, userId: string) {
+    try {
+      const updatedProject = await projectDomainService.removeUserFromProject(
+        projectId,
+        userId,
+      );
+      if (!updatedProject) {
+        logger.warn(`Project with id: ${projectId} not found`);
+        throw new CustomError("Project not found", 404);
+      }
+      logger.info(`User ${userId} removed from project ${projectId}`);
+      return updatedProject;
+    } catch (error) {
+      logger.error(`Error removing user from project ${projectId}:`, error);
+      throw new CustomError("Failed to remove user from project", 500);
     }
   }
 }

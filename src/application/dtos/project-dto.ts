@@ -1,14 +1,16 @@
 import { Language } from "../../domain/entities/enums/language";
+import { Location } from "../../domain/entities/enums/location";
 
 export interface ProjectDTO {
   projectId: string;
   name: string;
   language: Language | null;
-  location: Location | null; // Assuming Location is a defined type
+  location: Location | null;
   description: string;
-  organizationId: string; // Change assignedUserId to organizationId
-  createdAt: string; // ISO string
-  updatedAt: string; // ISO string
+  managerId: string;
+  createdAt: string;
+  updatedAt: string;
+  users: string[];
 }
 
 export interface CreateProjectDTO {
@@ -16,14 +18,14 @@ export interface CreateProjectDTO {
   language?: Language | null;
   location?: Location | null;
   description: string;
-  organizationId: string; // Change assignedUserId to organizationId
+  managerId: string;
 }
 
 export interface UpdateProjectDTO {
-  projectId: string;
   name?: string;
   language?: Language | null;
   location?: Location | null;
   description?: string;
-  organizationId?: string; // Change assignedUserId to organizationId
+  managerId?: string;
+  users?: string[];
 }

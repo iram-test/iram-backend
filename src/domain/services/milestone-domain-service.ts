@@ -4,25 +4,25 @@ import {
   CreateMilestoneDTO,
   UpdateMilestoneDTO,
 } from "../../application/dtos/milestone-dto";
-import {v4} from "uuid";
+import { v4 } from "uuid";
 
 export class MilestoneDomainService implements MilestoneRepository {
   constructor(private milestoneRepository: MilestoneRepository) {}
 
   async addMilestone(milestoneDto: CreateMilestoneDTO): Promise<Milestone> {
     const milestone: Milestone = new Milestone(
-        v4(),
+      v4(),
       milestoneDto.name,
       milestoneDto.parentId ?? null,
       milestoneDto.description,
       milestoneDto.startDate ?? null,
       milestoneDto.endDate ?? null,
       milestoneDto.status,
-        v4(),
+      v4(),
       new Date().toISOString(),
       new Date().toISOString(),
-        v4(),
-        v4(),
+      v4(),
+      v4(),
     );
 
     return await this.milestoneRepository.addMilestone(milestone);

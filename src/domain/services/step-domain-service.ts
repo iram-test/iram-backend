@@ -1,14 +1,14 @@
 import { Step } from "../entities/step-entity";
 import { StepRepository } from "../repositories/step-repository";
 import { CreateStepDTO, UpdateStepDTO } from "../../application/dtos/step-dto";
-import {v4} from "uuid";
+import { v4 } from "uuid";
 
 export class StepDomainService implements StepRepository {
   constructor(private stepRepository: StepRepository) {}
 
   async addStep(stepDto: CreateStepDTO): Promise<Step> {
     const step = new Step(
-        v4(),
+      v4(),
       stepDto.stepDescription,
       stepDto.expectedResult,
       stepDto.image ?? null,

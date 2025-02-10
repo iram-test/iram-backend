@@ -6,11 +6,9 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { OrganizationUserAssociationEntity } from "./organization-user-association-entity";
 import { TestCaseEntity } from "./test-case-entity";
 import { TestReportEntity } from "./test-report-entity";
 import { UserRole } from "../../../domain/entities/enums/user-role";
-import { ProjectEntity } from "./project-entity";
 import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
@@ -56,12 +54,6 @@ export class UserEntity {
   role!: UserRole;
 
   @OneToMany(
-    () => OrganizationUserAssociationEntity,
-    (organizationUserAssociation) => organizationUserAssociation.user,
-  )
-  organizationAssociations?: OrganizationUserAssociationEntity[];
-
-  @OneToMany(
     () => TestCaseEntity,
     (testCase) => testCase.assignedUser,
   )
@@ -72,12 +64,6 @@ export class UserEntity {
     (testReport) => testReport.assignedUser,
   )
   testReports?: TestReportEntity[];
-
-  @OneToMany(
-    () => ProjectEntity,
-    (project) => project.assignedUser,
-  )
-  project?: ProjectEntity[];
 
   @OneToMany(
     () => TestRunEntity,

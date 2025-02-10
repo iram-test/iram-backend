@@ -4,14 +4,14 @@ import {
   CreateSectionDTO,
   UpdateSectionDTO,
 } from "../../application/dtos/section-dto";
-import {v4} from "uuid";
+import { v4 } from "uuid";
 
 export class SectionDomainService implements SectionRepository {
   constructor(private sectionRepository: SectionRepository) {}
 
   async addSection(sectionDto: CreateSectionDTO): Promise<Section> {
     const section = new Section(
-        v4(),
+      v4(),
       sectionDto.name,
       sectionDto.description,
       sectionDto.subsectionIds ?? null,
