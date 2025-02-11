@@ -5,13 +5,24 @@ import {
 } from "../../application/dtos/test-case-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
 
 const testCaseRepository = new TestCasePostgresRepository();
+const projectRepository = new ProjectPostgresRepository();
 
 class TestCaseService {
-  async addTestCase(testCaseDto: CreateTestCaseDTO) {
+  async addTestCase(projectId: string, testCaseDto: CreateTestCaseDTO) {
     try {
-      const newTestCase = await testCaseRepository.addTestCase(testCaseDto);
+      const project = await projectRepository.getById(projectId);
+      if (!project) {
+        logger.warn(`Project with id: ${projectId} was not found`);
+        throw new CustomError("Project not found", 404);
+      }
+
+      const newTestCase = await testCaseRepository.addTestCase({
+        ...testCaseDto,
+        projectId: projectId,
+      });
       logger.info(`Test case created: ${newTestCase.title}`);
       return newTestCase;
     } catch (error) {

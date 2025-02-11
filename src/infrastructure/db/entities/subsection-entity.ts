@@ -6,10 +6,8 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from "typeorm";
 import { SectionEntity } from "./section-entity";
-import { TestCaseEntity } from "./test-case-entity";
 
 @Entity()
 export class SubSectionEntity {
@@ -34,10 +32,4 @@ export class SubSectionEntity {
   )
   @JoinColumn({ name: "sectionId" })
   section!: SectionEntity;
-
-  @OneToMany(
-    () => TestCaseEntity,
-    (testCase) => testCase.subsection,
-  )
-  testCases?: TestCaseEntity[];
 }

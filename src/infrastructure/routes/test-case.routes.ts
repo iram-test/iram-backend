@@ -15,7 +15,7 @@ import { getTestCaseByTitle } from "../controllers/test-case-controller";
 
 export async function testCaseRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/test-cases",
+    "/projects/:projectId/test-cases",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     addTestCase,
   );

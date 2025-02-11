@@ -21,7 +21,6 @@ export interface TestCaseDTO {
 export interface CreateTestCaseDTO {
   title: string;
   sectionIds: string[];
-  projectId: string;
   assignedUserId: string;
   templateType: TemplateType;
   testType: TestType;

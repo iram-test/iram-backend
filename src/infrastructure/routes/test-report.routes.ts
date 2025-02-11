@@ -15,7 +15,7 @@ import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function testReportRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/test-reports",
+    "/projects/:projectId/test-reports",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),

@@ -12,11 +12,12 @@ export const addTestRun = async (
   reply: FastifyReply,
 ) => {
   try {
+    const { projectId } = request.params as { projectId: string };
     const testRunDto = request.body as CreateTestRunDTO;
-    const newTestRun = await TestRunService.addTestRun(testRunDto);
+    const newTestRun = await TestRunService.addTestRun(projectId, testRunDto);
     reply.status(201).send(newTestRun);
   } catch (error) {
-    logger.error(`Error during creating test run: ${error}`);
+    logger.error(`Error creating test run: ${error}`);
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
     } else {
@@ -33,7 +34,7 @@ export const getAllTestRuns = async (
     const testRuns = await TestRunService.getAll();
     reply.status(200).send(testRuns);
   } catch (error) {
-    logger.error(`Error during getting all test runs: ${error}`);
+    logger.error(`Error getting all test runs: ${error}`);
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
     } else {
@@ -51,7 +52,7 @@ export const getTestRunById = async (
     const testRun = await TestRunService.getById(testRunId);
     reply.status(200).send(testRun);
   } catch (error) {
-    logger.error(`Error during getting test run by id: ${error}`);
+    logger.error(`Error getting test run by id: ${error}`);
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
     } else {
@@ -71,7 +72,7 @@ export const updateTestRun = async (
     reply.status(200).send(updatedTestRun);
   } catch (error) {
     logger.error(
-      `Error during updating test run with id: ${request.params}: ${error}`,
+      `Error updating test run with id: ${request.params}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });

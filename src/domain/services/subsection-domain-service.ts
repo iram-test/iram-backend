@@ -9,7 +9,9 @@ import { v4 } from "uuid";
 export class SubsectionDomainService implements SubsectionRepository {
   constructor(private subsectionRepository: SubsectionRepository) {}
 
-  async addSubsection(subsectionDto: CreateSubsectionDTO): Promise<Subsection> {
+  async addSubsection(
+    subsectionDto: CreateSubsectionDTO & { sectionId: string },
+  ): Promise<Subsection> {
     const subsection = new Subsection(
       v4(),
       subsectionDto.name,
@@ -17,7 +19,7 @@ export class SubsectionDomainService implements SubsectionRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.subsectionRepository.addSubsection(subsection);
+    return await this.subsectionRepository.addSubsection(subsectionDto);
   }
 
   getAll(): Promise<Subsection[]> {

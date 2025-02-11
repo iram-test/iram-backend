@@ -8,19 +8,22 @@ export interface MilestoneDTO {
   startDate: string | null; // ISO string
   endDate: string | null; // ISO string
   status: MilestoneStatus;
-  projectId: string; // Add projectId
+  projectId: string | null;
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
+  testReportId: string | null;
+  testRunId: string | null;
 }
 
 export interface CreateMilestoneDTO {
   name: string;
   parentId?: string | null;
   description: string;
-  startDate?: string | null; // ISO string
-  endDate?: string | null; // ISO string
+  startDate?: string | null;
+  endDate?: string | null;
   status: MilestoneStatus;
-  projectId: string | null;
+  testReportId?: string | null;
+  testRunId?: string | null;
 }
 
 export interface UpdateMilestoneDTO {

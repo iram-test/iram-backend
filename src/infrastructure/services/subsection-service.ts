@@ -5,14 +5,24 @@ import {
 } from "../../application/dtos/subsection-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { SectionPostgresRepository } from "../db/repositories/section-postgres-repository";
 
 const subsectionRepository = new SubsectionPostgresRepository();
+const sectionRepository = new SectionPostgresRepository();
 
 class SubsectionService {
-  async addSubsection(subsectionDto: CreateSubsectionDTO) {
+  async addSubsection(sectionId: string, subsectionDto: CreateSubsectionDTO) {
     try {
-      const newSubsection =
-        await subsectionRepository.addSubsection(subsectionDto);
+      const section = await sectionRepository.getById(sectionId);
+      if (!section) {
+        logger.warn(`Section with id: ${sectionId} was not found`);
+        throw new CustomError("Section not found", 404);
+      }
+
+      const newSubsection = await subsectionRepository.addSubsection({
+        ...subsectionDto,
+        sectionId: sectionId,
+      });
       logger.info(`Subsection created: ${newSubsection.name}`);
       return newSubsection;
     } catch (error) {

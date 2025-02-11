@@ -5,7 +5,9 @@ import {
 } from "../../application/dtos/section-dto";
 
 export interface SectionRepository {
-  addSection(section: CreateSectionDTO): Promise<Section>;
+  addSection(
+    section: CreateSectionDTO & { testCaseId: string },
+  ): Promise<Section>;
   getAll(): Promise<Section[]>;
   update(section: UpdateSectionDTO): Promise<Section>;
   getById(sectionId: string): Promise<Section | null>;

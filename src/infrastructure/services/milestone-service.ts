@@ -6,14 +6,25 @@ import {
 } from "../../application/dtos/milestone-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
 
 const milestoneRepository = new MilestonePostgresRepository();
+const projectRepository = new ProjectPostgresRepository();
 const milestoneService = new MilestoneDomainService(milestoneRepository);
 
 class MilestoneService {
-  async addMilestone(milestoneDto: CreateMilestoneDTO) {
+  async addMilestone(projectId: string, milestoneDto: CreateMilestoneDTO) {
     try {
-      const newMilestone = await milestoneService.addMilestone(milestoneDto);
+      const project = await projectRepository.getById(projectId);
+      if (!project) {
+        logger.warn(`Project with id: ${projectId} was not found`);
+        throw new CustomError("Project not found", 404);
+      }
+
+      const newMilestone = await milestoneService.addMilestone({
+        ...milestoneDto,
+        projectId: projectId,
+      });
       logger.info(`Milestone created: ${newMilestone.name}`);
       return newMilestone;
     } catch (error) {

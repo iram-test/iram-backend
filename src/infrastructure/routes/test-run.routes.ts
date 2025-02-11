@@ -16,7 +16,7 @@ import {
 
 export async function testRunRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/test-runs",
+    "/projects/:projectId/test-runs",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
     addTestRun,
   );

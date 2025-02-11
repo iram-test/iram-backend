@@ -9,7 +9,9 @@ import { v4 } from "uuid";
 export class MilestoneDomainService implements MilestoneRepository {
   constructor(private milestoneRepository: MilestoneRepository) {}
 
-  async addMilestone(milestoneDto: CreateMilestoneDTO): Promise<Milestone> {
+  async addMilestone(
+    milestoneDto: CreateMilestoneDTO & { projectId: string },
+  ): Promise<Milestone> {
     const milestone: Milestone = new Milestone(
       v4(),
       milestoneDto.name,
@@ -18,13 +20,12 @@ export class MilestoneDomainService implements MilestoneRepository {
       milestoneDto.startDate ?? null,
       milestoneDto.endDate ?? null,
       milestoneDto.status,
-      v4(),
+      milestoneDto.projectId,
+      milestoneDto.testReportId ?? null,
+      milestoneDto.testRunId ?? null,
       new Date().toISOString(),
       new Date().toISOString(),
-      v4(),
-      v4(),
     );
-
     return await this.milestoneRepository.addMilestone(milestone);
   }
 

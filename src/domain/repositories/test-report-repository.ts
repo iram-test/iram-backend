@@ -5,7 +5,9 @@ import {
 } from "../../application/dtos/test-report-dto";
 
 export interface TestReportRepository {
-  addTestReport(testReport: CreateTestReportDTO): Promise<TestReport>;
+  addTestReport(
+    testReport: CreateTestReportDTO & { projectId: string },
+  ): Promise<TestReport>;
   getAll(): Promise<TestReport[]>;
   update(testReport: UpdateTestReportDTO): Promise<TestReport>;
   getById(testReportId: string): Promise<TestReport | null>;

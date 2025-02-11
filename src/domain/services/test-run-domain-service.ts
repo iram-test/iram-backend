@@ -9,7 +9,9 @@ import { v4 } from "uuid";
 export class TestRunDomainService implements TestRunRepository {
   constructor(private testRunRepository: TestRunRepository) {}
 
-  async addTestRun(testRunDto: CreateTestRunDTO): Promise<TestRun> {
+  async addTestRun(
+    testRunDto: CreateTestRunDTO & { projectId: string },
+  ): Promise<TestRun> {
     const testRun: TestRun = new TestRun(
       v4(),
       testRunDto.name,
@@ -21,7 +23,7 @@ export class TestRunDomainService implements TestRunRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.testRunRepository.addTestRun(testRun);
+    return await this.testRunRepository.addTestRun(testRunDto);
   }
 
   getAll(): Promise<TestRun[]> {
@@ -44,17 +46,14 @@ export class TestRunDomainService implements TestRunRepository {
     return this.testRunRepository.getByProjectId(projectId);
   }
   getTestRunByProjectId(projectId: string): Promise<TestRun[]> {
-    // NEW
     return this.testRunRepository.getTestRunByProjectId(projectId);
   }
 
   getTestRunByUserId(userId: string): Promise<TestRun[]> {
-    // NEW
     return this.testRunRepository.getTestRunByUserId(userId);
   }
 
   getTestRunByTestReportId(testReportId: string): Promise<TestRun[]> {
-    // NEW
     return this.testRunRepository.getTestRunByTestReportId(testReportId);
   }
 }

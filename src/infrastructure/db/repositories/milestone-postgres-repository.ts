@@ -1,4 +1,4 @@
-import { DataSource, Repository, FindOptionsWhere, IsNull } from "typeorm";
+import { DataSource, Repository, IsNull } from "typeorm";
 import { MilestoneEntity } from "../entities/milestone-entity";
 import { Milestone } from "../../../domain/entities/milestone-entity";
 import {
@@ -15,8 +15,20 @@ export class MilestonePostgresRepository implements MilestoneRepository {
     this.repository = this.dataSource.getRepository(MilestoneEntity);
   }
 
-  async addMilestone(createDto: CreateMilestoneDTO): Promise<Milestone> {
-    const milestone = this.repository.create(createDto);
+  async addMilestone(
+    createDto: CreateMilestoneDTO & {
+      projectId: string;
+      testReportId?: string | null;
+      testRunId?: string | null;
+    },
+  ): Promise<Milestone> {
+    const milestone = this.repository.create({
+      ...createDto,
+      projectId: createDto.projectId,
+      testReportId: createDto.testReportId ?? null,
+      testRunId: createDto.testRunId ?? null,
+    });
+
     const savedMilestone = await this.repository.save(milestone);
     return this.toDomainEntity(savedMilestone);
   }
@@ -85,11 +97,11 @@ export class MilestonePostgresRepository implements MilestoneRepository {
       entity.startDate,
       entity.endDate,
       entity.status,
-      entity.project ? entity.project.projectId : null,
+      entity.projectId,
+      entity.testReportId,
+      entity.testRunId,
       entity.createdAt,
       entity.updatedAt,
-      entity.testReport ? entity.testReport.testReportId : null,
-      entity.testRun ? entity.testRun.testRunId : null,
     );
   }
 }

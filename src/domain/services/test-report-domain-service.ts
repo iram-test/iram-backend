@@ -9,7 +9,9 @@ import { v4 } from "uuid";
 export class TestReportDomainService implements TestReportRepository {
   constructor(private testReportRepository: TestReportRepository) {}
 
-  async addTestReport(testReportDto: CreateTestReportDTO): Promise<TestReport> {
+  async addTestReport(
+    testReportDto: CreateTestReportDTO & { projectId: string },
+  ): Promise<TestReport> {
     const testReport = new TestReport(
       v4(),
       testReportDto.name,
@@ -19,10 +21,11 @@ export class TestReportDomainService implements TestReportRepository {
       testReportDto.testCaseIds,
       testReportDto.milestoneIds,
       testReportDto.testRunIds,
+      testReportDto.projectId,
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.testReportRepository.addTestReport(testReport); // Pass the constructed entity
+    return await this.testReportRepository.addTestReport(testReport);
   }
 
   getAll(): Promise<TestReport[]> {
@@ -48,11 +51,9 @@ export class TestReportDomainService implements TestReportRepository {
     return this.testReportRepository.getByAssignedUserId(assignedUserId);
   }
   getTestReportsByProjectId(projectId: string): Promise<TestReport[]> {
-    // NEW
     return this.testReportRepository.getTestReportsByProjectId(projectId);
   }
   getTestReportsByUserId(userId: string): Promise<TestReport[]> {
-    // NEW
     return this.testReportRepository.getTestReportsByUserId(userId);
   }
 }

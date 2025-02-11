@@ -5,13 +5,23 @@ import {
 } from "../../application/dtos/test-run-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
 
 const testRunRepository = new TestRunPostgresRepository();
+const projectRepository = new ProjectPostgresRepository();
 
 class TestRunService {
-  async addTestRun(testRunDto: CreateTestRunDTO) {
+  async addTestRun(projectId: string, testRunDto: CreateTestRunDTO) {
     try {
-      const newTestRun = await testRunRepository.addTestRun(testRunDto);
+      const project = await projectRepository.getById(projectId);
+      if (!project) {
+        logger.warn(`Project with id: ${projectId} was not found`);
+        throw new CustomError("Project not found", 404);
+      }
+      const newTestRun = await testRunRepository.addTestRun({
+        ...testRunDto,
+        projectId: projectId,
+      });
       logger.info(`Test run created: ${newTestRun.testRunId}`);
       return newTestRun;
     } catch (error) {

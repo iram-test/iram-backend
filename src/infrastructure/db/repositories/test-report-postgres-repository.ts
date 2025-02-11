@@ -15,7 +15,9 @@ export class TestReportPostgresRepository implements TestReportRepository {
     this.repository = this.dataSource.getRepository(TestReportEntity);
   }
 
-  async addTestReport(createDto: CreateTestReportDTO): Promise<TestReport> {
+  async addTestReport(
+    createDto: CreateTestReportDTO & { projectId: string },
+  ): Promise<TestReport> {
     const testReport = this.repository.create(createDto);
     const savedTestReport = await this.repository.save(testReport);
     return this.toDomainEntity(savedTestReport);
@@ -100,6 +102,7 @@ export class TestReportPostgresRepository implements TestReportRepository {
       testCaseIds,
       milestoneIds,
       testRunIds,
+      entity.project.projectId,
       entity.createdAt.toISOString(),
       entity.updatedAt.toISOString(),
     );

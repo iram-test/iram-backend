@@ -7,6 +7,7 @@ import {
 } from "../../../application/dtos/project-dto";
 import { ProjectRepository } from "../../../domain/repositories/project-repository";
 import { PostgresDataSource } from "../../../tools/db-connection";
+import { UserEntity } from "../entities/user-entity";
 
 export class ProjectPostgresRepository implements ProjectRepository {
   private repository: Repository<ProjectEntity>;
@@ -101,6 +102,13 @@ export class ProjectPostgresRepository implements ProjectRepository {
     userId: string,
   ): Promise<Project | null> {
     try {
+      const user = await this.dataSource
+        .getRepository(UserEntity)
+        .findOne({ where: { userId } });
+      if (!user) {
+        return null;
+      }
+
       const project = await this.repository.findOne({ where: { projectId } });
       if (!project) {
         return null;
@@ -122,6 +130,13 @@ export class ProjectPostgresRepository implements ProjectRepository {
     userId: string,
   ): Promise<Project | null> {
     try {
+      const user = await this.dataSource
+        .getRepository(UserEntity)
+        .findOne({ where: { userId } });
+      if (!user) {
+        return null;
+      }
+
       const project = await this.repository.findOne({ where: { projectId } });
       if (!project) {
         return null;

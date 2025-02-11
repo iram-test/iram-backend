@@ -15,7 +15,9 @@ export class SectionPostgresRepository implements SectionRepository {
     this.repository = this.dataSource.getRepository(SectionEntity);
   }
 
-  async addSection(createDto: CreateSectionDTO): Promise<Section> {
+  async addSection(
+    createDto: CreateSectionDTO & { testCaseId: string },
+  ): Promise<Section> {
     const section = this.repository.create(createDto);
     const savedSection = await this.repository.save(section);
     return this.toDomainEntity(savedSection);
@@ -23,7 +25,7 @@ export class SectionPostgresRepository implements SectionRepository {
 
   async getAll(): Promise<Section[]> {
     const sections = await this.repository.find({
-      relations: ["project", "testCases", "subsections"],
+      relations: ["testCase", "subsections"],
     });
     return sections.map((entity) => this.toDomainEntity(entity));
   }
@@ -33,7 +35,7 @@ export class SectionPostgresRepository implements SectionRepository {
     await this.repository.update(sectionId, updateData);
     const updatedSection = await this.repository.findOneOrFail({
       where: { sectionId },
-      relations: ["project", "testCases", "subsections"],
+      relations: ["testCase", "subsections"],
     });
     return this.toDomainEntity(updatedSection);
   }
@@ -41,7 +43,7 @@ export class SectionPostgresRepository implements SectionRepository {
   async getById(sectionId: string): Promise<Section | null> {
     const section = await this.repository.findOne({
       where: { sectionId },
-      relations: ["project", "testCases", "subsections"],
+      relations: ["testCase", "subsections"],
     });
     return section ? this.toDomainEntity(section) : null;
   }
@@ -49,7 +51,7 @@ export class SectionPostgresRepository implements SectionRepository {
   async getByName(sectionName: string): Promise<Section | null> {
     const section = await this.repository.findOne({
       where: { name: sectionName },
-      relations: ["project", "testCases", "subsections"],
+      relations: ["testCase", "subsections"],
     });
     return section ? this.toDomainEntity(section) : null;
   }
@@ -59,12 +61,8 @@ export class SectionPostgresRepository implements SectionRepository {
   }
 
   async getSectionsByProjectId(projectId: string): Promise<Section[]> {
-    const sections = await this.repository.find({
-      where: { project: { projectId: projectId } },
-      relations: ["project", "testCases", "subsections"],
-    });
-
-    return sections.map((entity) => this.toDomainEntity(entity));
+    // Цей метод не має сенсу в цій ієрархії, його треба видалити або переробити.
+    return [];
   }
 
   private toDomainEntity(entity: SectionEntity): Section {

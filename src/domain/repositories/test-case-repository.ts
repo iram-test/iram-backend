@@ -5,7 +5,9 @@ import {
 } from "../../application/dtos/test-case-dto";
 
 export interface TestCaseRepository {
-  addTestCase(testCase: CreateTestCaseDTO): Promise<TestCase>;
+  addTestCase(
+    testCase: CreateTestCaseDTO & { projectId: string },
+  ): Promise<TestCase>;
   getAll(): Promise<TestCase[]>;
   update(testCase: UpdateTestCaseDTO): Promise<TestCase>;
   getById(testCaseId: string): Promise<TestCase | null>;

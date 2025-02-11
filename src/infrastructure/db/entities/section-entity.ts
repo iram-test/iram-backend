@@ -8,9 +8,9 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { ProjectEntity } from "./project-entity";
-import { TestCaseEntity } from "./test-case-entity";
 import { SubSectionEntity } from "./subsection-entity";
+import { TestCaseEntity } from "./test-case-entity";
+import { ProjectEntity } from "./project-entity";
 
 @Entity()
 export class SectionEntity {
@@ -30,21 +30,22 @@ export class SectionEntity {
   updatedAt!: Date;
 
   @ManyToOne(
-    () => ProjectEntity,
-    (project) => project.sections,
-  )
-  @JoinColumn({ name: "projectId" })
-  project!: ProjectEntity;
-
-  @OneToMany(
     () => TestCaseEntity,
-    (testCase) => testCase.section,
+    (testCase) => testCase.sections,
   )
-  testCases?: TestCaseEntity[];
+  @JoinColumn({ name: "testCaseId" })
+  testCase!: TestCaseEntity;
 
   @OneToMany(
     () => SubSectionEntity,
     (subsection) => subsection.section,
   )
   subsections?: SubSectionEntity[];
+  @ManyToOne(
+    () => ProjectEntity,
+    (project) => project.sections,
+    { onDelete: "CASCADE" },
+  )
+  @JoinColumn({ name: "projectId" })
+  project!: ProjectEntity;
 }

@@ -9,7 +9,9 @@ import { v4 } from "uuid";
 export class SectionDomainService implements SectionRepository {
   constructor(private sectionRepository: SectionRepository) {}
 
-  async addSection(sectionDto: CreateSectionDTO): Promise<Section> {
+  async addSection(
+    sectionDto: CreateSectionDTO & { testCaseId: string },
+  ): Promise<Section> {
     const section = new Section(
       v4(),
       sectionDto.name,
@@ -18,7 +20,7 @@ export class SectionDomainService implements SectionRepository {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.sectionRepository.addSection(section);
+    return await this.sectionRepository.addSection(sectionDto);
   }
 
   getAll(): Promise<Section[]> {

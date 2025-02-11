@@ -12,8 +12,12 @@ export const addTestReport = async (
   reply: FastifyReply,
 ) => {
   try {
+    const { projectId } = request.params as { projectId: string };
     const testReportDto = request.body as CreateTestReportDTO;
-    const newTestReport = await TestReportService.addTestReport(testReportDto);
+    const newTestReport = await TestReportService.addTestReport(
+      projectId,
+      testReportDto,
+    );
     reply.status(201).send(newTestReport);
   } catch (error) {
     logger.error(`Error creating test report: ${error}`);

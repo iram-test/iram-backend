@@ -8,6 +8,7 @@ export class TestReport {
     public testCaseIds: string[],
     public milestoneIds: string[],
     public testRunIds: string[],
+    public projectId: string,
     public createdAt: string,
     public updatedAt: string,
   ) {}

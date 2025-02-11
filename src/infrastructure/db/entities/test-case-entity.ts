@@ -27,9 +27,6 @@ export class TestCaseEntity {
   title!: string;
 
   @Column()
-  sectionId!: string;
-
-  @Column()
   projectId!: string;
 
   @Column({ type: "enum", enum: TemplateType })
@@ -70,25 +67,17 @@ export class TestCaseEntity {
   @JoinColumn({ name: "assignedUserId" })
   assignedUser!: UserEntity;
 
-  @ManyToOne(
+  @OneToMany(
     () => SectionEntity,
-    (section) => section.testCases,
+    (section) => section.testCase,
   )
-  @JoinColumn({ name: "sectionId" })
-  section!: SectionEntity;
+  sections?: SectionEntity[];
 
   @OneToMany(
     () => StepEntity,
     (step) => step.testCase,
   )
   steps?: StepEntity[];
-
-  @ManyToOne(
-    () => SubSectionEntity,
-    (subsection) => subsection.testCases,
-  )
-  @JoinColumn({ name: "subsectionId" })
-  subsection!: SubSectionEntity;
 
   @ManyToOne(
     () => TestRunEntity,

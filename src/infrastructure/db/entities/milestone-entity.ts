@@ -42,6 +42,15 @@ export class MilestoneEntity {
   @UpdateDateColumn()
   updatedAt!: string;
 
+  @Column({ nullable: false })
+  projectId!: string;
+
+  @Column({ nullable: true })
+  testReportId!: string | null;
+
+  @Column({ nullable: true })
+  testRunId!: string | null;
+
   @ManyToOne(
     () => ProjectEntity,
     (project) => project.milestones,

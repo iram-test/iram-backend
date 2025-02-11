@@ -15,7 +15,9 @@ export class TestRunPostgresRepository implements TestRunRepository {
     this.repository = this.dataSource.getRepository(TestRunEntity);
   }
 
-  async addTestRun(createDto: CreateTestRunDTO): Promise<TestRun> {
+  async addTestRun(
+    createDto: CreateTestRunDTO & { projectId: string },
+  ): Promise<TestRun> {
     const testRun = this.repository.create(createDto);
     const savedTestRun = await this.repository.save(testRun);
     return this.toDomainEntity(savedTestRun);

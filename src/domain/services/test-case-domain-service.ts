@@ -9,7 +9,9 @@ import { v4 } from "uuid";
 export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
-  async addTestCase(testCaseDto: CreateTestCaseDTO): Promise<TestCase> {
+  async addTestCase(
+    testCaseDto: CreateTestCaseDTO & { projectId: string },
+  ): Promise<TestCase> {
     const testCase = new TestCase(
       v4(),
       testCaseDto.title,
@@ -58,11 +60,9 @@ export class TestCaseDomainService implements TestCaseRepository {
     return this.testCaseRepository.getByAssignedUserId(assignedUserId);
   }
   getTestCasesByProjectId(projectId: string): Promise<TestCase[]> {
-    // NEW
     return this.testCaseRepository.getTestCasesByProjectId(projectId);
   }
   getTestCasesByUserId(userId: string): Promise<TestCase[]> {
-    // NEW
     return this.testCaseRepository.getTestCasesByUserId(userId);
   }
 }

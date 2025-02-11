@@ -12,8 +12,12 @@ export const addMilestone = async (
   reply: FastifyReply,
 ) => {
   try {
+    const { projectId } = request.params as { projectId: string };
     const milestoneDto = request.body as CreateMilestoneDTO;
-    const newMilestone = await MilestoneService.addMilestone(milestoneDto);
+    const newMilestone = await MilestoneService.addMilestone(
+      projectId,
+      milestoneDto,
+    );
     reply.status(201).send(newMilestone);
   } catch (error) {
     logger.error(`Error creating milestone: ${error}`);

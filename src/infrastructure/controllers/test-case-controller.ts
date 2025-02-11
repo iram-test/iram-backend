@@ -12,8 +12,12 @@ export const addTestCase = async (
   reply: FastifyReply,
 ) => {
   try {
+    const { projectId } = request.params as { projectId: string };
     const testCaseDto = request.body as CreateTestCaseDTO;
-    const newTestCase = await TestCaseService.addTestCase(testCaseDto);
+    const newTestCase = await TestCaseService.addTestCase(
+      projectId,
+      testCaseDto,
+    );
     reply.status(201).send(newTestCase);
   } catch (error) {
     logger.error(`Error creating test case: ${error}`);

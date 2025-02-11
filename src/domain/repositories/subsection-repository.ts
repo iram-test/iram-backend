@@ -5,11 +5,13 @@ import {
 } from "../../application/dtos/subsection-dto";
 
 export interface SubsectionRepository {
-  addSubsection(subsection: CreateSubsectionDTO): Promise<Subsection>;
+  addSubsection(
+    subsection: CreateSubsectionDTO & { sectionId: string },
+  ): Promise<Subsection>;
   getAll(): Promise<Subsection[]>;
   update(subsection: UpdateSubsectionDTO): Promise<Subsection>;
   getById(subsectionId: string): Promise<Subsection | null>;
   getByName(subsectionName: string): Promise<Subsection | null>;
   delete(subsectionId: string): Promise<void>;
-  getSubsectionsBySectionId(sectionId: string): Promise<Subsection[]>; // NEW
+  getSubsectionsBySectionId(sectionId: string): Promise<Subsection[]>;
 }

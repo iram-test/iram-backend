@@ -12,8 +12,12 @@ export const addSubsection = async (
   reply: FastifyReply,
 ) => {
   try {
+    const { sectionId } = request.params as { sectionId: string };
     const subsectionDto = request.body as CreateSubsectionDTO;
-    const newSubsection = await SubsectionService.addSubsection(subsectionDto);
+    const newSubsection = await SubsectionService.addSubsection(
+      sectionId,
+      subsectionDto,
+    );
     reply.status(201).send(newSubsection);
   } catch (error) {
     logger.error(`Error creating subsection: ${error}`);
