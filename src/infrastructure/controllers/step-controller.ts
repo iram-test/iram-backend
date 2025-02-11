@@ -6,8 +6,9 @@ import { CustomError } from "../../tools/custom-error";
 
 export const addStep = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
+    const { testCaseId } = request.params as { testCaseId: string };
     const stepDto = request.body as CreateStepDTO;
-    const newStep = await StepService.addStep(stepDto);
+    const newStep = await StepService.addStep(testCaseId, stepDto);
     reply.status(201).send(newStep);
   } catch (error) {
     logger.error(`Error creating step: ${error}`);
@@ -15,20 +16,6 @@ export const addStep = async (request: FastifyRequest, reply: FastifyReply) => {
       reply.status(error.statusCode).send({ message: error.message });
     } else {
       reply.status(500).send({ message: "Error creating step" });
-    }
-  }
-};
-
-export const getAllSteps = async (_: FastifyRequest, reply: FastifyReply) => {
-  try {
-    const steps = await StepService.getAll();
-    reply.status(200).send(steps);
-  } catch (error) {
-    logger.error(`Error during getting all steps: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
-    } else {
-      reply.status(500).send({ message: "Error getting steps" });
     }
   }
 };

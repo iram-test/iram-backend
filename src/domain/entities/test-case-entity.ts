@@ -6,9 +6,9 @@ export class TestCase {
   constructor(
     public testCaseId: string,
     public title: string,
-    public sectionIds: string[],
+    public sectionId: string,
     public projectId: string,
-    public assignedUserId: string,
+    public assignedUserId: string | null,
     public templateType: TemplateType,
     public testType: TestType,
     public priority: Priority,

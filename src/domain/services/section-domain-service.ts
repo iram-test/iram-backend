@@ -10,7 +10,7 @@ export class SectionDomainService implements SectionRepository {
   constructor(private sectionRepository: SectionRepository) {}
 
   async addSection(
-    sectionDto: CreateSectionDTO & { testCaseId: string },
+    sectionDto: CreateSectionDTO & { projectId: string },
   ): Promise<Section> {
     const section = new Section(
       v4(),

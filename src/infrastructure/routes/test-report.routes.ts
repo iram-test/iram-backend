@@ -8,7 +8,6 @@ import {
   getTestReportsByAssignedUserId,
   getTestReportByName,
   getTestReportsByProjectId,
-  getTestReportsByUserId,
 } from "../controllers/test-report-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";

@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import {
   addStep,
-  getAllSteps,
   getStepById,
   updateStep,
   deleteStep,
@@ -12,7 +11,7 @@ import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function stepRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/steps",
+    "/test-cases/:testCaseId/steps",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
@@ -20,15 +19,17 @@ export async function stepRoutes(fastify: FastifyInstance) {
     },
     addStep,
   );
+
   fastify.get(
-    "/steps",
+    "/test-cases/:testCaseId/steps",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
       ],
     },
-    getAllSteps,
+    getStepsByTestCaseId,
   );
+
   fastify.get(
     "/steps/:stepId",
     {
@@ -38,6 +39,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
     },
     getStepById,
   );
+
   fastify.put(
     "/steps/:stepId",
     {
@@ -47,6 +49,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
     },
     updateStep,
   );
+
   fastify.delete(
     "/steps/:stepId",
     {
@@ -55,14 +58,5 @@ export async function stepRoutes(fastify: FastifyInstance) {
       ],
     },
     deleteStep,
-  );
-  fastify.get(
-    "/test-cases/:testCaseId/steps",
-    {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
-    },
-    getStepsByTestCaseId,
   );
 }

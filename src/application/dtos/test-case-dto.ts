@@ -7,7 +7,7 @@ export interface TestCaseDTO {
   title: string;
   sectionIds: string[];
   projectId: string;
-  assignedUserId: string;
+  assignedUserId: string | null;
   templateType: TemplateType;
   testType: TestType;
   priority: Priority;
@@ -20,16 +20,15 @@ export interface TestCaseDTO {
 
 export interface CreateTestCaseDTO {
   title: string;
-  sectionIds: string[];
-  assignedUserId: string;
+  sectionId: string;
+  assignedUserId?: string;
   templateType: TemplateType;
   testType: TestType;
   priority: Priority;
   timeEstimation: string;
   description: string;
-  stepIds: string[] | null; // Changed stepsId to stepIds
+  stepIds?: string[] | null;
 }
-
 export interface UpdateTestCaseDTO {
   testCaseId: string;
   title?: string;

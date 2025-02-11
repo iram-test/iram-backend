@@ -12,22 +12,7 @@ export class TestCaseDomainService implements TestCaseRepository {
   async addTestCase(
     testCaseDto: CreateTestCaseDTO & { projectId: string },
   ): Promise<TestCase> {
-    const testCase = new TestCase(
-      v4(),
-      testCaseDto.title,
-      testCaseDto.sectionIds,
-      testCaseDto.projectId,
-      testCaseDto.assignedUserId,
-      testCaseDto.templateType,
-      testCaseDto.testType,
-      testCaseDto.priority,
-      testCaseDto.timeEstimation,
-      testCaseDto.description,
-      testCaseDto.stepIds,
-      new Date().toISOString(),
-      new Date().toISOString(),
-    );
-    return await this.testCaseRepository.addTestCase(testCase);
+    return await this.testCaseRepository.addTestCase(testCaseDto);
   }
 
   getAll(): Promise<TestCase[]> {

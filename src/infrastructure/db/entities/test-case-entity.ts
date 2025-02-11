@@ -15,7 +15,6 @@ import { ProjectEntity } from "./project-entity";
 import { StepEntity } from "./step-entity";
 import { UserEntity } from "./user-entity";
 import { SectionEntity } from "./section-entity";
-import { SubSectionEntity } from "./subsection-entity";
 import { TestRunEntity } from "./test-run-entity";
 
 @Entity()
@@ -39,9 +38,6 @@ export class TestCaseEntity {
   priority!: Priority;
 
   @Column()
-  assignedUserId!: string;
-
-  @Column()
   timeEstimation!: string;
 
   @Column()
@@ -63,15 +59,17 @@ export class TestCaseEntity {
   @ManyToOne(
     () => UserEntity,
     (user) => user.testCases,
+    { nullable: true },
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedUser!: UserEntity;
+  assignedUser?: UserEntity;
 
-  @OneToMany(
+  @ManyToOne(
     () => SectionEntity,
-    (section) => section.testCase,
+    (section) => section.testCases,
   )
-  sections?: SectionEntity[];
+  @JoinColumn({ name: "sectionId" })
+  section!: SectionEntity;
 
   @OneToMany(
     () => StepEntity,

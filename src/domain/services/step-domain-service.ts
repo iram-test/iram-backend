@@ -6,20 +6,10 @@ import { v4 } from "uuid";
 export class StepDomainService implements StepRepository {
   constructor(private stepRepository: StepRepository) {}
 
-  async addStep(stepDto: CreateStepDTO): Promise<Step> {
-    const step = new Step(
-      v4(),
-      stepDto.stepDescription,
-      stepDto.expectedResult,
-      stepDto.image ?? null,
-      new Date().toISOString(),
-      new Date().toISOString(),
-    );
-    return await this.stepRepository.addStep(step);
-  }
-
-  getAll(): Promise<Step[]> {
-    return this.stepRepository.getAll();
+  async addStep(
+    stepDto: CreateStepDTO & { testCaseId: string },
+  ): Promise<Step> {
+    return await this.stepRepository.addStep(stepDto);
   }
 
   getById(stepId: string): Promise<Step | null> {

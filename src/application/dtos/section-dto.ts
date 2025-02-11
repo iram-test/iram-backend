@@ -10,12 +10,12 @@ export interface SectionDTO {
 export interface CreateSectionDTO {
   name: string;
   description: string;
-  subsectionIds?: string[] | null;
+  subsectionIds?: string[];
 }
 
 export interface UpdateSectionDTO {
   sectionId: string;
   name?: string;
   description?: string;
-  subsectionIds?: string[] | null;
+  subsectionIds?: string[];
 }

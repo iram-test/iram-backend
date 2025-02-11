@@ -20,8 +20,8 @@ export class StepEntity {
   @Column()
   expectedResult!: string;
 
-  @Column("text", { array: true, nullable: true })
-  images!: string[] | null;
+  @Column({ type: "jsonb", nullable: true })
+  image!: string[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -32,6 +32,7 @@ export class StepEntity {
   @ManyToOne(
     () => TestCaseEntity,
     (testCase) => testCase.steps,
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "testCaseId" })
   testCase!: TestCaseEntity;

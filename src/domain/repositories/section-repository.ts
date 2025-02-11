@@ -6,7 +6,7 @@ import {
 
 export interface SectionRepository {
   addSection(
-    section: CreateSectionDTO & { testCaseId: string },
+    section: CreateSectionDTO & { projectId: string },
   ): Promise<Section>;
   getAll(): Promise<Section[]>;
   update(section: UpdateSectionDTO): Promise<Section>;

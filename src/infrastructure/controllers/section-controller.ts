@@ -12,9 +12,9 @@ export const addSection = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { testCaseId } = request.params as { testCaseId: string };
+    const { projectId } = request.params as { projectId: string };
     const sectionDto = request.body as CreateSectionDTO;
-    const newSection = await SectionService.addSection(testCaseId, sectionDto);
+    const newSection = await SectionService.addSection(projectId, sectionDto);
     reply.status(201).send(newSection);
   } catch (error) {
     logger.error(`Error creating section: ${error}`);

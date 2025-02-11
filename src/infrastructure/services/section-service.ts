@@ -5,22 +5,22 @@ import {
 } from "../../application/dtos/section-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
-import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository";
+import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
 
 const sectionRepository = new SectionPostgresRepository();
-const testCaseRepository = new TestCasePostgresRepository();
+const projectRepository = new ProjectPostgresRepository();
 
 class SectionService {
-  async addSection(testCaseId: string, sectionDto: CreateSectionDTO) {
+  async addSection(projectId: string, sectionDto: CreateSectionDTO) {
     try {
-      const testCase = await testCaseRepository.getById(testCaseId);
-      if (!testCase) {
-        logger.warn(`Test case with id: ${testCaseId} was not found`);
-        throw new CustomError("Test case not found", 404);
+      const project = await projectRepository.getById(projectId);
+      if (!project) {
+        logger.warn(`Project with id: ${projectId} was not found`);
+        throw new CustomError("Project not found", 404);
       }
       const newSection = await sectionRepository.addSection({
         ...sectionDto,
-        testCaseId: testCaseId,
+        projectId: projectId,
       });
       logger.info(`Section created: ${newSection.name}`);
       return newSection;

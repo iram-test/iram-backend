@@ -4,13 +4,13 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from "typeorm";
 import { SubSectionEntity } from "./subsection-entity";
-import { TestCaseEntity } from "./test-case-entity";
 import { ProjectEntity } from "./project-entity";
+import { TestCaseEntity } from "./test-case-entity";
 
 @Entity()
 export class SectionEntity {
@@ -29,18 +29,13 @@ export class SectionEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @ManyToOne(
-    () => TestCaseEntity,
-    (testCase) => testCase.sections,
-  )
-  @JoinColumn({ name: "testCaseId" })
-  testCase!: TestCaseEntity;
-
   @OneToMany(
     () => SubSectionEntity,
     (subsection) => subsection.section,
+    { cascade: true },
   )
   subsections?: SubSectionEntity[];
+
   @ManyToOne(
     () => ProjectEntity,
     (project) => project.sections,
@@ -48,4 +43,13 @@ export class SectionEntity {
   )
   @JoinColumn({ name: "projectId" })
   project!: ProjectEntity;
+
+  @Column()
+  projectId!: string;
+
+  @OneToMany(
+    () => TestCaseEntity,
+    (testCase) => testCase.section,
+  )
+  testCases?: TestCaseEntity[];
 }

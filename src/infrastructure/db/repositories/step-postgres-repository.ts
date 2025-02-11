@@ -7,6 +7,7 @@ import {
 } from "../../../application/dtos/step-dto";
 import { StepRepository } from "../../../domain/repositories/step-repository";
 import { PostgresDataSource } from "../../../tools/db-connection";
+import { TestCaseEntity } from "../entities/test-case-entity";
 
 export class StepPostgresRepository implements StepRepository {
   private repository: Repository<StepEntity>;
@@ -15,17 +16,26 @@ export class StepPostgresRepository implements StepRepository {
     this.repository = this.dataSource.getRepository(StepEntity);
   }
 
-  async addStep(createDto: CreateStepDTO): Promise<Step> {
-    const step = this.repository.create(createDto);
+  async addStep(
+    createDto: CreateStepDTO & { testCaseId: string },
+  ): Promise<Step> {
+    const { testCaseId, ...stepData } = createDto;
+    const step = this.repository.create(stepData);
+
+    const testCaseRepository = this.dataSource.getRepository(TestCaseEntity);
+
+    const testCase = await testCaseRepository.findOneBy({
+      testCaseId: testCaseId,
+    });
+
+    if (!testCase) {
+      throw new Error(`TestCase with id ${testCaseId} not found`);
+    }
+
+    step.testCase = testCase;
+
     const savedStep = await this.repository.save(step);
     return this.toDomainEntity(savedStep);
-  }
-
-  async getAll(): Promise<Step[]> {
-    const steps = await this.repository.find({
-      relations: ["testCase"],
-    });
-    return steps.map((entity) => this.toDomainEntity(entity));
   }
 
   async update(updateDto: UpdateStepDTO): Promise<Step> {
@@ -63,7 +73,7 @@ export class StepPostgresRepository implements StepRepository {
       entity.stepId,
       entity.stepDescription,
       entity.expectedResult,
-      entity.images,
+      entity.image,
       entity.createdAt.toISOString(),
       entity.updatedAt.toISOString(),
     );

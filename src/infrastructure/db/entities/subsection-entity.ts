@@ -29,7 +29,11 @@ export class SubSectionEntity {
   @ManyToOne(
     () => SectionEntity,
     (section) => section.subsections,
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "sectionId" })
   section!: SectionEntity;
+
+  @Column()
+  sectionId!: string;
 }

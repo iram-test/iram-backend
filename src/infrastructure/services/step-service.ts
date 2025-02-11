@@ -2,28 +2,26 @@ import { StepPostgresRepository } from "../db/repositories/step-postgres-reposit
 import { CreateStepDTO, UpdateStepDTO } from "../../application/dtos/step-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository"; // Import TestCase repository
 
 const stepRepository = new StepPostgresRepository();
+const testCaseRepository = new TestCasePostgresRepository();
 
 class StepService {
-  async addStep(stepDto: CreateStepDTO) {
+  async addStep(testCaseId: string, stepDto: CreateStepDTO) {
     try {
-      const newStep = await stepRepository.addStep(stepDto);
+      const testCase = await testCaseRepository.getById(testCaseId);
+      if (!testCase) {
+        logger.warn(`Test case with id: ${testCaseId} was not found`);
+        throw new CustomError("Test case not found", 404);
+      }
+
+      const newStep = await stepRepository.addStep({ ...stepDto, testCaseId });
       logger.info(`Step created: ${newStep.stepId}`);
       return newStep;
     } catch (error) {
       logger.error(`Error creating step:`, error);
       throw new CustomError("Failed to create step", 500);
-    }
-  }
-
-  async getAll() {
-    try {
-      logger.info(`Get all steps`);
-      return await stepRepository.getAll();
-    } catch (error) {
-      logger.error(`Error getting all steps:`, error);
-      throw new CustomError("Failed to get steps", 500);
     }
   }
 

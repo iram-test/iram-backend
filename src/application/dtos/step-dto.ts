@@ -11,6 +11,7 @@ export interface CreateStepDTO {
   stepDescription: string;
   expectedResult: string;
   image?: string[] | null;
+  testCaseId?: string;
 }
 
 export interface UpdateStepDTO {

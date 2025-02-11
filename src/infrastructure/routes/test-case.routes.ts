@@ -11,7 +11,6 @@ import {
 } from "../controllers/test-case-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
-import { getTestCaseByTitle } from "../controllers/test-case-controller";
 
 export async function testCaseRoutes(fastify: FastifyInstance) {
   fastify.post(
