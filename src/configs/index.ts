@@ -33,4 +33,14 @@ export const config = {
     max: 100,
     timeWindow: "1 minute",
   },
+  nodemailer: {
+    host: process.env.EMAIL_HOST!,
+    port: process.env.EMAIL_PORT!,
+    user: process.env.EMAIL_USER!,
+    pass: process.env.EMAIL_PASS!,
+    url: process.env.API_URL!,
+    clientId: process.env.CLIENT_ID!,
+    clientSecret: process.env.OAUTH_CLIENT_SECRET!,
+    refreshToken: process.env.OAUTH_REFRESH_TOKEN!
+  }
 };

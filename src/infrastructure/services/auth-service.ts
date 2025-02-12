@@ -12,13 +12,14 @@ import { hashPassword, validatePassword } from "../../tools/password-utils";
 import { config } from "../../configs";
 import { UserRole } from "../../domain/entities/enums/user-role";
 import { User } from "../../domain/entities/user-entity";
+import mailService from "../../tools/mail-service";
 
 const userRepository = new UserPostgresRepository();
 const userService = new UserDomainService(userRepository);
 
 class AuthService {
   async registration(
-    registerDto: RegisterDTO,
+      registerDto: RegisterDTO,
   ): Promise<{ userId: string; accessToken: string; refreshToken: string }> {
     const candidate = await userService.getUserByEmail(registerDto.email);
     if (candidate) {
@@ -45,21 +46,30 @@ class AuthService {
     });
 
     const tokens = generateTokens(
-      newUser.userId,
-      newUser.username,
-      newUser.role,
+        newUser.userId,
+        newUser.username,
+        newUser.role,
     );
 
     const lastLogin = new Date().toISOString();
     await userRepository.saveRefreshToken(newUser.userId, tokens.refreshToken);
     await userRepository.updateLastLogin(newUser.userId, lastLogin);
 
+    const activationLink = `${config.nodemailer.url}/auth/activate/${newUser.userId}`;
+
+    try {
+      await mailService.sendActivationMail(newUser.email, activationLink);
+      logger.info(`Activation email sent to ${newUser.email}`);
+    } catch (error) {
+      logger.error(`Failed to send activation email: ${error}`);
+    }
+
     logger.info(`User registered with id: ${newUser.userId}`);
     return { userId: newUser.userId, ...tokens };
   }
 
   async login(
-    loginDto: LoginWithUsernameDTO | LoginWithEmailDTO,
+      loginDto: LoginWithUsernameDTO | LoginWithEmailDTO,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     let user: User | null;
 
@@ -78,9 +88,9 @@ class AuthService {
     }
 
     const isValid = await validatePassword(
-      loginDto.password,
-      user.password,
-      config.hash.salt,
+        loginDto.password,
+        user.password,
+        config.hash.salt,
     );
     if (!isValid) {
       logger.warn(`Invalid password for user: ${user.username || user.email}`);
@@ -116,7 +126,7 @@ class AuthService {
   }
 
   async refresh(
-    refreshToken: string,
+      refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     if (!refreshToken) {
       logger.warn(`Refresh token is required`);
@@ -144,6 +154,22 @@ class AuthService {
       logger.error(`Invalid refresh token`, error);
       throw new CustomError("Invalid refresh token", 401);
     }
+  }
+
+  async activate(userId: string): Promise<void> {
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      logger.warn(`User with id: ${userId} was not found`);
+      throw new CustomError("User not found", 404);
+    }
+
+    if (user.isVerified) {
+      logger.warn(`User with id: ${userId} is already activated`);
+      throw new CustomError("User already activated", 400);
+    }
+
+    await userRepository.updateUser({ ...user, userId: user.userId, isVerified: true });
+    logger.info(`User with id: ${userId} activated successfully`);
   }
 }
 
