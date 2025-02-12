@@ -6,10 +6,11 @@ import {
 } from "../../application/dtos/auth-dto";
 import authService from "../services/auth-service";
 import logger from "../../tools/logger";
+import {CustomError} from "../../tools/custom-error";
 
 export const register = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const registerDto = request.body as RegisterDTO;
@@ -27,8 +28,8 @@ export const register = async (
 };
 
 export const loginWithUsername = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const loginDto = request.body as LoginWithUsernameDTO;
@@ -41,8 +42,8 @@ export const loginWithUsername = async (
 };
 
 export const loginWithEmail = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const loginDto = request.body as LoginWithEmailDTO;
@@ -73,5 +74,23 @@ export const refresh = async (request: FastifyRequest, reply: FastifyReply) => {
   } catch (error) {
     logger.error(`Error during refresh: ${error}`);
     reply.code(401).send({ message: "Invalid refresh token" });
+  }
+};
+
+// New activate controller
+export const activate = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const { userId } = request.params as { userId: string };
+    await authService.activate(userId);
+    reply.code(200).send({ message: "Account activated successfully" });
+  } catch (error) {
+    logger.error(`Error during account activation: ${error}`);
+    reply.code(500).send({ message: "Error during account activation" });
+
+    if (error instanceof CustomError) {
+      reply.code(error.statusCode).send({ message: error.message });
+    } else {
+      reply.code(500).send({ message: "Error during account activation" });
+    }
   }
 };

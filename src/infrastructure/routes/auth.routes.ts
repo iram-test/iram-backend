@@ -5,6 +5,7 @@ import {
   loginWithEmail,
   logout,
   refresh,
+  activate,
 } from "../controllers/auth-controller";
 
 export async function authRoutes(fastify: FastifyInstance) {
@@ -13,4 +14,5 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post("/auth/login/email", loginWithEmail);
   fastify.post("/auth/logout", logout);
   fastify.post("/auth/refresh", refresh);
+  fastify.get("/auth/activate/:userId", activate);
 }
