@@ -34,10 +34,10 @@ export class ProjectEntity {
   @Column()
   description!: string;
 
-  @Column()
-  managerId!: string;
+  @Column({ nullable: true })
+  managerId!: string | null;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: "SET NULL" })
   @JoinColumn({ name: "managerId" })
   manager?: UserEntity;
 

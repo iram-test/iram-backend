@@ -9,14 +9,17 @@ import { v4 } from "uuid";
 export class ProjectDomainService {
   constructor(private projectRepository: ProjectRepository) {}
 
-  async addProject(projectDto: CreateProjectDTO): Promise<Project> {
+  async addProject(
+    projectDto: CreateProjectDTO,
+    userId: string,
+  ): Promise<Project> {
     const project: Project = new Project(
       v4(),
       projectDto.name,
       projectDto.language ?? null,
       projectDto.location ?? null,
       projectDto.description,
-      projectDto.managerId,
+      userId,
       new Date().toISOString(),
       new Date().toISOString(),
       [],

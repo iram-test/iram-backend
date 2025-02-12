@@ -5,7 +5,7 @@ import {
 } from "../../application/dtos/project-dto";
 
 export interface ProjectRepository {
-  addProject(project: CreateProjectDTO): Promise<Project>;
+  addProject(project: Project): Promise<Project>;
   getAll(): Promise<Project[]>;
   update(projectId: string, project: UpdateProjectDTO): Promise<Project | null>;
   getById(projectId: string): Promise<Project | null>;

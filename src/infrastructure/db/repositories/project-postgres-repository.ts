@@ -16,8 +16,8 @@ export class ProjectPostgresRepository implements ProjectRepository {
     this.repository = this.dataSource.getRepository(ProjectEntity);
   }
 
-  async addProject(createDto: CreateProjectDTO): Promise<Project> {
-    const projectEntity = this.repository.create(createDto);
+  async addProject(project: Project): Promise<Project> {
+    const projectEntity = this.repository.create(project);
     const savedProjectEntity = await this.repository.save(projectEntity);
     return this.toDomainEntity(savedProjectEntity);
   }
@@ -158,7 +158,7 @@ export class ProjectPostgresRepository implements ProjectRepository {
       entity.language ?? null,
       entity.location ?? null,
       entity.description,
-      entity.managerId,
+      entity.managerId ?? "",
       entity.createdAt.toISOString(),
       entity.updatedAt.toISOString(),
       entity.users,

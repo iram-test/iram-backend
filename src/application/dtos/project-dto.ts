@@ -18,7 +18,6 @@ export interface CreateProjectDTO {
   language?: Language | null;
   location?: Location | null;
   description: string;
-  managerId: string;
 }
 
 export interface UpdateProjectDTO {

@@ -8,6 +8,9 @@ import {
 import { TestCaseRepository } from "../../../domain/repositories/test-case-repository";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { UserEntity } from "../entities/user-entity";
+import { SectionEntity } from "../entities/section-entity";
+import { SubSectionEntity } from "../entities/subsection-entity";
+import { CustomError } from "../../../tools/custom-error";
 
 export class TestCasePostgresRepository implements TestCaseRepository {
   private repository: Repository<TestCaseEntity>;
@@ -17,9 +20,38 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   }
 
   async addTestCase(
-    createDto: CreateTestCaseDTO & { projectId: string; sectionId: string },
+    createDto: CreateTestCaseDTO & {
+      projectId: string;
+      sectionId?: string | null;
+    },
   ): Promise<TestCase> {
     const testCase = this.repository.create(createDto);
+
+    if (createDto.sectionId) {
+      const sectionRepository = this.dataSource.getRepository(SectionEntity);
+      const section = await sectionRepository.findOne({
+        where: { sectionId: createDto.sectionId },
+      });
+      if (section) {
+        testCase.section = section;
+        testCase.sectionId = section.sectionId;
+        testCase.subsectionId = null;
+      } else {
+        const subSectionRepository =
+          this.dataSource.getRepository(SubSectionEntity);
+        const subSection = await subSectionRepository.findOne({
+          where: { subsectionId: createDto.sectionId },
+          relations: ["section"],
+        });
+        if (subSection) {
+          testCase.section = subSection.section;
+          testCase.sectionId = subSection.section.sectionId;
+          testCase.subsectionId = subSection.subsectionId;
+        } else {
+          throw new CustomError("Section or SubSection not found", 404);
+        }
+      }
+    }
 
     if (createDto.assignedUserId) {
       const userRepository = this.dataSource.getRepository(UserEntity);
@@ -37,21 +69,57 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     return this.toDomainEntity(savedTestCase);
   }
 
+  async update(updateDto: UpdateTestCaseDTO): Promise<TestCase> {
+    const { testCaseId, sectionId, ...updateData } = updateDto;
+
+    const existingTestCase = await this.repository.findOneOrFail({
+      where: { testCaseId },
+      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+    });
+
+    if (sectionId !== undefined) {
+      if (sectionId === null) {
+        existingTestCase.section = null as any;
+        existingTestCase.sectionId = null;
+        existingTestCase.subsectionId = null;
+      } else {
+        const sectionRepository = this.dataSource.getRepository(SectionEntity);
+        const section = await sectionRepository.findOne({
+          where: { sectionId },
+        });
+        if (section) {
+          existingTestCase.section = section;
+          existingTestCase.sectionId = section.sectionId;
+          existingTestCase.subsectionId = null;
+        } else {
+          // Пробуємо знайти як підсекцію
+          const subSectionRepository =
+            this.dataSource.getRepository(SubSectionEntity);
+          const subSection = await subSectionRepository.findOne({
+            where: { subsectionId: sectionId },
+            relations: ["section"],
+          });
+          if (!subSection) {
+            throw new Error("Section or SubSection not found");
+          }
+          existingTestCase.section = subSection.section;
+          existingTestCase.sectionId = subSection.section.sectionId;
+          existingTestCase.subsectionId = subSection.subsectionId;
+        }
+      }
+    }
+
+    Object.assign(existingTestCase, updateData);
+
+    const updatedTestCase = await this.repository.save(existingTestCase);
+    return this.toDomainEntity(updatedTestCase);
+  }
+
   async getAll(): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       relations: ["project", "assignedUser", "section", "steps", "testRun"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
-  }
-
-  async update(updateDto: UpdateTestCaseDTO): Promise<TestCase> {
-    const { testCaseId, ...updateData } = updateDto;
-    await this.repository.update(testCaseId, updateData);
-    const updatedTestCase = await this.repository.findOneOrFail({
-      where: { testCaseId },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
-    });
-    return this.toDomainEntity(updatedTestCase);
   }
 
   async getById(testCaseId: string): Promise<TestCase | null> {
@@ -90,6 +158,14 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
 
+  async getBySubSectionId(subsectionId: string): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { subsectionId: subsectionId },
+      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
   async getByAssignedUserId(assignedUserId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { assignedUser: { userId: assignedUserId } },
@@ -115,13 +191,18 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   }
 
   private toDomainEntity(entity: TestCaseEntity): TestCase {
+    const resolvedSectionId = entity.subsectionId
+      ? entity.subsectionId
+      : entity.section
+        ? entity.section.sectionId
+        : null;
     const stepIds = entity.steps
       ? entity.steps.map((step) => step.stepId)
       : null;
     return new TestCase(
       entity.testCaseId,
       entity.title,
-      entity.section.sectionId,
+      resolvedSectionId,
       entity.projectId,
       entity.assignedUser ? entity.assignedUser.userId : null,
       entity.templateType,

@@ -12,8 +12,8 @@ export interface TestRunDTO {
 
 export interface CreateTestRunDTO {
   name: string;
-  milestoneIds: string[];
-  assignedUserIds?: string[] | null;
+  milestoneId?: string;
+  assignedUserId?: string;
   testCaseIds: string[];
   description: string;
 }
@@ -21,8 +21,8 @@ export interface CreateTestRunDTO {
 export interface UpdateTestRunDTO {
   testRunId: string;
   name?: string;
-  milestoneIds?: string[];
-  assignedUserIds?: string[] | null;
+  milestoneId?: string;
+  assignedUserId?: string;
   testCaseIds?: string[];
   description?: string;
 }

@@ -13,7 +13,8 @@ export const addProject = async (
 ) => {
   try {
     const projectDto = request.body as CreateProjectDTO;
-    const newProject = await ProjectService.addProject(projectDto);
+    const userId = request.user!.userId;
+    const newProject = await ProjectService.addProject(projectDto, userId);
     reply.status(201).send(newProject);
   } catch (error) {
     logger.error(`Error creating project: ${error}`);

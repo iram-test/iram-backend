@@ -59,7 +59,10 @@ export class TestCaseEntity {
   @ManyToOne(
     () => UserEntity,
     (user) => user.testCases,
-    { nullable: true },
+    {
+      nullable: true,
+      onDelete: "SET NULL",
+    },
   )
   @JoinColumn({ name: "assignedUserId" })
   assignedUser?: UserEntity;
@@ -67,9 +70,18 @@ export class TestCaseEntity {
   @ManyToOne(
     () => SectionEntity,
     (section) => section.testCases,
+    {
+      nullable: true,
+    },
   )
   @JoinColumn({ name: "sectionId" })
-  section!: SectionEntity;
+  section?: SectionEntity;
+
+  @Column({ type: "uuid", nullable: true })
+  sectionId?: string | null;
+
+  @Column({ type: "uuid", nullable: true })
+  subsectionId?: string | null;
 
   @OneToMany(
     () => StepEntity,
@@ -79,7 +91,7 @@ export class TestCaseEntity {
 
   @ManyToOne(
     () => TestRunEntity,
-    (testRun) => testRun.testCase,
+    (testRun) => testRun.testCases,
   )
   @JoinColumn({ name: "testRunId" })
   testRun!: TestRunEntity;

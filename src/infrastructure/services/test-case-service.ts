@@ -31,6 +31,27 @@ class TestCaseService {
     }
   }
 
+  async update(testCaseId: string, testCaseDto: UpdateTestCaseDTO) {
+    try {
+      const testCase = await testCaseRepository.getById(testCaseId);
+      if (!testCase) {
+        logger.warn(
+          `Test case with id ${testCaseId} was not found for update.`,
+        );
+        throw new CustomError("Test case not found", 404);
+      }
+      const updatedTestCase = await testCaseRepository.update({
+        ...testCaseDto,
+        testCaseId,
+      });
+      logger.info(`Test case with id: ${testCaseId} updated successfully.`);
+      return updatedTestCase;
+    } catch (error) {
+      logger.error(`Error updating test case with id ${testCaseId}:`, error);
+      throw new CustomError("Failed to update test case", 500);
+    }
+  }
+
   async getAll() {
     try {
       logger.info(`Get all test cases`);
@@ -53,27 +74,6 @@ class TestCaseService {
     } catch (error) {
       logger.error(`Error getting test case by id ${testCaseId}:`, error);
       throw new CustomError("Failed to get test case", 500);
-    }
-  }
-
-  async update(testCaseId: string, testCaseDto: UpdateTestCaseDTO) {
-    try {
-      const testCase = await testCaseRepository.getById(testCaseId);
-      if (!testCase) {
-        logger.warn(
-          `Test case with id ${testCaseId} was not found for update.`,
-        );
-        throw new CustomError("Test case not found", 404);
-      }
-      const updatedTestCase = await testCaseRepository.update({
-        ...testCaseDto,
-        testCaseId,
-      });
-      logger.info(`Test case with id: ${testCaseId} updated successfully.`);
-      return updatedTestCase;
-    } catch (error) {
-      logger.error(`Error updating test case with id ${testCaseId}:`, error);
-      throw new CustomError("Failed to update test case", 500);
     }
   }
 
@@ -154,6 +154,16 @@ class TestCaseService {
       return await testCaseRepository.getTestCasesByUserId(userId);
     } catch (error) {
       logger.error(`Error getting test cases by user id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
+  }
+
+  async getBySubSectionId(subsectionId: string) {
+    try {
+      logger.info(`Get test cases by sub section id`);
+      return await testCaseRepository.getBySubSectionId(subsectionId);
+    } catch (error) {
+      logger.error(`Error getting test cases by sub section id:`, error);
       throw new CustomError("Failed to get test cases", 500);
     }
   }

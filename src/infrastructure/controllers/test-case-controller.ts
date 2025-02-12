@@ -181,3 +181,21 @@ export const getTestCaseByTitle = async (
     }
   }
 };
+
+export const getTestCasesBySubSectionId = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { subsectionId } = request.params as { subsectionId: string };
+    const testCases = await TestCaseService.getBySubSectionId(subsectionId);
+    reply.status(200).send(testCases);
+  } catch (error) {
+    logger.error(`Error during getting test cases by sub section ID: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
+  }
+};

@@ -4,9 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { TestCaseEntity } from "./test-case-entity";
 import { MilestoneEntity } from "./milestone-entity";
@@ -35,17 +35,22 @@ export class TestRunEntity {
     () => TestCaseEntity,
     (testCase) => testCase.testRun,
   )
-  testCase?: TestCaseEntity[];
+  testCases?: TestCaseEntity[];
 
-  @OneToMany(
+  @ManyToOne(
     () => MilestoneEntity,
-    (milestone) => milestone.testRun,
+    (milestone) => milestone.testRuns,
+    {
+      nullable: true,
+    },
   )
-  milestones?: MilestoneEntity[];
+  @JoinColumn({ name: "milestoneId" })
+  milestone?: MilestoneEntity;
 
   @ManyToOne(
     () => ProjectEntity,
     (project) => project.testRuns,
+    { eager: true },
   )
   @JoinColumn({ name: "projectId" })
   project!: ProjectEntity;
@@ -53,14 +58,20 @@ export class TestRunEntity {
   @ManyToOne(
     () => TestReportEntity,
     (testReport) => testReport.testRuns,
+    {
+      nullable: true,
+    },
   )
   @JoinColumn({ name: "testReportId" })
-  testReport!: TestReportEntity;
+  testReport?: TestReportEntity;
 
   @ManyToOne(
     () => UserEntity,
     (user) => user.testRuns,
-    { nullable: true },
+    {
+      nullable: true,
+      onDelete: "SET NULL",
+    },
   )
   @JoinColumn({ name: "assignedUserId" })
   assignedUser?: UserEntity;

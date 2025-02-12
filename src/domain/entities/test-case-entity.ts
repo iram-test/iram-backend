@@ -6,7 +6,7 @@ export class TestCase {
   constructor(
     public testCaseId: string,
     public title: string,
-    public sectionId: string,
+    public sectionId: string | null,
     public projectId: string,
     public assignedUserId: string | null,
     public templateType: TemplateType,

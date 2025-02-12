@@ -41,6 +41,10 @@ export class TestCaseDomainService implements TestCaseRepository {
   getBySectionId(sectionId: string): Promise<TestCase[]> {
     return this.testCaseRepository.getBySectionId(sectionId);
   }
+
+  getBySubSectionId(subsectionId: string): Promise<TestCase[]> {
+    return this.testCaseRepository.getBySubSectionId(subsectionId);
+  }
   getByAssignedUserId(assignedUserId: string): Promise<TestCase[]> {
     return this.testCaseRepository.getByAssignedUserId(assignedUserId);
   }

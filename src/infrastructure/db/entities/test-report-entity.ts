@@ -44,7 +44,7 @@ export class TestReportEntity {
   @ManyToOne(
     () => UserEntity,
     (user) => user.testReports,
-    { nullable: true },
+    { nullable: true, onDelete: "SET NULL" },
   )
   @JoinColumn({ name: "assignedUserId" })
   assignedUser?: UserEntity | null;

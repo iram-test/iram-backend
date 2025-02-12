@@ -15,15 +15,18 @@ export class TestRunDomainService implements TestRunRepository {
     const testRun: TestRun = new TestRun(
       v4(),
       testRunDto.name,
-      testRunDto.milestoneIds,
-      testRunDto.assignedUserIds ?? null,
+      testRunDto.milestoneId ?? null,
+      testRunDto.assignedUserId ?? null,
       testRunDto.projectId,
       testRunDto.testCaseIds,
       testRunDto.description,
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    return await this.testRunRepository.addTestRun(testRunDto);
+    return await this.testRunRepository.addTestRun({
+      ...testRunDto,
+      projectId: testRunDto.projectId,
+    });
   }
 
   getAll(): Promise<TestRun[]> {
@@ -45,6 +48,7 @@ export class TestRunDomainService implements TestRunRepository {
   getByProjectId(projectId: string): Promise<TestRun[]> {
     return this.testRunRepository.getByProjectId(projectId);
   }
+
   getTestRunByProjectId(projectId: string): Promise<TestRun[]> {
     return this.testRunRepository.getTestRunByProjectId(projectId);
   }

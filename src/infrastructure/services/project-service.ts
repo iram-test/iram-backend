@@ -11,9 +11,12 @@ const projectRepository = new ProjectPostgresRepository();
 const projectDomainService = new ProjectDomainService(projectRepository);
 
 class ProjectService {
-  async addProject(projectDto: CreateProjectDTO) {
+  async addProject(projectDto: CreateProjectDTO, userId: string) {
     try {
-      const newProject = await projectDomainService.addProject(projectDto);
+      const newProject = await projectDomainService.addProject(
+        projectDto,
+        userId,
+      );
       logger.info(`Project created: ${newProject.name}`);
       return newProject;
     } catch (error) {
