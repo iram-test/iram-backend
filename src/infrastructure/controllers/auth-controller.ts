@@ -6,11 +6,11 @@ import {
 } from "../../application/dtos/auth-dto";
 import authService from "../services/auth-service";
 import logger from "../../tools/logger";
-import {CustomError} from "../../tools/custom-error";
+import { CustomError } from "../../tools/custom-error";
 
 export const register = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const registerDto = request.body as RegisterDTO;
@@ -28,8 +28,8 @@ export const register = async (
 };
 
 export const loginWithUsername = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const loginDto = request.body as LoginWithUsernameDTO;
@@ -42,8 +42,8 @@ export const loginWithUsername = async (
 };
 
 export const loginWithEmail = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const loginDto = request.body as LoginWithEmailDTO;
@@ -78,7 +78,10 @@ export const refresh = async (request: FastifyRequest, reply: FastifyReply) => {
 };
 
 // New activate controller
-export const activate = async (request: FastifyRequest, reply: FastifyReply) => {
+export const activate = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
   try {
     const { userId } = request.params as { userId: string };
     await authService.activate(userId);

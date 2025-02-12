@@ -1,10 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { ProjectEntity } from "../entities/project-entity";
 import { Project } from "../../../domain/entities/project-entity";
-import {
-  CreateProjectDTO,
-  UpdateProjectDTO,
-} from "../../../application/dtos/project-dto";
+import { UpdateProjectDTO } from "../../../application/dtos/project-dto";
 import { ProjectRepository } from "../../../domain/repositories/project-repository";
 import { PostgresDataSource } from "../../../tools/db-connection";
 import { UserEntity } from "../entities/user-entity";

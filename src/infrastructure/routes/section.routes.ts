@@ -12,7 +12,7 @@ import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/projects/:projectId/sections", // Створення Section всередині Project
+    "/projects/:projectId/sections",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),

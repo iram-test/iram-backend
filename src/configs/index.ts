@@ -41,6 +41,6 @@ export const config = {
     url: process.env.API_URL!,
     clientId: process.env.CLIENT_ID!,
     clientSecret: process.env.OAUTH_CLIENT_SECRET!,
-    refreshToken: process.env.OAUTH_REFRESH_TOKEN!
-  }
+    refreshToken: process.env.OAUTH_REFRESH_TOKEN!,
+  },
 };

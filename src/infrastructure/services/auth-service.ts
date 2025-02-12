@@ -19,7 +19,7 @@ const userService = new UserDomainService(userRepository);
 
 class AuthService {
   async registration(
-      registerDto: RegisterDTO,
+    registerDto: RegisterDTO,
   ): Promise<{ userId: string; accessToken: string; refreshToken: string }> {
     const candidate = await userService.getUserByEmail(registerDto.email);
     if (candidate) {
@@ -46,9 +46,9 @@ class AuthService {
     });
 
     const tokens = generateTokens(
-        newUser.userId,
-        newUser.username,
-        newUser.role,
+      newUser.userId,
+      newUser.username,
+      newUser.role,
     );
 
     const lastLogin = new Date().toISOString();
@@ -69,7 +69,7 @@ class AuthService {
   }
 
   async login(
-      loginDto: LoginWithUsernameDTO | LoginWithEmailDTO,
+    loginDto: LoginWithUsernameDTO | LoginWithEmailDTO,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     let user: User | null;
 
@@ -88,9 +88,9 @@ class AuthService {
     }
 
     const isValid = await validatePassword(
-        loginDto.password,
-        user.password,
-        config.hash.salt,
+      loginDto.password,
+      user.password,
+      config.hash.salt,
     );
     if (!isValid) {
       logger.warn(`Invalid password for user: ${user.username || user.email}`);
@@ -126,7 +126,7 @@ class AuthService {
   }
 
   async refresh(
-      refreshToken: string,
+    refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     if (!refreshToken) {
       logger.warn(`Refresh token is required`);
@@ -168,7 +168,11 @@ class AuthService {
       throw new CustomError("User already activated", 400);
     }
 
-    await userRepository.updateUser({ ...user, userId: user.userId, isVerified: true });
+    await userRepository.updateUser({
+      ...user,
+      userId: user.userId,
+      isVerified: true,
+    });
     logger.info(`User with id: ${userId} activated successfully`);
   }
 }

@@ -1,8 +1,5 @@
 import { Project } from "../entities/project-entity";
-import {
-  CreateProjectDTO,
-  UpdateProjectDTO,
-} from "../../application/dtos/project-dto";
+import { UpdateProjectDTO } from "../../application/dtos/project-dto";
 
 export interface ProjectRepository {
   addProject(project: Project): Promise<Project>;
