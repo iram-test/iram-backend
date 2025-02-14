@@ -6,6 +6,12 @@ import {
 } from "../../application/dtos/test-case-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import fileService from "../services/file-service";
+
+export interface ExportTestCasesQuery {
+  ids: string[];
+  format: string;
+}
 
 export const addTestCase = async (
   request: FastifyRequest,
@@ -192,6 +198,50 @@ export const getTestCasesBySubSectionId = async (
     reply.status(200).send(testCases);
   } catch (error) {
     logger.error(`Error during getting test cases by sub section ID: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
+  }
+};
+
+export const getTestCasesByIds = async (
+  request: FastifyRequest<{ Querystring: ExportTestCasesQuery }>,
+  reply: FastifyReply,
+) => {
+  try {
+    const { ids, format } = request.query;
+
+    logger.info(
+      `getTestCasesByIds called with ids: ${JSON.stringify(ids)}, format: ${format}`,
+    );
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      logger.warn("No test case IDs provided.");
+      throw new CustomError("Test case IDs are required", 400);
+    }
+
+    if (!format) {
+      logger.warn("No format provided.");
+      throw new CustomError("Format is required", 400);
+    }
+
+    const testCasesData = await fileService.exportTestCasesByIds(ids, format);
+
+    const filename = `test_cases.${format}`;
+    const contentType =
+      format === "json"
+        ? "application/json"
+        : format === "csv"
+          ? "text/csv"
+          : "application/xml";
+
+    reply.header("Content-Disposition", `attachment; filename="${filename}"`);
+    reply.header("Content-Type", contentType);
+    reply.send(testCasesData);
+  } catch (error) {
+    logger.error(`Error getting test cases by IDs: ${error}`);
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
     } else {

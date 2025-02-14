@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { TestCaseEntity } from "../entities/test-case-entity";
 import { TestCase } from "../../../domain/entities/test-case-entity";
 import {
@@ -185,6 +185,14 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getTestCasesByUserId(userId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { assignedUser: { userId: userId } },
+      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getTestCasesByIds(ids: string[]): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { testCaseId: In(ids) },
       relations: ["project", "assignedUser", "section", "steps", "testRun"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));

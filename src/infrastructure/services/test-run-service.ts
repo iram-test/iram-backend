@@ -6,6 +6,7 @@ import {
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
+import { TestRun } from "../../domain/entities/test-run-entity";
 
 const testRunRepository = new TestRunPostgresRepository();
 const projectRepository = new ProjectPostgresRepository();
@@ -126,6 +127,17 @@ class TestRunService {
       return await testRunRepository.getTestRunByTestReportId(testReportId);
     } catch (error) {
       logger.error(`Error getting TestRuns by test report id:`, error);
+      throw new CustomError("Failed to get test runs", 500);
+    }
+  }
+
+  async getTestRunsByIds(ids: string[]): Promise<TestRun[]> {
+    try {
+      logger.info(`Get test runs by ids: ${ids.join(", ")}`);
+      const testRuns = await testRunRepository.getTestRunsByIds(ids);
+      return testRuns;
+    } catch (error) {
+      logger.error(`Error getting test runs by ids: ${ids.join(", ")}`, error);
       throw new CustomError("Failed to get test runs", 500);
     }
   }

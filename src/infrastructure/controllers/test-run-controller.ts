@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest, RouteHandler } from "fastify";
 import TestRunService from "../services/test-run-service";
 import {
   CreateTestRunDTO,
@@ -6,6 +6,12 @@ import {
 } from "../../application/dtos/test-run-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import fileService from "../services/file-service";
+
+export interface ExportTestRunsQuery {
+  ids: string[];
+  format: string;
+}
 
 export const addTestRun = async (
   request: FastifyRequest,
@@ -153,6 +159,46 @@ export const getTestRunsByTestReportId = async (
     logger.error(
       `Error getting TestRuns by test report id: ${request.params}: ${error}`,
     );
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test runs" });
+    }
+  }
+};
+
+export const getTestRunsByIds = async (
+  request: FastifyRequest<{ Querystring: ExportTestRunsQuery }>,
+  reply: FastifyReply,
+) => {
+  try {
+    const { ids, format } = request.query;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      logger.warn("No test run IDs provided.");
+      throw new CustomError("Test run IDs are required", 400);
+    }
+
+    if (!format) {
+      logger.warn("No format provided.");
+      throw new CustomError("Format is required", 400);
+    }
+
+    const testRunsData = await fileService.exportTestRunsByIds(ids, format);
+
+    const filename = `test_runs.${format}`;
+    const contentType =
+      format === "json"
+        ? "application/json"
+        : format === "csv"
+          ? "text/csv"
+          : "application/xml";
+
+    reply.header("Content-Disposition", `attachment; filename="${filename}"`);
+    reply.header("Content-Type", contentType);
+    reply.send(testRunsData);
+  } catch (error) {
+    logger.error(`Error getting TestRuns by ids: ${request.query}: ${error}`);
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
     } else {

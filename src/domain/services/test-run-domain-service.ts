@@ -60,4 +60,8 @@ export class TestRunDomainService implements TestRunRepository {
   getTestRunByTestReportId(testReportId: string): Promise<TestRun[]> {
     return this.testRunRepository.getTestRunByTestReportId(testReportId);
   }
+
+  getTestRunsByIds(ids: string[]): Promise<TestRun[]> {
+    return this.testRunRepository.getTestRunsByIds(ids);
+  }
 }

@@ -189,6 +189,20 @@ export class TestRunPostgresRepository implements TestRunRepository {
     return testRuns.map((entity) => this.toDomainEntity(entity));
   }
 
+  async getTestRunsByIds(ids: string[]): Promise<TestRun[]> {
+    const testRuns = await this.repository.find({
+      where: { testRunId: In(ids) },
+      relations: [
+        "testCases",
+        "milestone",
+        "project",
+        "testReport",
+        "assignedUser",
+      ],
+    });
+    return testRuns.map((entity) => this.toDomainEntity(entity));
+  }
+
   private toDomainEntity(entity: TestRunEntity): TestRun {
     const testCaseIds = entity.testCases
       ? entity.testCases.map((testCase) => testCase.testCaseId)

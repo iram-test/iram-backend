@@ -16,4 +16,5 @@ export interface TestRunRepository {
   getTestRunByProjectId(projectId: string): Promise<TestRun[]>;
   getTestRunByUserId(userId: string): Promise<TestRun[]>;
   getTestRunByTestReportId(testReportId: string): Promise<TestRun[]>;
+  getTestRunsByIds(ids: string[]): Promise<TestRun[]>;
 }
