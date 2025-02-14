@@ -5,7 +5,7 @@ import { config } from "./src/configs";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import { router } from "./src/infrastructure/routes";
-import multipart from '@fastify/multipart';
+import multipart from "@fastify/multipart";
 import sensible from "@fastify/sensible";
 import { PostgresDataSource } from "./src/tools/db-connection";
 dotenv.config();

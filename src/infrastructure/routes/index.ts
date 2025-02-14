@@ -14,6 +14,7 @@ import { fileRoutes } from "./file.routes";
 export async function router(fastify: FastifyInstance) {
   await authRoutes(fastify);
   await userRoutes(fastify);
+  await fileRoutes(fastify);
   await sectionRoutes(fastify);
   await subsectionRoutes(fastify);
   await milestoneRoutes(fastify);
@@ -22,5 +23,4 @@ export async function router(fastify: FastifyInstance) {
   await testCaseRoutes(fastify);
   await testReportRoutes(fastify);
   await testRunRoutes(fastify);
-  await fileRoutes(fastify);
 }

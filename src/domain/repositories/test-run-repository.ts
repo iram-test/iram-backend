@@ -6,7 +6,7 @@ import {
 
 export interface TestRunRepository {
   addTestRun(
-      testRun: CreateTestRunDTO & { projectId: string },
+    testRun: CreateTestRunDTO & { projectId: string },
   ): Promise<TestRun>;
   getAll(): Promise<TestRun[]>;
   getById(testRunId: string): Promise<TestRun | null>;

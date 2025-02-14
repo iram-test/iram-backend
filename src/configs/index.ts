@@ -17,7 +17,7 @@ export const config = {
     refreshExpiration: process.env.JWT_REFRESH_EXPIRATION!,
   },
   cors: {
-    origin: [`http://${process.env.IP_ADDRESS!}`, "http://localhost:3001"],
+    origin: ["*"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
     optionsSuccessStatus: 204,

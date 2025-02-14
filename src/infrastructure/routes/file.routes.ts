@@ -1,78 +1,63 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import {
-    importTestCasesFromJson,
-    importTestCasesFromCsv,
-    saveTestRunToPdf,
-    saveTestCaseToPdf,
-    exportTestCases,
-    exportTestRun,
-    saveTestCases,
+  importTestCasesFromJson,
+  importTestCasesFromCsv,
 } from "../controllers/file-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
-import { TestCase } from "../../domain/entities/test-case-entity";
-import { RouteGenericInterface } from "fastify/types/route";
-import { TestRun } from "../../domain/entities/test-run-entity";
+import { getTestCasesByIds } from "../controllers/test-case-controller";
+import {
+  getTestRunsByIds,
+  ExportTestRunsQuery,
+} from "../controllers/test-run-controller";
+import { ExportTestCasesQuery } from "../interfaces/export-interface";
+import { RouteShorthandOptions } from "fastify/types/route";
 
-interface ImportFileRoute extends RouteGenericInterface {
-    Body: { filePath: string };
+interface ImportFileRoute {
+  Body: { filePath: string };
 }
 
-interface ExportTestCasesRoute extends RouteGenericInterface {
-    Body: { testCases: TestCase[]; format: string };
-}
-
-interface ExportTestRunRoute extends RouteGenericInterface {
-    Body: { testRun: TestRun; format: string };
-}
-
-interface PdfFileRoute extends RouteGenericInterface {
-    Params: { testRunId?: string; testCaseId?: string };
-}
+const exportRouteOptions: RouteShorthandOptions = {
+  schema: {
+    querystring: {
+      type: "object",
+      properties: {
+        ids: { type: "array", items: { type: "string" } },
+        format: { type: "string" },
+      },
+      required: ["ids", "format"],
+    },
+  },
+};
 
 export async function fileRoutes(fastify: FastifyInstance) {
-    fastify.post<ImportFileRoute>(
-        "/files/import/json",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        importTestCasesFromJson,
-    );
+  fastify.post<ImportFileRoute>(
+    "/files/import/json",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    importTestCasesFromJson,
+  );
 
-    fastify.post<ImportFileRoute>(
-        "/files/import/csv",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        importTestCasesFromCsv,
-    );
+  fastify.post<ImportFileRoute>(
+    "/files/import/csv",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    importTestCasesFromCsv,
+  );
 
-    // Generic test cases export
-    fastify.post<ExportTestCasesRoute>(
-        "/files/export/test-cases",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        exportTestCases,
-    );
+  fastify.get<{ Querystring: ExportTestCasesQuery }>(
+    "/files/export/test-cases",
+    {
+      preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])],
+      ...exportRouteOptions,
+    },
+    getTestCasesByIds,
+  );
 
-    // Generic test run export
-    fastify.post<ExportTestRunRoute>(
-        "/files/export/test-run",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        exportTestRun,
-    );
-
-    // Generic test cases save
-    fastify.post<ExportTestCasesRoute>(
-        "/files/save/test-cases",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        saveTestCases,
-    );
-
-    fastify.get<PdfFileRoute>(
-        "/files/test-runs/:testRunId/pdf",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        saveTestRunToPdf,
-    );
-
-    fastify.get<PdfFileRoute>(
-        "/files/test-cases/:testCaseId/pdf",
-        { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
-        saveTestCaseToPdf,
-    );
+  fastify.get<{ Querystring: ExportTestRunsQuery }>(
+    "/files/export/test-runs",
+    {
+      preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])],
+      ...exportRouteOptions,
+    },
+    getTestRunsByIds,
+  );
 }

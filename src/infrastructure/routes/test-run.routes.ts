@@ -6,7 +6,6 @@ import {
   updateTestRun,
   deleteTestRun,
   getTestRunsByProjectId,
-  getTestRunsByIds,
 } from "../controllers/test-run-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
@@ -17,51 +16,46 @@ import {
 
 export async function testRunRoutes(fastify: FastifyInstance) {
   fastify.post(
-      "/projects/:projectId/test-runs",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      addTestRun,
+    "/projects/:projectId/test-runs",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    addTestRun,
   );
   fastify.get(
-      "/test-runs",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      getAllTestRuns,
+    "/test-runs",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    getAllTestRuns,
   );
   fastify.get(
-      "/test-runs/:testRunId",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      getTestRunById,
+    "/test-runs/:testRunId",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    getTestRunById,
   );
   fastify.put(
-      "/test-runs/:testRunId",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      updateTestRun,
+    "/test-runs/:testRunId",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    updateTestRun,
   );
   fastify.delete(
-      "/test-runs/:testRunId",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      deleteTestRun,
+    "/test-runs/:testRunId",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    deleteTestRun,
   );
 
   fastify.get(
-      "/projects/:projectId/test-runs",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      getTestRunsByProjectId,
+    "/projects/:projectId/test-runs",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    getTestRunsByProjectId,
   );
 
   fastify.get(
-      "/users/:userId/test-runs",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      getTestRunsByUserId,
+    "/users/:userId/test-runs",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    getTestRunsByUserId,
   );
 
   fastify.get(
-      "/test-reports/:testReportId/test-runs",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      getTestRunsByTestReportId,
-  );
-  fastify.get(
-      "/test-runs/by-ids",
-      { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
-      getTestRunsByIds
+    "/test-reports/:testReportId/test-runs",
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    getTestRunsByTestReportId,
   );
 }

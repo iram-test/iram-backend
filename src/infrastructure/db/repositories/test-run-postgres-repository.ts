@@ -21,7 +21,7 @@ export class TestRunPostgresRepository implements TestRunRepository {
   }
 
   async addTestRun(
-      createDto: CreateTestRunDTO & { projectId: string },
+    createDto: CreateTestRunDTO & { projectId: string },
   ): Promise<TestRun> {
     const projectRepository = this.dataSource.getRepository(ProjectEntity);
     const project = await projectRepository.findOneBy({
@@ -34,7 +34,7 @@ export class TestRunPostgresRepository implements TestRunRepository {
     let milestone;
     if (createDto.milestoneId) {
       const milestoneRepository =
-          this.dataSource.getRepository(MilestoneEntity);
+        this.dataSource.getRepository(MilestoneEntity);
       milestone = await milestoneRepository.findOneBy({
         milestoneID: createDto.milestoneId,
       });
@@ -88,8 +88,8 @@ export class TestRunPostgresRepository implements TestRunRepository {
 
     if (!testRunFull) {
       throw new CustomError(
-          "Could not retrieve saved test run with relations",
-          500,
+        "Could not retrieve saved test run with relations",
+        500,
       );
     }
 
@@ -205,27 +205,27 @@ export class TestRunPostgresRepository implements TestRunRepository {
 
   private toDomainEntity(entity: TestRunEntity): TestRun {
     const testCaseIds = entity.testCases
-        ? entity.testCases.map((testCase) => testCase.testCaseId)
-        : [];
+      ? entity.testCases.map((testCase) => testCase.testCaseId)
+      : [];
     const milestoneId = entity.milestone ? entity.milestone.milestoneID : null;
     const assignedUserId = entity.assignedUser
-        ? entity.assignedUser.userId
-        : null;
+      ? entity.assignedUser.userId
+      : null;
 
     if (!entity.project) {
       throw new Error("Project relation is not loaded");
     }
 
     return new TestRun(
-        entity.testRunId,
-        entity.name,
-        milestoneId,
-        assignedUserId,
-        entity.project.projectId,
-        testCaseIds,
-        entity.description,
-        entity.createdAt.toISOString(),
-        entity.updatedAt.toISOString(),
+      entity.testRunId,
+      entity.name,
+      milestoneId,
+      assignedUserId,
+      entity.project.projectId,
+      testCaseIds,
+      entity.description,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
     );
   }
 }
