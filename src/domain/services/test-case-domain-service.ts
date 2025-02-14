@@ -10,7 +10,7 @@ export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
   async addTestCase(
-    testCaseDto: CreateTestCaseDTO & { projectId: string },
+      testCaseDto: CreateTestCaseDTO & { projectId: string },
   ): Promise<TestCase> {
     return await this.testCaseRepository.addTestCase(testCaseDto);
   }
@@ -53,5 +53,8 @@ export class TestCaseDomainService implements TestCaseRepository {
   }
   getTestCasesByUserId(userId: string): Promise<TestCase[]> {
     return this.testCaseRepository.getTestCasesByUserId(userId);
+  }
+  getTestCasesByIds(ids: string[]): Promise<TestCase[]> {
+    return this.testCaseRepository.getTestCasesByIds(ids);
   }
 }

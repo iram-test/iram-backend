@@ -8,8 +8,8 @@ import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 
 export const addTestRun = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
@@ -27,8 +27,8 @@ export const addTestRun = async (
 };
 
 export const getAllTestRuns = async (
-  _: FastifyRequest,
-  reply: FastifyReply,
+    _: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const testRuns = await TestRunService.getAll();
@@ -44,8 +44,8 @@ export const getAllTestRuns = async (
 };
 
 export const getTestRunById = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { testRunId } = request.params as { testRunId: string };
@@ -62,8 +62,8 @@ export const getTestRunById = async (
 };
 
 export const updateTestRun = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { testRunId } = request.params as { testRunId: string };
@@ -72,7 +72,7 @@ export const updateTestRun = async (
     reply.status(200).send(updatedTestRun);
   } catch (error) {
     logger.error(
-      `Error updating test run with id: ${request.params}: ${error}`,
+        `Error updating test run with id: ${request.params}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
@@ -83,8 +83,8 @@ export const updateTestRun = async (
 };
 
 export const deleteTestRun = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { testRunId } = request.params as { testRunId: string };
@@ -101,8 +101,8 @@ export const deleteTestRun = async (
 };
 
 export const getTestRunsByProjectId = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
@@ -110,7 +110,7 @@ export const getTestRunsByProjectId = async (
     reply.status(200).send(testRuns);
   } catch (error) {
     logger.error(
-      `Error getting TestRuns by project id: ${request.params}: ${error}`,
+        `Error getting TestRuns by project id: ${request.params}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
@@ -121,8 +121,8 @@ export const getTestRunsByProjectId = async (
 };
 
 export const getTestRunsByUserId = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { userId } = request.params as { userId: string };
@@ -130,7 +130,7 @@ export const getTestRunsByUserId = async (
     reply.status(200).send(testRuns);
   } catch (error) {
     logger.error(
-      `Error getting TestRuns by user id: ${request.params}: ${error}`,
+        `Error getting TestRuns by user id: ${request.params}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
@@ -141,17 +141,38 @@ export const getTestRunsByUserId = async (
 };
 
 export const getTestRunsByTestReportId = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
+    request: FastifyRequest,
+    reply: FastifyReply,
 ) => {
   try {
     const { testReportId } = request.params as { testReportId: string };
     const testRuns =
-      await TestRunService.getTestRunByTestReportId(testReportId);
+        await TestRunService.getTestRunByTestReportId(testReportId);
     reply.status(200).send(testRuns);
   } catch (error) {
     logger.error(
-      `Error getting TestRuns by test report id: ${request.params}: ${error}`,
+        `Error getting TestRuns by test report id: ${request.params}: ${error}`,
+    );
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test runs" });
+    }
+  }
+};
+
+
+export const getTestRunsByIds = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+) => {
+  try {
+    const ids = request.query as { ids: string[] };
+    const testRuns = await TestRunService.getTestRunsByIds(ids.ids);
+    reply.status(200).send(testRuns);
+  } catch (error) {
+    logger.error(
+        `Error getting TestRuns by ids: ${request.query}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });

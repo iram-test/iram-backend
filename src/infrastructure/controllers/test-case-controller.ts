@@ -199,3 +199,26 @@ export const getTestCasesBySubSectionId = async (
     }
   }
 };
+
+export const getTestCasesByIds = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+) => {
+  try {
+    const { ids } = request.query as { ids: string[] };
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      logger.warn("No test case IDs provided.");
+      throw new CustomError("Test case IDs are required", 400);
+    }
+
+    const testCases = await TestCaseService.getTestCasesByIds(ids);
+    reply.status(200).send(testCases);
+  } catch (error) {
+    logger.error(`Error getting test cases by IDs: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting test cases" });
+    }
+  }
+};

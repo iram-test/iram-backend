@@ -5,6 +5,7 @@ import { config } from "./src/configs";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import { router } from "./src/infrastructure/routes";
+import multipart from '@fastify/multipart';
 import sensible from "@fastify/sensible";
 import { PostgresDataSource } from "./src/tools/db-connection";
 dotenv.config();
@@ -12,6 +13,7 @@ dotenv.config();
 (async () => {
   try {
     const server = Fastify({ logger: false });
+    await server.register(multipart);
     await server.register(rateLimit, config.rateLimiter);
     await server.register(cors, config.cors);
     await server.register(sensible);

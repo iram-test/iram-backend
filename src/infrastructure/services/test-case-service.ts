@@ -6,6 +6,7 @@ import {
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
+import { TestCase } from "../../domain/entities/test-case-entity";
 
 const testCaseRepository = new TestCasePostgresRepository();
 const projectRepository = new ProjectPostgresRepository();
@@ -36,7 +37,7 @@ class TestCaseService {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
         logger.warn(
-          `Test case with id ${testCaseId} was not found for update.`,
+            `Test case with id ${testCaseId} was not found for update.`,
         );
         throw new CustomError("Test case not found", 404);
       }
@@ -82,7 +83,7 @@ class TestCaseService {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
         logger.warn(
-          `Test case with id: ${testCaseId} was not found for delete.`,
+            `Test case with id: ${testCaseId} was not found for delete.`,
         );
         throw new CustomError("Test case not found", 404);
       }
@@ -164,6 +165,16 @@ class TestCaseService {
       return await testCaseRepository.getBySubSectionId(subsectionId);
     } catch (error) {
       logger.error(`Error getting test cases by sub section id:`, error);
+      throw new CustomError("Failed to get test cases", 500);
+    }
+  }
+  async getTestCasesByIds(ids: string[]): Promise<TestCase[]> {
+    try {
+      logger.info(`Get test cases by ids: ${ids.join(", ")}`);
+      const testCases = await testCaseRepository.getTestCasesByIds(ids);
+      return testCases;
+    } catch (error) {
+      logger.error(`Error getting test cases by ids: ${ids.join(", ")}`, error);
       throw new CustomError("Failed to get test cases", 500);
     }
   }

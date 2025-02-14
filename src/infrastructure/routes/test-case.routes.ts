@@ -9,6 +9,7 @@ import {
   getTestCasesBySectionId,
   getTestCasesByAssignedUserId,
   getTestCasesBySubSectionId,
+    getTestCasesByIds,
 } from "../controllers/test-case-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
@@ -83,4 +84,14 @@ export async function testCaseRoutes(fastify: FastifyInstance) {
     },
     getTestCasesByAssignedUserId,
   );
+
+    fastify.get(
+        "/test-cases/by-ids",
+        {
+            preHandler: [
+                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+            ],
+        },
+        getTestCasesByIds
+    );
 }

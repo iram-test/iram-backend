@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import {DataSource, In, Repository} from "typeorm";
 import { TestCaseEntity } from "../entities/test-case-entity";
 import { TestCase } from "../../../domain/entities/test-case-entity";
 import {
@@ -20,10 +20,10 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   }
 
   async addTestCase(
-    createDto: CreateTestCaseDTO & {
-      projectId: string;
-      sectionId?: string | null;
-    },
+      createDto: CreateTestCaseDTO & {
+        projectId: string;
+        sectionId?: string | null;
+      },
   ): Promise<TestCase> {
     const testCase = this.repository.create(createDto);
 
@@ -38,7 +38,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
         testCase.subsectionId = null;
       } else {
         const subSectionRepository =
-          this.dataSource.getRepository(SubSectionEntity);
+            this.dataSource.getRepository(SubSectionEntity);
         const subSection = await subSectionRepository.findOne({
           where: { subsectionId: createDto.sectionId },
           relations: ["section"],
@@ -94,7 +94,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
         } else {
           // Пробуємо знайти як підсекцію
           const subSectionRepository =
-            this.dataSource.getRepository(SubSectionEntity);
+              this.dataSource.getRepository(SubSectionEntity);
           const subSection = await subSectionRepository.findOne({
             where: { subsectionId: sectionId },
             relations: ["section"],
@@ -190,29 +190,37 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
 
+  async getTestCasesByIds(ids: string[]): Promise<TestCase[]> {
+    const testCases = await this.repository.find({
+      where: { testCaseId: In(ids) },
+      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+    });
+    return testCases.map((entity) => this.toDomainEntity(entity));
+  }
+
   private toDomainEntity(entity: TestCaseEntity): TestCase {
     const resolvedSectionId = entity.subsectionId
-      ? entity.subsectionId
-      : entity.section
-        ? entity.section.sectionId
-        : null;
+        ? entity.subsectionId
+        : entity.section
+            ? entity.section.sectionId
+            : null;
     const stepIds = entity.steps
-      ? entity.steps.map((step) => step.stepId)
-      : null;
+        ? entity.steps.map((step) => step.stepId)
+        : null;
     return new TestCase(
-      entity.testCaseId,
-      entity.title,
-      resolvedSectionId,
-      entity.projectId,
-      entity.assignedUser ? entity.assignedUser.userId : null,
-      entity.templateType,
-      entity.testType,
-      entity.priority,
-      entity.timeEstimation,
-      entity.description,
-      stepIds,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
+        entity.testCaseId,
+        entity.title,
+        resolvedSectionId,
+        entity.projectId,
+        entity.assignedUser ? entity.assignedUser.userId : null,
+        entity.templateType,
+        entity.testType,
+        entity.priority,
+        entity.timeEstimation,
+        entity.description,
+        stepIds,
+        entity.createdAt.toISOString(),
+        entity.updatedAt.toISOString(),
     );
   }
 }

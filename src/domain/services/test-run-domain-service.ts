@@ -10,18 +10,18 @@ export class TestRunDomainService implements TestRunRepository {
   constructor(private testRunRepository: TestRunRepository) {}
 
   async addTestRun(
-    testRunDto: CreateTestRunDTO & { projectId: string },
+      testRunDto: CreateTestRunDTO & { projectId: string },
   ): Promise<TestRun> {
     const testRun: TestRun = new TestRun(
-      v4(),
-      testRunDto.name,
-      testRunDto.milestoneId ?? null,
-      testRunDto.assignedUserId ?? null,
-      testRunDto.projectId,
-      testRunDto.testCaseIds,
-      testRunDto.description,
-      new Date().toISOString(),
-      new Date().toISOString(),
+        v4(),
+        testRunDto.name,
+        testRunDto.milestoneId ?? null,
+        testRunDto.assignedUserId ?? null,
+        testRunDto.projectId,
+        testRunDto.testCaseIds,
+        testRunDto.description,
+        new Date().toISOString(),
+        new Date().toISOString(),
     );
     return await this.testRunRepository.addTestRun({
       ...testRunDto,
@@ -59,5 +59,9 @@ export class TestRunDomainService implements TestRunRepository {
 
   getTestRunByTestReportId(testReportId: string): Promise<TestRun[]> {
     return this.testRunRepository.getTestRunByTestReportId(testReportId);
+  }
+
+  getTestRunsByIds(ids: string[]): Promise<TestRun[]> {
+    return this.testRunRepository.getTestRunsByIds(ids);
   }
 }

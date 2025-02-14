@@ -9,6 +9,7 @@ import { stepRoutes } from "./step.routes";
 import { testCaseRoutes } from "./test-case.routes";
 import { testReportRoutes } from "./test-report.routes";
 import { testRunRoutes } from "./test-run.routes";
+import { fileRoutes } from "./file.routes";
 
 export async function router(fastify: FastifyInstance) {
   await authRoutes(fastify);
@@ -21,4 +22,5 @@ export async function router(fastify: FastifyInstance) {
   await testCaseRoutes(fastify);
   await testReportRoutes(fastify);
   await testRunRoutes(fastify);
+  await fileRoutes(fastify);
 }
