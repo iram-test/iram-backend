@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyInstance } from "fastify";
 import {
   importTestCasesFromJson,
   importTestCasesFromCsv,
@@ -10,7 +10,7 @@ import {
   getTestRunsByIds,
   ExportTestRunsQuery,
 } from "../controllers/test-run-controller";
-import { ExportTestCasesQuery } from "../interfaces/export-interface";
+import { ExportTestCasesQuery } from "../controllers/test-case-controller";
 import { RouteShorthandOptions } from "fastify/types/route";
 
 interface ImportFileRoute {
