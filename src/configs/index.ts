@@ -21,7 +21,7 @@ export const config = {
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
     optionsSuccessStatus: 204,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", 'x-refresh-token'],
   },
   hash: {
     iterations: 1000,

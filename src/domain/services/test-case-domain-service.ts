@@ -10,7 +10,7 @@ export class TestCaseDomainService implements TestCaseRepository {
   constructor(private testCaseRepository: TestCaseRepository) {}
 
   async addTestCase(
-    testCaseDto: CreateTestCaseDTO & { projectId: string },
+      testCaseDto: CreateTestCaseDTO & { projectId: string },
   ): Promise<TestCase> {
     return await this.testCaseRepository.addTestCase(testCaseDto);
   }

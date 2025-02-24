@@ -11,6 +11,7 @@ import { UserEntity } from "../entities/user-entity";
 import { SectionEntity } from "../entities/section-entity";
 import { SubSectionEntity } from "../entities/subsection-entity";
 import { CustomError } from "../../../tools/custom-error";
+import { Status } from "../../../domain/entities/enums/status";
 
 export class TestCasePostgresRepository implements TestCaseRepository {
   private repository: Repository<TestCaseEntity>;
@@ -20,10 +21,10 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   }
 
   async addTestCase(
-    createDto: CreateTestCaseDTO & {
-      projectId: string;
-      sectionId?: string | null;
-    },
+      createDto: CreateTestCaseDTO & {
+        projectId: string;
+        sectionId?: string | null;
+      },
   ): Promise<TestCase> {
     const testCase = this.repository.create(createDto);
 
@@ -38,7 +39,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
         testCase.subsectionId = null;
       } else {
         const subSectionRepository =
-          this.dataSource.getRepository(SubSectionEntity);
+            this.dataSource.getRepository(SubSectionEntity);
         const subSection = await subSectionRepository.findOne({
           where: { subsectionId: createDto.sectionId },
           relations: ["section"],
@@ -70,7 +71,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   }
 
   async update(updateDto: UpdateTestCaseDTO): Promise<TestCase> {
-    const { testCaseId, sectionId, ...updateData } = updateDto;
+    const { testCaseId, sectionId, status, ...updateData } = updateDto;
 
     const existingTestCase = await this.repository.findOneOrFail({
       where: { testCaseId },
@@ -94,7 +95,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
         } else {
           // Пробуємо знайти як підсекцію
           const subSectionRepository =
-            this.dataSource.getRepository(SubSectionEntity);
+              this.dataSource.getRepository(SubSectionEntity);
           const subSection = await subSectionRepository.findOne({
             where: { subsectionId: sectionId },
             relations: ["section"],
@@ -107,6 +108,10 @@ export class TestCasePostgresRepository implements TestCaseRepository {
           existingTestCase.subsectionId = subSection.subsectionId;
         }
       }
+    }
+
+    if (status !== undefined) {
+      existingTestCase.status = status;
     }
 
     Object.assign(existingTestCase, updateData);
@@ -200,27 +205,28 @@ export class TestCasePostgresRepository implements TestCaseRepository {
 
   private toDomainEntity(entity: TestCaseEntity): TestCase {
     const resolvedSectionId = entity.subsectionId
-      ? entity.subsectionId
-      : entity.section
-        ? entity.section.sectionId
-        : null;
+        ? entity.subsectionId
+        : entity.section
+            ? entity.section.sectionId
+            : null;
     const stepIds = entity.steps
-      ? entity.steps.map((step) => step.stepId)
-      : null;
+        ? entity.steps.map((step) => step.stepId)
+        : null;
     return new TestCase(
-      entity.testCaseId,
-      entity.title,
-      resolvedSectionId,
-      entity.projectId,
-      entity.assignedUser ? entity.assignedUser.userId : null,
-      entity.templateType,
-      entity.testType,
-      entity.priority,
-      entity.timeEstimation,
-      entity.description,
-      stepIds,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
+        entity.testCaseId,
+        entity.title,
+        resolvedSectionId,
+        entity.projectId,
+        entity.assignedUser ? entity.assignedUser.userId : null,
+        entity.templateType,
+        entity.testType,
+        entity.priority,
+        entity.status,
+        entity.timeEstimation,
+        entity.description,
+        stepIds,
+        entity.createdAt.toISOString(),
+        entity.updatedAt.toISOString(),
     );
   }
 }

@@ -16,6 +16,7 @@ import { StepEntity } from "./step-entity";
 import { UserEntity } from "./user-entity";
 import { SectionEntity } from "./section-entity";
 import { TestRunEntity } from "./test-run-entity";
+import { Status } from "../../../domain/entities/enums/status";
 
 @Entity()
 export class TestCaseEntity {
@@ -37,6 +38,9 @@ export class TestCaseEntity {
   @Column({ type: "enum", enum: Priority })
   priority!: Priority;
 
+  @Column({ type: "enum", enum: Status, default: Status.UNTESTED })
+  status: Status = Status.UNTESTED;
+
   @Column()
   timeEstimation!: string;
 
@@ -50,29 +54,29 @@ export class TestCaseEntity {
   updatedAt!: Date;
 
   @ManyToOne(
-    () => ProjectEntity,
-    (project) => project.testCases,
+      () => ProjectEntity,
+      (project) => project.testCases,
   )
   @JoinColumn({ name: "projectId" })
   project!: ProjectEntity;
 
   @ManyToOne(
-    () => UserEntity,
-    (user) => user.testCases,
-    {
-      nullable: true,
-      onDelete: "SET NULL",
-    },
+      () => UserEntity,
+      (user) => user.testCases,
+      {
+        nullable: true,
+        onDelete: "SET NULL",
+      },
   )
   @JoinColumn({ name: "assignedUserId" })
   assignedUser?: UserEntity;
 
   @ManyToOne(
-    () => SectionEntity,
-    (section) => section.testCases,
-    {
-      nullable: true,
-    },
+      () => SectionEntity,
+      (section) => section.testCases,
+      {
+        nullable: true,
+      },
   )
   @JoinColumn({ name: "sectionId" })
   section?: SectionEntity;
@@ -84,14 +88,14 @@ export class TestCaseEntity {
   subsectionId?: string | null;
 
   @OneToMany(
-    () => StepEntity,
-    (step) => step.testCase,
+      () => StepEntity,
+      (step) => step.testCase,
   )
   steps?: StepEntity[];
 
   @ManyToOne(
-    () => TestRunEntity,
-    (testRun) => testRun.testCases,
+      () => TestRunEntity,
+      (testRun) => testRun.testCases,
   )
   @JoinColumn({ name: "testRunId" })
   testRun!: TestRunEntity;

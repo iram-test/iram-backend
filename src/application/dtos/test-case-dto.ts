@@ -1,6 +1,7 @@
 import { TemplateType } from "../../domain/entities/enums/template-type";
 import { Priority } from "../../domain/entities/enums/project-priority";
 import { TestType } from "../../domain/entities/enums/test-type";
+import { Status } from "../../domain/entities/enums/status";
 
 export interface TestCaseDTO {
   testCaseId: string;
@@ -11,6 +12,7 @@ export interface TestCaseDTO {
   templateType: TemplateType;
   testType: TestType;
   priority: Priority;
+  status: Status;
   timeEstimation: string;
   description: string;
   stepIds: string[] | null;
@@ -38,6 +40,7 @@ export interface UpdateTestCaseDTO {
   templateType?: TemplateType;
   testType?: TestType;
   priority?: Priority;
+  status?: Status;
   timeEstimation?: string;
   description?: string;
   stepIds?: string[] | null;
