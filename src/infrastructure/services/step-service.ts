@@ -5,17 +5,17 @@ import { CustomError } from "../../tools/custom-error";
 import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository";
 
 const stepRepository = new StepPostgresRepository();
-const testCaseRepository = new TestCasePostgresRepository();
 
 class StepService {
   async addStep(testCaseId: string, stepDto: CreateStepDTO) {
     try {
-      const testCase = await testCaseRepository.getById(testCaseId);
+      const testCase = await new TestCasePostgresRepository().getById(
+        testCaseId,
+      );
       if (!testCase) {
         logger.warn(`Test case with id: ${testCaseId} was not found`);
         throw new CustomError("Test case not found", 404);
       }
-
       const newStep = await stepRepository.addStep({ ...stepDto, testCaseId });
       logger.info(`Step created: ${newStep.stepId}`);
       return newStep;
@@ -89,17 +89,43 @@ class StepService {
         logger.warn(`Step with id: ${stepId} was not found for image upload.`);
         throw new CustomError("Step not found", 404);
       }
-
       const currentImages = step.image || [];
       const updatedImages = [...currentImages, imageUrl];
-
-      const updatedStep = await stepRepository.update({ stepId: stepId, image: updatedImages });
+      const updatedStep = await stepRepository.update({
+        stepId,
+        image: updatedImages,
+      });
       logger.info(`Image uploaded for step with id ${stepId}`);
       return updatedStep;
-
     } catch (error) {
       logger.error(`Error uploading image for step with id ${stepId}:`, error);
       throw new CustomError("Failed to upload image", 500);
+    }
+  }
+
+  async uploadExpectedImage(stepId: string, imageUrl: string) {
+    try {
+      const step = await stepRepository.getById(stepId);
+      if (!step) {
+        logger.warn(
+          `Step with id: ${stepId} was not found for expected image upload.`,
+        );
+        throw new CustomError("Step not found", 404);
+      }
+      const currentExpectedImages = step.expectedImage || [];
+      const updatedExpectedImages = [...currentExpectedImages, imageUrl];
+      const updatedStep = await stepRepository.update({
+        stepId,
+        expectedImage: updatedExpectedImages,
+      });
+      logger.info(`Expected image uploaded for step with id ${stepId}`);
+      return updatedStep;
+    } catch (error) {
+      logger.error(
+        `Error uploading expected image for step with id ${stepId}:`,
+        error,
+      );
+      throw new CustomError("Failed to upload expected image", 500);
     }
   }
 }

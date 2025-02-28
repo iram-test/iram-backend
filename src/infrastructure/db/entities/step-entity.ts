@@ -23,6 +23,9 @@ export class StepEntity {
   @Column({ type: "jsonb", nullable: true })
   image!: string[] | null;
 
+  @Column({ type: "jsonb", nullable: true })
+  expectedImage!: string[] | null;
+
   @CreateDateColumn()
   createdAt!: Date;
 
@@ -30,9 +33,9 @@ export class StepEntity {
   updatedAt!: Date;
 
   @ManyToOne(
-      () => TestCaseEntity,
-      (testCase) => testCase.steps,
-      { onDelete: "CASCADE" },
+    () => TestCaseEntity,
+    (testCase) => testCase.steps,
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "testCaseId" })
   testCase!: TestCaseEntity;

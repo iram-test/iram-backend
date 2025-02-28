@@ -17,23 +17,16 @@ export class StepPostgresRepository implements StepRepository {
   }
 
   async addStep(
-      createDto: CreateStepDTO & { testCaseId: string },
+    createDto: CreateStepDTO & { testCaseId: string },
   ): Promise<Step> {
     const { testCaseId, ...stepData } = createDto;
     const step = this.repository.create(stepData);
-
     const testCaseRepository = this.dataSource.getRepository(TestCaseEntity);
-
-    const testCase = await testCaseRepository.findOneBy({
-      testCaseId: testCaseId,
-    });
-
+    const testCase = await testCaseRepository.findOneBy({ testCaseId });
     if (!testCase) {
       throw new Error(`TestCase with id ${testCaseId} not found`);
     }
-
     step.testCase = testCase;
-
     const savedStep = await this.repository.save(step);
     return this.toDomainEntity(savedStep);
   }
@@ -62,20 +55,22 @@ export class StepPostgresRepository implements StepRepository {
 
   async getStepsByTestCaseId(testCaseId: string): Promise<Step[]> {
     const steps = await this.repository.find({
-      where: { testCase: { testCaseId: testCaseId } },
+      where: { testCase: { testCaseId } },
       relations: ["testCase"],
     });
     return steps.map((entity) => this.toDomainEntity(entity));
   }
 
   private toDomainEntity(entity: StepEntity): Step {
+    // Припускаємо, що конструктор Step приймає expectedImage як п’ятий параметр
     return new Step(
-        entity.stepId,
-        entity.stepDescription,
-        entity.expectedResult,
-        entity.image,
-        entity.createdAt.toISOString(),
-        entity.updatedAt.toISOString(),
+      entity.stepId,
+      entity.stepDescription,
+      entity.expectedResult,
+      entity.image,
+      entity.expectedImage,
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
     );
   }
 }

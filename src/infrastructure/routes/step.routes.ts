@@ -1,72 +1,84 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyInstance } from "fastify";
 import {
-    addStep,
-    getStepById,
-    updateStep,
-    deleteStep,
-    getStepsByTestCaseId, uploadImage,
+  addStep,
+  getStepById,
+  updateStep,
+  deleteStep,
+  getStepsByTestCaseId,
+  uploadImage,
+  uploadExpectedImage,
 } from "../controllers/step-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function stepRoutes(fastify: FastifyInstance) {
-    fastify.post(
-        "/test-cases/:testCaseId/steps",
-        {
-            preHandler: [
-                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-            ],
-        },
-        addStep
-    );
+  fastify.post(
+    "/test-cases/:testCaseId/steps",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    addStep,
+  );
 
-    fastify.post(
-        "/test-cases/:testCaseId/steps/:stepId/upload-image",
-        {
-            preHandler: [
-                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-            ],
-        },
-        uploadImage
-    );
+  fastify.post(
+    "/test-cases/:testCaseId/steps/:stepId/upload-image",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    uploadImage,
+  );
 
-    fastify.get(
-        "/test-cases/:testCaseId/steps",
-        {
-            preHandler: [
-                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-            ],
-        },
-        getStepsByTestCaseId,
-    );
+  fastify.post(
+    "/test-cases/:testCaseId/steps/:stepId/upload-expected-image",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    uploadExpectedImage,
+  );
 
-    fastify.get(
-        "/steps/:stepId",
-        {
-            preHandler: [
-                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-            ],
-        },
-        getStepById,
-    );
+  fastify.get(
+    "/test-cases/:testCaseId/steps",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    getStepsByTestCaseId,
+  );
 
-    fastify.put(
-        "/steps/:stepId",
-        {
-            preHandler: [
-                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-            ],
-        },
-        updateStep,
-    );
+  fastify.get(
+    "/steps/:stepId",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    getStepById,
+  );
 
-    fastify.delete(
-        "/steps/:stepId",
-        {
-            preHandler: [
-                authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-            ],
-        },
-        deleteStep,
-    );
+  fastify.put(
+    "/steps/:stepId",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    updateStep,
+  );
+
+  fastify.delete(
+    "/steps/:stepId",
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
+      ],
+    },
+    deleteStep,
+  );
 }

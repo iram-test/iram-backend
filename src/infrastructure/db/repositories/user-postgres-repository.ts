@@ -17,10 +17,10 @@ export class UserPostgresRepository implements UserRepository {
 
   async getUsersByTestRunId(testRunId: string): Promise<User[]> {
     const users = await this.repository
-        .createQueryBuilder("user")
-        .leftJoinAndSelect("user.testRuns", "testRun")
-        .where("testRun.testRunId = :testRunId", { testRunId })
-        .getMany();
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.testRuns", "testRun")
+      .where("testRun.testRunId = :testRunId", { testRunId })
+      .getMany();
 
     return users.map((userEntity) => this.mapToDomain(userEntity));
   }

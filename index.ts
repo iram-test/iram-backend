@@ -12,7 +12,7 @@ import path from "node:path";
 import fastifyStatic from "@fastify/static";
 dotenv.config();
 
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
 (async () => {
   try {
@@ -23,13 +23,13 @@ const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
     await server.register(multipart, {
       limits: {
         fileSize: 10000000, // 10mb
-        files: 5
-      }
+        files: 5,
+      },
     });
     await server.register(router, { prefix: "/api" });
     await server.register(fastifyStatic, {
       root: UPLOAD_DIR,
-      prefix: '/uploads',
+      prefix: "/uploads",
     });
     setConsoleLogs(logger);
     setFileLogs(logger, "logs");

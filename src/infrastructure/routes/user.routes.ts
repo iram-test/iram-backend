@@ -1,10 +1,11 @@
 import { FastifyInstance } from "fastify";
 import {
-    addUser,
-    getAllUsers,
-    getUserById,
-    updateUser,
-    deleteUser, getUsersByTestRunId,
+  addUser,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  getUsersByTestRunId,
 } from "../controllers/user-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { isAdmin } from "../middlewares/admin-middleware";
