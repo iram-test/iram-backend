@@ -6,7 +6,7 @@ import {
 
 export interface TestCaseRepository {
   addTestCase(
-      testCase: CreateTestCaseDTO & { projectId: string },
+    testCase: CreateTestCaseDTO & { projectId: string },
   ): Promise<TestCase>;
   getAll(): Promise<TestCase[]>;
   update(testCase: UpdateTestCaseDTO): Promise<TestCase>;

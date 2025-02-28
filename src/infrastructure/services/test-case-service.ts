@@ -37,7 +37,7 @@ class TestCaseService {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
         logger.warn(
-            `Test case with id ${testCaseId} was not found for update.`,
+          `Test case with id ${testCaseId} was not found for update.`,
         );
         throw new CustomError("Test case not found", 404);
       }
@@ -83,7 +83,7 @@ class TestCaseService {
       const testCase = await testCaseRepository.getById(testCaseId);
       if (!testCase) {
         logger.warn(
-            `Test case with id: ${testCaseId} was not found for delete.`,
+          `Test case with id: ${testCaseId} was not found for delete.`,
         );
         throw new CustomError("Test case not found", 404);
       }

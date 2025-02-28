@@ -13,4 +13,5 @@ export interface UserRepository {
   getRefreshToken(userId: string): Promise<string | null>;
   deleteRefreshToken(userId: string): Promise<void>;
   updateLastLogin(userId: string, lastLogin: string): Promise<void>;
+  getUsersByTestRunId(testRunId: string): Promise<User[]>;
 }

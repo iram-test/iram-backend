@@ -37,7 +37,8 @@ class ProjectService {
 
   async getAllUsersFromProject(projectId: string): Promise<string[]> {
     try {
-      const users = await projectDomainService.getAllUsersFromProject(projectId);
+      const users =
+        await projectDomainService.getAllUsersFromProject(projectId);
       if (!users) {
         logger.warn(`Project with id: ${projectId} not found`);
         throw new CustomError("Project not found", 404);

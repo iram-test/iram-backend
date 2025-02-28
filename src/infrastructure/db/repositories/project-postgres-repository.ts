@@ -34,8 +34,8 @@ export class ProjectPostgresRepository implements ProjectRepository {
   }
 
   async update(
-      projectId: string,
-      updateDto: UpdateProjectDTO,
+    projectId: string,
+    updateDto: UpdateProjectDTO,
   ): Promise<Project | null> {
     try {
       await this.repository.update(projectId, updateDto);
@@ -52,8 +52,8 @@ export class ProjectPostgresRepository implements ProjectRepository {
       });
 
       return updatedProjectEntity
-          ? this.toDomainEntity(updatedProjectEntity)
-          : null;
+        ? this.toDomainEntity(updatedProjectEntity)
+        : null;
     } catch (error) {
       console.error("Error updating project:", error);
       return null;
@@ -95,13 +95,13 @@ export class ProjectPostgresRepository implements ProjectRepository {
   }
 
   async addUserToProject(
-      projectId: string,
-      userId: string,
+    projectId: string,
+    userId: string,
   ): Promise<Project | null> {
     try {
       const user = await this.dataSource
-          .getRepository(UserEntity)
-          .findOne({ where: { userId } });
+        .getRepository(UserEntity)
+        .findOne({ where: { userId } });
       if (!user) {
         return null;
       }
@@ -123,13 +123,13 @@ export class ProjectPostgresRepository implements ProjectRepository {
   }
 
   async removeUserFromProject(
-      projectId: string,
-      userId: string,
+    projectId: string,
+    userId: string,
   ): Promise<Project | null> {
     try {
       const user = await this.dataSource
-          .getRepository(UserEntity)
-          .findOne({ where: { userId } });
+        .getRepository(UserEntity)
+        .findOne({ where: { userId } });
       if (!user) {
         return null;
       }
@@ -163,15 +163,15 @@ export class ProjectPostgresRepository implements ProjectRepository {
 
   private toDomainEntity(entity: ProjectEntity): Project {
     return new Project(
-        entity.projectId,
-        entity.name,
-        entity.language ?? null,
-        entity.location ?? null,
-        entity.description,
-        entity.managerId ?? "",
-        entity.createdAt.toISOString(),
-        entity.updatedAt.toISOString(),
-        entity.users,
+      entity.projectId,
+      entity.name,
+      entity.language ?? null,
+      entity.location ?? null,
+      entity.description,
+      entity.managerId ?? "",
+      entity.createdAt.toISOString(),
+      entity.updatedAt.toISOString(),
+      entity.users,
     );
   }
 }

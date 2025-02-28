@@ -51,4 +51,8 @@ export class UserDomainService {
   async deleteRefreshToken(userId: string): Promise<void> {
     return await this.userRepository.deleteRefreshToken(userId);
   }
+
+  async getUsersByTestRunId(testRunId: string): Promise<User[]> {
+    return await this.userRepository.getUsersByTestRunId(testRunId);
+  }
 }

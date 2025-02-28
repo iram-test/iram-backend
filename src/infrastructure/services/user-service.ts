@@ -96,6 +96,17 @@ class UserService {
       throw new CustomError("Failed to get user", 500);
     }
   }
+
+  async getUsersByTestRunId(testRunId: string): Promise<User[]> {
+    try {
+      logger.info(`Getting users for test run ID: ${testRunId}`);
+      const users = await userRepository.getUsersByTestRunId(testRunId);
+      return users;
+    } catch (error) {
+      logger.error(`Error getting users for test run ID ${testRunId}:`, error);
+      throw new CustomError("Failed to get users for test run", 500);
+    }
+  }
 }
 
 export default new UserService();

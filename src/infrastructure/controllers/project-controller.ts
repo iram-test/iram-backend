@@ -27,8 +27,8 @@ export const addProject = async (
 };
 
 export const getAllUsersFromProject = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };

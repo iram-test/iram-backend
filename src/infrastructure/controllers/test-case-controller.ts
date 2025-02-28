@@ -14,15 +14,15 @@ export interface ExportTestCasesQuery {
 }
 
 export const addTestCase = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
     const testCaseDto = request.body as CreateTestCaseDTO;
     const newTestCase = await TestCaseService.addTestCase(
-        projectId,
-        testCaseDto,
+      projectId,
+      testCaseDto,
     );
     reply.status(201).send(newTestCase);
   } catch (error) {
@@ -36,8 +36,8 @@ export const addTestCase = async (
 };
 
 export const getAllTestCases = async (
-    _: FastifyRequest,
-    reply: FastifyReply,
+  _: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const testCases = await TestCaseService.getAll();
@@ -53,8 +53,8 @@ export const getAllTestCases = async (
 };
 
 export const getTestCaseById = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { testCaseId } = request.params as { testCaseId: string };
@@ -71,20 +71,20 @@ export const getTestCaseById = async (
 };
 
 export const updateTestCase = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { testCaseId } = request.params as { testCaseId: string };
     const testCaseDto = request.body as UpdateTestCaseDTO;
     const updatedTestCase = await TestCaseService.update(
-        testCaseId,
-        testCaseDto,
+      testCaseId,
+      testCaseDto,
     );
     reply.status(200).send(updatedTestCase);
   } catch (error) {
     logger.error(
-        `Error during updating test case with id: ${request.params}: ${error}`,
+      `Error during updating test case with id: ${request.params}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
@@ -95,8 +95,8 @@ export const updateTestCase = async (
 };
 
 export const deleteTestCase = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { testCaseId } = request.params as { testCaseId: string };
@@ -104,7 +104,7 @@ export const deleteTestCase = async (
     reply.status(204).send();
   } catch (error) {
     logger.error(
-        `Error deleting test case with id: ${request.params}: ${error}`,
+      `Error deleting test case with id: ${request.params}: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
@@ -115,8 +115,8 @@ export const deleteTestCase = async (
 };
 
 export const getTestCasesByProjectId = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
@@ -133,8 +133,8 @@ export const getTestCasesByProjectId = async (
 };
 
 export const getTestCasesBySectionId = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { sectionId } = request.params as { sectionId: string };
@@ -151,8 +151,8 @@ export const getTestCasesBySectionId = async (
 };
 
 export const getTestCasesByAssignedUserId = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { assignedUserId } = request.params as { assignedUserId: string };
@@ -160,7 +160,7 @@ export const getTestCasesByAssignedUserId = async (
     reply.status(200).send(testCases);
   } catch (error) {
     logger.error(
-        `Error during getting test cases by assigned user ID: ${error}`,
+      `Error during getting test cases by assigned user ID: ${error}`,
     );
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
@@ -171,8 +171,8 @@ export const getTestCasesByAssignedUserId = async (
 };
 
 export const getTestCaseByTitle = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { title } = request.params as { title: string };
@@ -189,8 +189,8 @@ export const getTestCaseByTitle = async (
 };
 
 export const getTestCasesBySubSectionId = async (
-    request: FastifyRequest,
-    reply: FastifyReply,
+  request: FastifyRequest,
+  reply: FastifyReply,
 ) => {
   try {
     const { subsectionId } = request.params as { subsectionId: string };
@@ -207,14 +207,14 @@ export const getTestCasesBySubSectionId = async (
 };
 
 export const getTestCasesByIds = async (
-    request: FastifyRequest<{ Querystring: ExportTestCasesQuery }>,
-    reply: FastifyReply,
+  request: FastifyRequest<{ Querystring: ExportTestCasesQuery }>,
+  reply: FastifyReply,
 ) => {
   try {
     const { ids, format } = request.query;
 
     logger.info(
-        `getTestCasesByIds called with ids: ${JSON.stringify(ids)}, format: ${format}`,
+      `getTestCasesByIds called with ids: ${JSON.stringify(ids)}, format: ${format}`,
     );
 
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
@@ -231,11 +231,11 @@ export const getTestCasesByIds = async (
 
     const filename = `test_cases.${format}`;
     const contentType =
-        format === "json"
-            ? "application/json"
-            : format === "csv"
-                ? "text/csv"
-                : "application/xml";
+      format === "json"
+        ? "application/json"
+        : format === "csv"
+          ? "text/csv"
+          : "application/xml";
 
     reply.header("Content-Disposition", `attachment; filename="${filename}"`);
     reply.header("Content-Type", contentType);

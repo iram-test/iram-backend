@@ -5,19 +5,19 @@ import { Status } from "./enums/status";
 
 export class TestCase {
   constructor(
-      public testCaseId: string,
-      public title: string,
-      public sectionId: string | null,
-      public projectId: string,
-      public assignedUserId: string | null,
-      public templateType: TemplateType,
-      public testType: TestType,
-      public priority: Priority,
-      public status: Status = Status.UNTESTED,
-      public timeEstimation: string,
-      public description: string,
-      public stepIds: string[] | null,
-      public createdAt: string,
-      public updatedAt: string,
+    public testCaseId: string,
+    public title: string,
+    public sectionId: string | null,
+    public projectId: string,
+    public assignedUserId: string | null,
+    public templateType: TemplateType,
+    public testType: TestType,
+    public priority: Priority,
+    public status: Status = Status.UNTESTED,
+    public timeEstimation: string,
+    public description: string,
+    public stepIds: string[] | null,
+    public createdAt: string,
+    public updatedAt: string,
   ) {}
 }

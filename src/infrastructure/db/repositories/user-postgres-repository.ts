@@ -1,49 +1,62 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import { UserEntity } from "../entities/user-entity";
-import { User } from "../../../domain/entities/user-entity";
+import { UserRepository } from "../../../domain/repositories/user-repository";
 import {
   CreateUserDTO,
   UpdateUserDTO,
 } from "../../../application/dtos/user-dto";
-import { UserRepository } from "../../../domain/repositories/user-repository";
-import { PostgresDataSource } from "../../../tools/db-connection";
+import { User } from "../../../domain/entities/user-entity";
 
 export class UserPostgresRepository implements UserRepository {
-  private repository: Repository<UserEntity>;
+  private repository;
 
-  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
-    this.repository = this.dataSource.getRepository(UserEntity);
+  constructor(dataSource: DataSource) {
+    this.repository = dataSource.getRepository(UserEntity);
   }
 
-  async addUser(createUserDTO: CreateUserDTO): Promise<User> {
-    const userEntity = this.repository.create(createUserDTO);
-    const savedUserEntity = await this.repository.save(userEntity);
-    return this.toDomainEntity(savedUserEntity);
+  async getUsersByTestRunId(testRunId: string): Promise<User[]> {
+    const users = await this.repository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.testRuns", "testRun")
+      .where("testRun.testRunId = :testRunId", { testRunId })
+      .getMany();
+
+    return users.map((userEntity) => this.mapToDomain(userEntity));
+  }
+
+  async addUser(user: CreateUserDTO): Promise<User> {
+    const userEntity = this.repository.create(user);
+    const savedUser = await this.repository.save(userEntity);
+    return this.mapToDomain(savedUser);
   }
 
   async getAll(): Promise<User[]> {
-    const users = await this.repository.find({
-      relations: ["testCases", "testReports", "testRuns"],
-    });
-    return users.map((userEntity) => this.toDomainEntity(userEntity));
+    const userEntities = await this.repository.find();
+    return userEntities.map((userEntity) => this.mapToDomain(userEntity));
   }
 
   async getUserById(userId: string): Promise<User | null> {
     const userEntity = await this.repository.findOne({
       where: { userId },
-      relations: ["testCases", "testReports", "testRuns"],
     });
-    return userEntity ? this.toDomainEntity(userEntity) : null;
+    if (!userEntity) {
+      return null;
+    }
+
+    return this.mapToDomain(userEntity);
   }
 
-  async updateUser(updateUserDTO: UpdateUserDTO): Promise<User> {
-    const { userId, ...updateData } = updateUserDTO;
-    await this.repository.update(userId, updateData);
-    const updatedUserEntity = await this.repository.findOneOrFail({
-      where: { userId },
-      relations: ["testCases", "testReports", "testRuns"],
+  async updateUser(user: UpdateUserDTO): Promise<User> {
+    await this.repository.update(user.userId, user);
+    const updatedUser = await this.repository.findOne({
+      where: { userId: user.userId },
     });
-    return this.toDomainEntity(updatedUserEntity);
+
+    if (!updatedUser) {
+      throw new Error("User not found after update");
+    }
+
+    return this.mapToDomain(updatedUser);
   }
 
   async deleteUser(userId: string): Promise<void> {
@@ -51,19 +64,13 @@ export class UserPostgresRepository implements UserRepository {
   }
 
   async getByEmail(email: string): Promise<User | null> {
-    const userEntity = await this.repository.findOne({
-      where: { email },
-      relations: ["testCases", "testReports", "testRuns"],
-    });
-    return userEntity ? this.toDomainEntity(userEntity) : null;
+    const userEntity = await this.repository.findOne({ where: { email } });
+    return userEntity ? this.mapToDomain(userEntity) : null;
   }
 
   async getByUsername(username: string): Promise<User | null> {
-    const userEntity = await this.repository.findOne({
-      where: { username },
-      relations: ["testCases", "testReports", "testRuns"],
-    });
-    return userEntity ? this.toDomainEntity(userEntity) : null;
+    const userEntity = await this.repository.findOne({ where: { username } });
+    return userEntity ? this.mapToDomain(userEntity) : null;
   }
 
   async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
@@ -71,8 +78,11 @@ export class UserPostgresRepository implements UserRepository {
   }
 
   async getRefreshToken(userId: string): Promise<string | null> {
-    const userEntity = await this.repository.findOne({ where: { userId } });
-    return userEntity?.refreshToken ?? null;
+    const user = await this.repository.findOne({
+      where: { userId },
+      select: ["refreshToken"],
+    });
+    return user ? user.refreshToken : null;
   }
 
   async deleteRefreshToken(userId: string): Promise<void> {
@@ -83,7 +93,7 @@ export class UserPostgresRepository implements UserRepository {
     await this.repository.update(userId, { lastLoginAt: lastLogin });
   }
 
-  private toDomainEntity(userEntity: UserEntity): User {
+  private mapToDomain(userEntity: UserEntity): User {
     return new User(
       userEntity.userId,
       userEntity.firstName,

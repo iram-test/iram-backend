@@ -43,6 +43,14 @@ export async function userRoutes(fastify: FastifyInstance) {
     updateUser,
   );
 
+  fastify.get(
+    "/test-runs/:testRunId/users",
+    {
+      preHandler: [authorize([UserRole.ADMIN, UserRole.MANAGER])],
+    },
+    getUsersByTestRunId,
+  );
+
   fastify.delete(
     "/users/:userId",
     {

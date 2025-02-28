@@ -72,6 +72,24 @@ export const updateUser = async (
   }
 };
 
+export const getUsersByTestRunId = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const { testRunId } = request.params as { testRunId: string };
+    const users = await UserService.getUsersByTestRunId(testRunId);
+    reply.status(200).send(users);
+  } catch (error) {
+    logger.error(`Error getting users by test run ID: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting users by test run ID" });
+    }
+  }
+};
+
 export const deleteUser = async (
   request: FastifyRequest,
   reply: FastifyReply,
