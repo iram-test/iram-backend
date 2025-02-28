@@ -26,6 +26,24 @@ export const addProject = async (
   }
 };
 
+export const getAllUsersFromProject = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+) => {
+  try {
+    const { projectId } = request.params as { projectId: string };
+    const users = await ProjectService.getAllUsersFromProject(projectId);
+    reply.status(200).send(users);
+  } catch (error) {
+    logger.error(`Error getting users for project ${request.params}: ${error}`);
+    if (error instanceof CustomError) {
+      reply.status(error.statusCode).send({ message: error.message });
+    } else {
+      reply.status(500).send({ message: "Error getting users for project" });
+    }
+  }
+};
+
 export const getAllProjects = async (
   _: FastifyRequest,
   reply: FastifyReply,

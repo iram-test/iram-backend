@@ -6,7 +6,7 @@ import {
   updateProject,
   deleteProject,
   addUserToProject,
-  removeUserFromProject,
+  removeUserFromProject, getAllUsersFromProject,
 } from "../controllers/project-controller";
 import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
@@ -30,6 +30,15 @@ export async function projectRoutes(fastify: FastifyInstance) {
       ],
     },
     getProjectById,
+  );
+  fastify.get(
+      "/projects/:projectId/users",
+      {
+        preHandler: [
+          authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+        ],
+      },
+      getAllUsersFromProject
   );
   fastify.put(
     "/projects/:projectId",

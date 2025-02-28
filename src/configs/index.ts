@@ -30,7 +30,7 @@ export const config = {
     digest: "sha512",
   },
   rateLimiter: {
-    max: 100,
+    max: 1000,
     timeWindow: "1 minute",
   },
   nodemailer: {

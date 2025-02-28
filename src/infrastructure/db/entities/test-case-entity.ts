@@ -79,7 +79,7 @@ export class TestCaseEntity {
       },
   )
   @JoinColumn({ name: "sectionId" })
-  section?: SectionEntity;
+  section?: SectionEntity | null;
 
   @Column({ type: "uuid", nullable: true })
   sectionId?: string | null;

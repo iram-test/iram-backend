@@ -10,7 +10,8 @@ export interface ProjectRepository {
   delete(projectId: string): Promise<void>;
   addUserToProject(projectId: string, userId: string): Promise<Project | null>;
   removeUserFromProject(
-    projectId: string,
-    userId: string,
+      projectId: string,
+      userId: string,
   ): Promise<Project | null>;
+  getAllUsersFromProject(projectId: string): Promise<string[] | null>;
 }

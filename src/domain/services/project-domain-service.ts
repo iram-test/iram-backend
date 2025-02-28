@@ -10,19 +10,19 @@ export class ProjectDomainService {
   constructor(private projectRepository: ProjectRepository) {}
 
   async addProject(
-    projectDto: CreateProjectDTO,
-    userId: string,
+      projectDto: CreateProjectDTO,
+      userId: string,
   ): Promise<Project> {
     const project: Project = new Project(
-      v4(),
-      projectDto.name,
-      projectDto.language ?? null,
-      projectDto.location ?? null,
-      projectDto.description,
-      userId,
-      new Date().toISOString(),
-      new Date().toISOString(),
-      [],
+        v4(),
+        projectDto.name,
+        projectDto.language ?? null,
+        projectDto.location ?? null,
+        projectDto.description,
+        userId,
+        new Date().toISOString(),
+        new Date().toISOString(),
+        [],
     );
 
     return this.projectRepository.addProject(project);
@@ -41,8 +41,8 @@ export class ProjectDomainService {
   }
 
   async updateProject(
-    projectId: string,
-    projectDto: UpdateProjectDTO,
+      projectId: string,
+      projectDto: UpdateProjectDTO,
   ): Promise<Project | null> {
     return this.projectRepository.update(projectId, projectDto);
   }
@@ -52,16 +52,20 @@ export class ProjectDomainService {
   }
 
   async addUserToProject(
-    projectId: string,
-    userId: string,
+      projectId: string,
+      userId: string,
   ): Promise<Project | null> {
     return this.projectRepository.addUserToProject(projectId, userId);
   }
 
   async removeUserFromProject(
-    projectId: string,
-    userId: string,
+      projectId: string,
+      userId: string,
   ): Promise<Project | null> {
     return this.projectRepository.removeUserFromProject(projectId, userId);
+  }
+
+  async getAllUsersFromProject(projectId: string): Promise<string[] | null> {
+    return this.projectRepository.getAllUsersFromProject(projectId);
   }
 }
