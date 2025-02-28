@@ -8,16 +8,29 @@ import { router } from "./src/infrastructure/routes";
 import multipart from "@fastify/multipart";
 import sensible from "@fastify/sensible";
 import { PostgresDataSource } from "./src/tools/db-connection";
+import path from "node:path";
+import fastifyStatic from "@fastify/static";
 dotenv.config();
+
+const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
 
 (async () => {
   try {
     const server = Fastify({ logger: false });
-    await server.register(multipart);
     await server.register(rateLimit, config.rateLimiter);
     await server.register(cors, config.cors);
     await server.register(sensible);
+    await server.register(multipart, {
+      limits: {
+        fileSize: 10000000, // 10mb
+        files: 5
+      }
+    });
     await server.register(router, { prefix: "/api" });
+    await server.register(fastifyStatic, {
+      root: UPLOAD_DIR,
+      prefix: '/uploads',
+    });
     setConsoleLogs(logger);
     setFileLogs(logger, "logs");
     PostgresDataSource.initialize()

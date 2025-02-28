@@ -17,7 +17,7 @@ export class StepPostgresRepository implements StepRepository {
   }
 
   async addStep(
-    createDto: CreateStepDTO & { testCaseId: string },
+      createDto: CreateStepDTO & { testCaseId: string },
   ): Promise<Step> {
     const { testCaseId, ...stepData } = createDto;
     const step = this.repository.create(stepData);
@@ -70,12 +70,12 @@ export class StepPostgresRepository implements StepRepository {
 
   private toDomainEntity(entity: StepEntity): Step {
     return new Step(
-      entity.stepId,
-      entity.stepDescription,
-      entity.expectedResult,
-      entity.image,
-      entity.createdAt.toISOString(),
-      entity.updatedAt.toISOString(),
+        entity.stepId,
+        entity.stepDescription,
+        entity.expectedResult,
+        entity.image,
+        entity.createdAt.toISOString(),
+        entity.updatedAt.toISOString(),
     );
   }
 }

@@ -2,7 +2,7 @@ import { StepPostgresRepository } from "../db/repositories/step-postgres-reposit
 import { CreateStepDTO, UpdateStepDTO } from "../../application/dtos/step-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
-import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository"; // Import TestCase repository
+import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository";
 
 const stepRepository = new StepPostgresRepository();
 const testCaseRepository = new TestCasePostgresRepository();
@@ -79,6 +79,27 @@ class StepService {
     } catch (error) {
       logger.error(`Error getting steps by testCaseId ${testCaseId}:`, error);
       throw new CustomError("Failed to get steps by testCaseId", 500);
+    }
+  }
+
+  async uploadImage(stepId: string, imageUrl: string) {
+    try {
+      const step = await stepRepository.getById(stepId);
+      if (!step) {
+        logger.warn(`Step with id: ${stepId} was not found for image upload.`);
+        throw new CustomError("Step not found", 404);
+      }
+
+      const currentImages = step.image || [];
+      const updatedImages = [...currentImages, imageUrl];
+
+      const updatedStep = await stepRepository.update({ stepId: stepId, image: updatedImages });
+      logger.info(`Image uploaded for step with id ${stepId}`);
+      return updatedStep;
+
+    } catch (error) {
+      logger.error(`Error uploading image for step with id ${stepId}:`, error);
+      throw new CustomError("Failed to upload image", 500);
     }
   }
 }
