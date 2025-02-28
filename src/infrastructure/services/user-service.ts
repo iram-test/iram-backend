@@ -1,8 +1,8 @@
-import { UserPostgresRepository } from "../db/repositories/user-postgres-repository";
 import { CreateUserDTO, UpdateUserDTO } from "../../application/dtos/user-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { User } from "../../domain/entities/user-entity";
+import {UserPostgresRepository} from "../db/repositories/user-postgres-repository";
 
 const userRepository = new UserPostgresRepository();
 

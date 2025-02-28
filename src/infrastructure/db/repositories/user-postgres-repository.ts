@@ -6,20 +6,21 @@ import {
   UpdateUserDTO,
 } from "../../../application/dtos/user-dto";
 import { User } from "../../../domain/entities/user-entity";
+import { PostgresDataSource } from "../../../tools/db-connection";
 
 export class UserPostgresRepository implements UserRepository {
   private repository;
 
-  constructor(dataSource: DataSource) {
-    this.repository = dataSource.getRepository(UserEntity);
+  constructor(private readonly dataSource: DataSource = PostgresDataSource) {
+    this.repository = this.dataSource.getRepository(UserEntity);
   }
 
   async getUsersByTestRunId(testRunId: string): Promise<User[]> {
     const users = await this.repository
-      .createQueryBuilder("user")
-      .leftJoinAndSelect("user.testRuns", "testRun")
-      .where("testRun.testRunId = :testRunId", { testRunId })
-      .getMany();
+        .createQueryBuilder("user")
+        .leftJoinAndSelect("user.testRuns", "testRun")
+        .where("testRun.testRunId = :testRunId", { testRunId })
+        .getMany();
 
     return users.map((userEntity) => this.mapToDomain(userEntity));
   }
