@@ -11,7 +11,6 @@ import { UserEntity } from "../entities/user-entity";
 import { SectionEntity } from "../entities/section-entity";
 import { SubSectionEntity } from "../entities/subsection-entity";
 import { CustomError } from "../../../tools/custom-error";
-import { Status } from "../../../domain/entities/enums/status";
 
 export class TestCasePostgresRepository implements TestCaseRepository {
   private repository: Repository<TestCaseEntity>;
@@ -71,7 +70,8 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   }
 
   async update(updateDto: UpdateTestCaseDTO): Promise<TestCase> {
-    const { testCaseId, sectionId, status, ...updateData } = updateDto;
+    const { testCaseId, sectionId, status, assignedUserId, ...updateData } =
+      updateDto;
 
     const existingTestCase = await this.repository.findOneOrFail({
       where: { testCaseId },
@@ -112,6 +112,21 @@ export class TestCasePostgresRepository implements TestCaseRepository {
 
     if (status !== undefined) {
       existingTestCase.status = status;
+    }
+
+    if (assignedUserId !== undefined) {
+      if (assignedUserId === null) {
+        existingTestCase.assignedUser = null;
+      } else {
+        const userRepository = this.dataSource.getRepository(UserEntity);
+        const user = await userRepository.findOne({
+          where: { userId: assignedUserId },
+        });
+        if (!user) {
+          throw new Error("User not found");
+        }
+        existingTestCase.assignedUser = user;
+      }
     }
 
     Object.assign(existingTestCase, updateData);

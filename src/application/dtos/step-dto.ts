@@ -1,9 +1,12 @@
+import { StepStatus } from "../../domain/entities/enums/step-status";
+
 export interface StepDTO {
   stepId: string;
   stepDescription: string;
   expectedResult: string;
   image: string[] | null;
   expectedImage: string[] | null;
+  stepStatus: StepStatus;
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }
@@ -13,6 +16,7 @@ export interface CreateStepDTO {
   expectedResult: string;
   expectedImage?: string[] | null;
   image?: string[] | null;
+  stepStatus: StepStatus;
   testCaseId?: string;
 }
 
@@ -22,4 +26,5 @@ export interface UpdateStepDTO {
   expectedImage?: string[] | null;
   expectedResult?: string;
   image?: string[] | null;
+  stepStatus?: StepStatus;
 }

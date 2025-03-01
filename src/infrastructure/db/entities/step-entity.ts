@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { TestCaseEntity } from "./test-case-entity";
+import { StepStatus } from "../../../domain/entities/enums/step-status";
 
 @Entity()
 export class StepEntity {
@@ -25,6 +26,13 @@ export class StepEntity {
 
   @Column({ type: "jsonb", nullable: true })
   expectedImage!: string[] | null;
+
+  @Column({
+    type: "enum",
+    enum: StepStatus,
+    default: StepStatus.UNTESTED,
+  })
+  stepStatus!: StepStatus;
 
   @CreateDateColumn()
   createdAt!: Date;

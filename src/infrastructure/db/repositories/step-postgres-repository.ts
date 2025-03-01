@@ -62,13 +62,13 @@ export class StepPostgresRepository implements StepRepository {
   }
 
   private toDomainEntity(entity: StepEntity): Step {
-    // Припускаємо, що конструктор Step приймає expectedImage як п’ятий параметр
     return new Step(
       entity.stepId,
       entity.stepDescription,
       entity.expectedResult,
       entity.image,
       entity.expectedImage,
+      entity.stepStatus,
       entity.createdAt.toISOString(),
       entity.updatedAt.toISOString(),
     );

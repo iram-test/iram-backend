@@ -140,7 +140,17 @@ export class TestRunPostgresRepository implements TestRunRepository {
   }
 
   async delete(testRunId: string): Promise<void> {
-    await this.repository.delete(testRunId);
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const testCaseRepository =
+        transactionalEntityManager.getRepository(TestCaseEntity);
+
+      const testCasesToDelete = await testCaseRepository.find({
+        where: { testRun: { testRunId } },
+      });
+
+      await testCaseRepository.remove(testCasesToDelete);
+      await transactionalEntityManager.delete(TestRunEntity, testRunId);
+    });
   }
 
   async getByProjectId(projectId: string): Promise<TestRun[]> {

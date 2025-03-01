@@ -69,7 +69,7 @@ export class TestCaseEntity {
     },
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedUser?: UserEntity;
+  assignedUser?: UserEntity | null; // Зміна тут: додано | null
 
   @ManyToOne(
     () => SectionEntity,
