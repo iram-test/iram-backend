@@ -87,7 +87,7 @@ export class TestReportPostgresRepository implements TestReportRepository {
   private toDomainEntity(entity: TestReportEntity): TestReport {
     const testCaseIds: string[] = [];
     const milestoneIds = entity.milestones
-      ? entity.milestones.map((milestone) => milestone.milestoneID)
+      ? entity.milestones.map((milestone) => milestone.milestoneId)
       : [];
     const testRunIds = entity.testRuns
       ? entity.testRuns.map((testRun) => testRun.testRunId)

@@ -51,8 +51,8 @@ export const getMilestoneById = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { milestoneID } = request.params as { milestoneID: string };
-    const milestone = await MilestoneService.getMilestoneById(milestoneID);
+    const { milestoneId } = request.params as { milestoneId: string };
+    const milestone = await MilestoneService.getMilestoneById(milestoneId);
     reply.status(200).send(milestone);
   } catch (error) {
     logger.error(`Error during getting milestone by id: ${error}`);
@@ -69,10 +69,10 @@ export const updateMilestone = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { milestoneID } = request.params as { milestoneID: string };
+    const { milestoneId } = request.params as { milestoneId: string };
     const milestoneDto = request.body as UpdateMilestoneDTO;
     const updatedMilestone = await MilestoneService.updateMilestone(
-      milestoneID,
+      milestoneId,
       milestoneDto,
     );
     reply.status(200).send(updatedMilestone);
@@ -91,8 +91,8 @@ export const deleteMilestone = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { milestoneID } = request.params as { milestoneID: string };
-    await MilestoneService.deleteMilestone(milestoneID);
+    const { milestoneId } = request.params as { milestoneId: string };
+    await MilestoneService.deleteMilestone(milestoneId);
     reply.status(204).send();
   } catch (error) {
     logger.error(`Error during delete milestone: ${error}`);

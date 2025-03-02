@@ -7,6 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  ManyToMany,
 } from "typeorm";
 import { Priority } from "../../../domain/entities/enums/project-priority";
 import { TemplateType } from "../../../domain/entities/enums/template-type";
@@ -53,6 +54,9 @@ export class TestCaseEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
+  @Column({ type: "varchar", nullable: true })
+  color!: string | null;
+
   @ManyToOne(
     () => ProjectEntity,
     (project) => project.testCases,
@@ -69,7 +73,7 @@ export class TestCaseEntity {
     },
   )
   @JoinColumn({ name: "assignedUserId" })
-  assignedUser?: UserEntity | null; // Зміна тут: додано | null
+  assignedUser?: UserEntity | null;
 
   @ManyToOne(
     () => SectionEntity,
@@ -93,10 +97,9 @@ export class TestCaseEntity {
   )
   steps?: StepEntity[];
 
-  @ManyToOne(
+  @ManyToMany(
     () => TestRunEntity,
     (testRun) => testRun.testCases,
   )
-  @JoinColumn({ name: "testRunId" })
-  testRun!: TestRunEntity;
+  testRuns?: TestRunEntity[];
 }

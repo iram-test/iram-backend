@@ -50,18 +50,18 @@ export class MilestonePostgresRepository implements MilestoneRepository {
   }
 
   async update(updateDto: UpdateMilestoneDTO): Promise<Milestone> {
-    const { milestoneID, ...updateData } = updateDto;
-    await this.repository.update(milestoneID, updateData);
+    const { milestoneId, ...updateData } = updateDto;
+    await this.repository.update(milestoneId, updateData);
     const updatedMilestone = await this.repository.findOneOrFail({
-      where: { milestoneID },
+      where: { milestoneId },
       relations: ["project", "testReport", "testRuns", "parentMilestone"],
     });
     return this.toDomainEntity(updatedMilestone);
   }
 
-  async getById(milestoneID: string): Promise<Milestone | null> {
+  async getById(milestoneId: string): Promise<Milestone | null> {
     const milestone = await this.repository.findOne({
-      where: { milestoneID },
+      where: { milestoneId },
       relations: ["project", "testReport", "testRuns", "parentMilestone"],
     });
     return milestone ? this.toDomainEntity(milestone) : null;
@@ -75,8 +75,8 @@ export class MilestonePostgresRepository implements MilestoneRepository {
     return milestone ? this.toDomainEntity(milestone) : null;
   }
 
-  async delete(milestoneID: string): Promise<void> {
-    await this.repository.delete(milestoneID);
+  async delete(milestoneId: string): Promise<void> {
+    await this.repository.delete(milestoneId);
   }
 
   async getByProjectId(projectId: string): Promise<Milestone[]> {
@@ -89,7 +89,7 @@ export class MilestonePostgresRepository implements MilestoneRepository {
 
   private toDomainEntity(entity: MilestoneEntity): Milestone {
     return new Milestone(
-      entity.milestoneID,
+      entity.milestoneId,
       entity.name,
       entity.parentId,
       entity.description,

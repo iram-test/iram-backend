@@ -26,6 +26,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     },
   ): Promise<TestCase> {
     const testCase = this.repository.create(createDto);
+    testCase.color = this.generateRandomColor();
 
     if (createDto.sectionId) {
       const sectionRepository = this.dataSource.getRepository(SectionEntity);
@@ -69,13 +70,22 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     return this.toDomainEntity(savedTestCase);
   }
 
+  private generateRandomColor(): string {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
   async update(updateDto: UpdateTestCaseDTO): Promise<TestCase> {
     const { testCaseId, sectionId, status, assignedUserId, ...updateData } =
       updateDto;
 
     const existingTestCase = await this.repository.findOneOrFail({
       where: { testCaseId },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
 
     if (sectionId !== undefined) {
@@ -93,7 +103,6 @@ export class TestCasePostgresRepository implements TestCaseRepository {
           existingTestCase.sectionId = section.sectionId;
           existingTestCase.subsectionId = null;
         } else {
-          // Пробуємо знайти як підсекцію
           const subSectionRepository =
             this.dataSource.getRepository(SubSectionEntity);
           const subSection = await subSectionRepository.findOne({
@@ -137,7 +146,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
 
   async getAll(): Promise<TestCase[]> {
     const testCases = await this.repository.find({
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -145,7 +154,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getById(testCaseId: string): Promise<TestCase | null> {
     const testCase = await this.repository.findOne({
       where: { testCaseId },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCase ? this.toDomainEntity(testCase) : null;
   }
@@ -153,7 +162,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getByTitle(title: string): Promise<TestCase | null> {
     const testCase = await this.repository.findOne({
       where: { title },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCase ? this.toDomainEntity(testCase) : null;
   }
@@ -165,7 +174,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getByProjectId(projectId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { project: { projectId } },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -173,7 +182,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getBySectionId(sectionId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { section: { sectionId: sectionId } },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -181,7 +190,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getBySubSectionId(subsectionId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { subsectionId: subsectionId },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -189,7 +198,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getByAssignedUserId(assignedUserId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { assignedUser: { userId: assignedUserId } },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -197,7 +206,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getTestCasesByProjectId(projectId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { project: { projectId: projectId } },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -205,7 +214,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getTestCasesByUserId(userId: string): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { assignedUser: { userId: userId } },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -213,7 +222,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
   async getTestCasesByIds(ids: string[]): Promise<TestCase[]> {
     const testCases = await this.repository.find({
       where: { testCaseId: In(ids) },
-      relations: ["project", "assignedUser", "section", "steps", "testRun"],
+      relations: ["project", "assignedUser", "section", "steps"],
     });
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
@@ -242,6 +251,7 @@ export class TestCasePostgresRepository implements TestCaseRepository {
       stepIds,
       entity.createdAt.toISOString(),
       entity.updatedAt.toISOString(),
+      entity.color,
     );
   }
 }

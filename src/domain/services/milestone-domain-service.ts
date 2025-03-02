@@ -37,8 +37,8 @@ export class MilestoneDomainService implements MilestoneRepository {
     return this.milestoneRepository.getByParentId(parentId);
   }
 
-  getById(milestoneID: string): Promise<Milestone | null> {
-    return this.milestoneRepository.getById(milestoneID);
+  getById(milestoneId: string): Promise<Milestone | null> {
+    return this.milestoneRepository.getById(milestoneId);
   }
 
   getByName(milestoneName: string): Promise<Milestone | null> {
@@ -49,8 +49,8 @@ export class MilestoneDomainService implements MilestoneRepository {
     return this.milestoneRepository.update(milestoneDto);
   }
 
-  delete(milestoneID: string): Promise<void> {
-    return this.milestoneRepository.delete(milestoneID);
+  delete(milestoneId: string): Promise<void> {
+    return this.milestoneRepository.delete(milestoneId);
   }
   getByProjectId(projectId: string): Promise<Milestone[]> {
     return this.milestoneRepository.getByProjectId(projectId);

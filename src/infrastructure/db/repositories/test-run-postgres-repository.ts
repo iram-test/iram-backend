@@ -36,7 +36,7 @@ export class TestRunPostgresRepository implements TestRunRepository {
       const milestoneRepository =
         this.dataSource.getRepository(MilestoneEntity);
       milestone = await milestoneRepository.findOneBy({
-        milestoneID: createDto.milestoneId,
+        milestoneId: createDto.milestoneId,
       });
       if (!milestone) {
         throw new CustomError("Milestone not found", 404);
@@ -71,10 +71,15 @@ export class TestRunPostgresRepository implements TestRunRepository {
       project,
       milestone,
       assignedUser,
-      testCases,
     });
 
     const savedTestRun = await this.repository.save(testRun);
+
+    if (testCases.length > 0) {
+      savedTestRun.testCases = testCases;
+      await this.dataSource.manager.save(savedTestRun);
+    }
+
     const testRunFull = await this.repository.findOne({
       where: { testRunId: savedTestRun.testRunId },
       relations: [
@@ -124,8 +129,69 @@ export class TestRunPostgresRepository implements TestRunRepository {
   }
 
   async update(updateDto: UpdateTestRunDTO): Promise<TestRun> {
-    const { testRunId, ...updateData } = updateDto;
-    await this.repository.update(testRunId, updateData);
+    const {
+      testRunId,
+      milestoneId,
+      assignedUserId,
+      testCaseIds,
+      ...otherData
+    } = updateDto;
+    const updateData: any = { ...otherData };
+
+    const testRun = await this.repository.findOne({
+      where: { testRunId },
+      relations: ["testCases", "milestone", "assignedUser"],
+    });
+
+    if (!testRun) {
+      throw new CustomError("Test Run not found", 404);
+    }
+
+    if (milestoneId !== undefined) {
+      if (milestoneId === null) {
+        updateData.milestone = null;
+      } else {
+        const milestoneRepository =
+          this.dataSource.getRepository(MilestoneEntity);
+        const milestone = await milestoneRepository.findOneBy({ milestoneId });
+        if (!milestone) {
+          throw new CustomError("Milestone not found", 404);
+        }
+        updateData.milestone = milestone;
+      }
+    }
+
+    if (assignedUserId !== undefined) {
+      if (assignedUserId === null) {
+        updateData.assignedUser = null;
+      } else {
+        const userRepository = this.dataSource.getRepository(UserEntity);
+        const user = await userRepository.findOneBy({ userId: assignedUserId });
+        if (!user) {
+          throw new CustomError("User not found", 404);
+        }
+        updateData.assignedUser = user;
+      }
+    }
+
+    if (testCaseIds !== undefined) {
+      const testCaseRepository = this.dataSource.getRepository(TestCaseEntity);
+      const newTestCases: TestCaseEntity[] = await testCaseRepository.findBy({
+        testCaseId: In(testCaseIds),
+      });
+
+      if (newTestCases.length !== testCaseIds.length) {
+        throw new CustomError("One or more Test Cases not found", 500);
+      }
+
+      testRun.testCases = newTestCases;
+      await this.dataSource.manager.save(testRun);
+    }
+
+    Object.assign(testRun, otherData);
+
+    await this.repository.save(testRun);
+
     const updatedTestRun = await this.repository.findOneOrFail({
       where: { testRunId },
       relations: [
@@ -136,19 +202,24 @@ export class TestRunPostgresRepository implements TestRunRepository {
         "assignedUser",
       ],
     });
+
     return this.toDomainEntity(updatedTestRun);
   }
 
   async delete(testRunId: string): Promise<void> {
     await this.dataSource.transaction(async (transactionalEntityManager) => {
-      const testCaseRepository =
-        transactionalEntityManager.getRepository(TestCaseEntity);
-
-      const testCasesToDelete = await testCaseRepository.find({
-        where: { testRun: { testRunId } },
+      const testRun = await transactionalEntityManager.findOne(TestRunEntity, {
+        where: { testRunId },
+        relations: ["testCases"],
       });
 
-      await testCaseRepository.remove(testCasesToDelete);
+      if (!testRun) {
+        throw new CustomError("Test Run not found", 404);
+      }
+
+      testRun.testCases = [];
+      await transactionalEntityManager.save(testRun);
+
       await transactionalEntityManager.delete(TestRunEntity, testRunId);
     });
   }
@@ -217,7 +288,7 @@ export class TestRunPostgresRepository implements TestRunRepository {
     const testCaseIds = entity.testCases
       ? entity.testCases.map((testCase) => testCase.testCaseId)
       : [];
-    const milestoneId = entity.milestone ? entity.milestone.milestoneID : null;
+    const milestoneId = entity.milestone ? entity.milestone.milestoneId : null;
     const assignedUserId = entity.assignedUser
       ? entity.assignedUser.userId
       : null;

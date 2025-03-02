@@ -43,51 +43,51 @@ class MilestoneService {
     }
   }
 
-  async getMilestoneById(milestoneID: string) {
+  async getMilestoneById(milestoneId: string) {
     try {
-      const milestone = await milestoneService.getById(milestoneID);
+      const milestone = await milestoneService.getById(milestoneId);
       if (!milestone) {
-        logger.warn(`Milestone with id: ${milestoneID} not found`);
+        logger.warn(`Milestone with id: ${milestoneId} not found`);
         throw new CustomError("Milestone not found", 404);
       }
-      logger.info(`Milestone with id: ${milestoneID} found`);
+      logger.info(`Milestone with id: ${milestoneId} found`);
       return milestone;
     } catch (error) {
-      logger.error(`Error getting milestone by id ${milestoneID}:`, error);
+      logger.error(`Error getting milestone by id ${milestoneId}:`, error);
       throw new CustomError("Failed to get milestone", 500);
     }
   }
 
-  async updateMilestone(milestoneID: string, milestoneDto: UpdateMilestoneDTO) {
+  async updateMilestone(milestoneId: string, milestoneDto: UpdateMilestoneDTO) {
     try {
-      const milestone = await milestoneService.getById(milestoneID);
+      const milestone = await milestoneService.getById(milestoneId);
       if (!milestone) {
-        logger.warn(`Milestone with id: ${milestoneID} not found for update`);
+        logger.warn(`Milestone with id: ${milestoneId} not found for update`);
         throw new CustomError("Milestone not found", 404);
       }
 
       const updatedMilestone = await milestoneService.update({
         ...milestoneDto,
-        milestoneID,
+        milestoneId,
       });
-      logger.info(`Milestone with id: ${milestoneID} updated`);
+      logger.info(`Milestone with id: ${milestoneId} updated`);
       return updatedMilestone;
     } catch (error) {
-      logger.error(`Error updating milestone with id ${milestoneID}:`, error);
+      logger.error(`Error updating milestone with id ${milestoneId}:`, error);
       throw new CustomError("Failed to update milestone", 500);
     }
   }
-  async deleteMilestone(milestoneID: string) {
+  async deleteMilestone(milestoneId: string) {
     try {
-      const milestone = await milestoneService.getById(milestoneID);
+      const milestone = await milestoneService.getById(milestoneId);
       if (!milestone) {
-        logger.warn(`Milestone with id: ${milestoneID} not found for delete`);
+        logger.warn(`Milestone with id: ${milestoneId} not found for delete`);
         throw new CustomError("Milestone not found", 404);
       }
-      await milestoneService.delete(milestoneID);
-      logger.info(`Milestone with id: ${milestoneID} deleted`);
+      await milestoneService.delete(milestoneId);
+      logger.info(`Milestone with id: ${milestoneId} deleted`);
     } catch (error) {
-      logger.error(`Error deleting milestone with id ${milestoneID}:`, error);
+      logger.error(`Error deleting milestone with id ${milestoneId}:`, error);
       throw new CustomError("Failed to delete milestone", 500);
     }
   }

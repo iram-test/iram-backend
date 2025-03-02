@@ -19,5 +19,6 @@ export class TestCase {
     public stepIds: string[] | null,
     public createdAt: string,
     public updatedAt: string,
+    public color: string | null,
   ) {}
 }

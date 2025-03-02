@@ -6,7 +6,8 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { TestCaseEntity } from "./test-case-entity";
 import { MilestoneEntity } from "./milestone-entity";
@@ -31,10 +32,11 @@ export class TestRunEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(
+  @ManyToMany(
     () => TestCaseEntity,
-    (testCase) => testCase.testRun,
+    (testCase) => testCase.testRuns,
   )
+  @JoinTable()
   testCases?: TestCaseEntity[];
 
   @ManyToOne(

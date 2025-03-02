@@ -9,8 +9,8 @@ export interface MilestoneRepository {
   getAll(): Promise<Milestone[]>;
   getByParentId(parentId: string | null): Promise<Milestone[]>;
   update(milestone: UpdateMilestoneDTO): Promise<Milestone>;
-  getById(milestoneID: string): Promise<Milestone | null>;
+  getById(milestoneId: string): Promise<Milestone | null>;
   getByName(milestoneName: string): Promise<Milestone | null>;
-  delete(milestoneID: string): Promise<void>;
+  delete(milestoneId: string): Promise<void>;
   getByProjectId(projectId: string): Promise<Milestone[]>;
 }

@@ -28,7 +28,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
   );
 
   fastify.get(
-    "/milestones/:milestoneID",
+    "/milestones/:milestoneId",
     {
       preHandler: [
         authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
@@ -38,13 +38,13 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
   );
 
   fastify.put(
-    "/milestones/:milestoneID",
+    "/milestones/:milestoneId",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     updateMilestone,
   );
 
   fastify.delete(
-    "/milestones/:milestoneID",
+    "/milestones/:milestoneId",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     deleteMilestone,
   );

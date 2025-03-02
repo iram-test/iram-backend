@@ -17,7 +17,7 @@ import { TestRunEntity } from "./test-run-entity";
 @Entity()
 export class MilestoneEntity {
   @PrimaryGeneratedColumn("uuid")
-  milestoneID!: string;
+  milestoneId!: string;
 
   @Column()
   name!: string;
