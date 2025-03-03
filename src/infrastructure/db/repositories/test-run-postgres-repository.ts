@@ -1,4 +1,4 @@
-import { DataSource, Repository, In } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { TestRunEntity } from "../entities/test-run-entity";
 import { TestRun } from "../../../domain/entities/test-run-entity";
 import {
@@ -12,6 +12,7 @@ import { TestCaseEntity } from "../entities/test-case-entity";
 import { UserEntity } from "../entities/user-entity";
 import { MilestoneEntity } from "../entities/milestone-entity";
 import { CustomError } from "../../../tools/custom-error";
+import { v4 as uuidv4 } from "uuid";
 
 export class TestRunPostgresRepository implements TestRunRepository {
   private repository: Repository<TestRunEntity>;
@@ -23,6 +24,7 @@ export class TestRunPostgresRepository implements TestRunRepository {
   async addTestRun(
     createDto: CreateTestRunDTO & { projectId: string },
   ): Promise<TestRun> {
+    const testRunId = uuidv4();
     const projectRepository = this.dataSource.getRepository(ProjectEntity);
     const project = await projectRepository.findOneBy({
       projectId: createDto.projectId,
@@ -68,6 +70,7 @@ export class TestRunPostgresRepository implements TestRunRepository {
 
     const testRun = this.repository.create({
       ...createDto,
+      testRunId,
       project,
       milestone,
       assignedUser,

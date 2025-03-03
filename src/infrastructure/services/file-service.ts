@@ -98,9 +98,7 @@ class FileService {
           `Successfully saved test case: ${savedTestCase.testCaseId}`,
         );
       } catch (saveError: any) {
-        logger.error(
-          `Error saving test case ${testCase.testCaseId}: ${saveError.message}`,
-        );
+        logger.error(`Error saving test case: ${saveError.message}`);
         throw new CustomError(
           `Failed to save test case: ${saveError.message}`,
           500,

@@ -13,10 +13,6 @@ import {
 import { ExportTestCasesQuery } from "../controllers/test-case-controller";
 import { RouteShorthandOptions } from "fastify/types/route";
 
-interface ImportFileRoute {
-  Body: { filePath: string };
-}
-
 const exportRouteOptions: RouteShorthandOptions = {
   schema: {
     querystring: {
@@ -32,13 +28,13 @@ const exportRouteOptions: RouteShorthandOptions = {
 
 export async function fileRoutes(fastify: FastifyInstance) {
   const roles = [UserRole.MANAGER, UserRole.ADMIN, UserRole.USER];
-  fastify.post<ImportFileRoute>(
+  fastify.post(
     "/files/import/json",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     importTestCasesFromJson,
   );
 
-  fastify.post<ImportFileRoute>(
+  fastify.post(
     "/files/import/csv",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     importTestCasesFromCsv,

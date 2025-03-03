@@ -11,6 +11,7 @@ import { UserEntity } from "../entities/user-entity";
 import { SectionEntity } from "../entities/section-entity";
 import { SubSectionEntity } from "../entities/subsection-entity";
 import { CustomError } from "../../../tools/custom-error";
+import { v4 as uuidv4 } from "uuid";
 
 export class TestCasePostgresRepository implements TestCaseRepository {
   private repository: Repository<TestCaseEntity>;
@@ -25,8 +26,13 @@ export class TestCasePostgresRepository implements TestCaseRepository {
       sectionId?: string | null;
     },
   ): Promise<TestCase> {
-    const testCase = this.repository.create(createDto);
-    testCase.color = this.generateRandomColor();
+    const testCaseId = uuidv4();
+
+    const testCase = this.repository.create({
+      ...createDto,
+      testCaseId,
+      color: this.generateRandomColor(),
+    });
 
     if (createDto.sectionId) {
       const sectionRepository = this.dataSource.getRepository(SectionEntity);
@@ -219,7 +225,10 @@ export class TestCasePostgresRepository implements TestCaseRepository {
     return testCases.map((entity) => this.toDomainEntity(entity));
   }
 
-  async getTestCasesByIds(ids: string[]): Promise<TestCase[]> {
+  async getTestCasesByIds(ids: string[]): Promise<TestCase[] | []> {
+    if (!ids || ids.length === 0) {
+      return []; // Return an empty array if no IDs are provided
+    }
     const testCases = await this.repository.find({
       where: { testCaseId: In(ids) },
       relations: ["project", "assignedUser", "section", "steps"],
