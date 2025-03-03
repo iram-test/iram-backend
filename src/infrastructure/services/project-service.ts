@@ -1,4 +1,5 @@
 import { ProjectPostgresRepository } from "../db/repositories/project-postgres-repository";
+import { UserPostgresRepository } from "../db/repositories/user-postgres-repository";
 import {
   CreateProjectDTO,
   UpdateProjectDTO,
@@ -9,7 +10,11 @@ import { ProjectDomainService } from "../../domain/services/project-domain-servi
 import { Project } from "../../domain/entities/project-entity";
 
 const projectRepository = new ProjectPostgresRepository();
-const projectDomainService = new ProjectDomainService(projectRepository);
+const userRepository = new UserPostgresRepository();
+const projectDomainService = new ProjectDomainService(
+  projectRepository,
+  userRepository,
+);
 
 class ProjectService {
   async addProject(projectDto: CreateProjectDTO, userId: string) {
@@ -43,6 +48,19 @@ class ProjectService {
     } catch (error) {
       logger.error(`Error getting projects for user ID ${userId}:`, error);
       throw new CustomError("Failed to get projects for user", 500);
+    }
+  }
+
+  async getProjectsByManagerId(managerId: string): Promise<Project[]> {
+    try {
+      logger.info(`Getting projects for manager ID: ${managerId}`);
+      return await projectDomainService.getProjectsByManagerId(managerId);
+    } catch (error) {
+      logger.error(
+        `Error getting projects for manager ID ${managerId}:`,
+        error,
+      );
+      throw new CustomError("Failed to get projects for manager", 500);
     }
   }
 

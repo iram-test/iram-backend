@@ -54,16 +54,25 @@ export const getAllProjects = async (
     const userId = request.user!.userId;
 
     if (userRole === UserRole.USER) {
-      // If the user has the USER role, get only associated projects
       const projects = await ProjectService.getProjectsByUserId(userId);
       reply.status(200).send(projects);
+    } else if (userRole === UserRole.MANAGER) {
+      const managedProjects =
+        await ProjectService.getProjectsByManagerId(userId);
+      const userProjects = await ProjectService.getProjectsByUserId(userId);
+
+      const allProjects = [...managedProjects, ...userProjects];
+      const uniqueProjects = Array.from(
+        new Set(allProjects.map((p) => p.projectId)),
+      ).map((id) => allProjects.find((p) => p.projectId === id)!);
+
+      reply.status(200).send(uniqueProjects);
     } else {
-      // If the user has MANAGER or ADMIN role, get all projects
       const projects = await ProjectService.getAll();
       reply.status(200).send(projects);
     }
   } catch (error) {
-    logger.error(`Error getting all projects: ${error}`);
+    logger.error(`Error getting projects: ${error}`);
     if (error instanceof CustomError) {
       reply.status(error.statusCode).send({ message: error.message });
     } else {
@@ -97,6 +106,20 @@ export const updateProject = async (
   try {
     const { projectId } = request.params as { projectId: string };
     const projectDto = request.body as UpdateProjectDTO;
+    const userId = request.user!.userId;
+    const userRole = request.user!.role;
+
+    const project = await ProjectService.getById(projectId);
+
+    if (!project) {
+      return reply.status(404).send({ message: "Project not found" });
+    }
+    if (project.managerId !== userId && userRole !== UserRole.ADMIN) {
+      return reply
+        .status(403)
+        .send({ message: "Unauthorized to update this project" });
+    }
+
     const updatedProject = await ProjectService.update(projectId, projectDto);
     reply.status(200).send(updatedProject);
   } catch (error) {
@@ -117,6 +140,19 @@ export const deleteProject = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
+    const userId = request.user!.userId;
+    const userRole = request.user!.role;
+
+    const project = await ProjectService.getById(projectId);
+    if (!project) {
+      return reply.status(404).send({ message: "Project not found" });
+    }
+
+    if (project.managerId !== userId && userRole !== UserRole.ADMIN) {
+      return reply
+        .status(403)
+        .send({ message: "Unauthorized to delete this project" });
+    }
     await ProjectService.delete(projectId);
     reply.status(204).send();
   } catch (error) {
@@ -138,6 +174,19 @@ export const addUserToProject = async (
   try {
     const { projectId } = request.params as { projectId: string };
     const { userId } = request.body as { userId: string };
+    const requestingUserId = request.user!.userId;
+    const userRole = request.user!.role;
+
+    const project = await ProjectService.getById(projectId);
+    if (!project) {
+      return reply.status(404).send({ message: "Project not found" });
+    }
+
+    if (project.managerId !== requestingUserId && userRole !== UserRole.ADMIN) {
+      return reply
+        .status(403)
+        .send({ message: "Unauthorized to add users to this project" });
+    }
     const updatedProject = await ProjectService.addUserToProject(
       projectId,
       userId,
@@ -160,6 +209,19 @@ export const removeUserFromProject = async (
   try {
     const { projectId } = request.params as { projectId: string };
     const { userId } = request.body as { userId: string };
+    const requestingUserId = request.user!.userId;
+    const userRole = request.user!.role;
+
+    const project = await ProjectService.getById(projectId);
+    if (!project) {
+      return reply.status(404).send({ message: "Project not found" });
+    }
+
+    if (project.managerId !== requestingUserId && userRole !== UserRole.ADMIN) {
+      return reply
+        .status(403)
+        .send({ message: "Unauthorized to remove users from this project" });
+    }
     const updatedProject = await ProjectService.removeUserFromProject(
       projectId,
       userId,

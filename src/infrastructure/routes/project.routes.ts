@@ -47,23 +47,23 @@ export async function projectRoutes(fastify: FastifyInstance) {
   );
   fastify.put(
     "/projects/:projectId",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     updateProject,
   );
   fastify.delete(
     "/projects/:projectId",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     deleteProject,
   );
   fastify.post(
     "/projects/:projectId/users",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     addUserToProject,
   );
 
   fastify.delete(
     "/projects/:projectId/users",
-    { preHandler: [authorize([UserRole.MANAGER])] },
+    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
     removeUserFromProject,
   );
 }

@@ -15,4 +15,5 @@ export interface ProjectRepository {
   ): Promise<Project | null>;
   getAllUsersFromProject(projectId: string): Promise<string[] | null>;
   getProjectsByUserId(userId: string): Promise<Project[]>;
+  getProjectsByManagerId(managerId: string): Promise<Project[]>;
 }

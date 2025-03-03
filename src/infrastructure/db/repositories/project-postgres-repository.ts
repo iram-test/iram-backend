@@ -1,4 +1,4 @@
-import { DataSource, Repository, FindOptionsWhere } from "typeorm";
+import { DataSource, Repository, FindOptionsWhere, In } from "typeorm";
 import { ProjectEntity } from "../entities/project-entity";
 import { Project } from "../../../domain/entities/project-entity";
 import { UpdateProjectDTO } from "../../../application/dtos/project-dto";
@@ -39,6 +39,7 @@ export class ProjectPostgresRepository implements ProjectRepository {
   ): Promise<Project | null> {
     try {
       await this.repository.update(projectId, updateDto);
+
       const updatedProjectEntity = await this.repository.findOne({
         where: { projectId },
         relations: [
@@ -115,7 +116,7 @@ export class ProjectPostgresRepository implements ProjectRepository {
         project.users.push(userId);
         await this.repository.save(project);
       }
-      return this.getById(projectId); // Use toDomainEntity here
+      return this.getById(projectId);
     } catch (error) {
       console.error("Error adding user to project:", error);
       return null;
@@ -141,7 +142,7 @@ export class ProjectPostgresRepository implements ProjectRepository {
 
       project.users = project.users.filter((id) => id !== userId);
       await this.repository.save(project);
-      return this.getById(projectId); // Use toDomainEntity here
+      return this.getById(projectId);
     } catch (error) {
       console.error("Error removing user from project:", error);
       return null;
@@ -168,6 +169,14 @@ export class ProjectPostgresRepository implements ProjectRepository {
       .leftJoinAndSelect("project.manager", "manager")
       .getMany();
 
+    return projectEntities.map((entity) => this.toDomainEntity(entity));
+  }
+
+  async getProjectsByManagerId(managerId: string): Promise<Project[]> {
+    const projectEntities = await this.repository.find({
+      where: { managerId: managerId },
+      relations: ["manager"],
+    });
     return projectEntities.map((entity) => this.toDomainEntity(entity));
   }
 

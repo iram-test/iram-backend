@@ -5,9 +5,13 @@ import {
   UpdateProjectDTO,
 } from "../../application/dtos/project-dto";
 import { v4 } from "uuid";
+import { UserRepository } from "../repositories/user-repository";
 
 export class ProjectDomainService {
-  constructor(private projectRepository: ProjectRepository) {}
+  constructor(
+    private projectRepository: ProjectRepository,
+    private userRepository: UserRepository,
+  ) {}
 
   async addProject(
     projectDto: CreateProjectDTO,
@@ -44,7 +48,21 @@ export class ProjectDomainService {
     projectId: string,
     projectDto: UpdateProjectDTO,
   ): Promise<Project | null> {
-    return this.projectRepository.update(projectId, projectDto);
+    const existingProject = await this.projectRepository.getById(projectId);
+    if (!existingProject) {
+      return null;
+    }
+
+    if (projectDto.managerId) {
+      existingProject.managerId = projectDto.managerId;
+    }
+
+    const updatedProjectData: UpdateProjectDTO = {
+      ...projectDto,
+      managerId: existingProject.managerId,
+    };
+
+    return this.projectRepository.update(projectId, updatedProjectData);
   }
 
   async deleteProject(projectId: string): Promise<void> {
@@ -71,5 +89,8 @@ export class ProjectDomainService {
 
   async getProjectsByUserId(userId: string): Promise<Project[]> {
     return this.projectRepository.getProjectsByUserId(userId);
+  }
+  async getProjectsByManagerId(managerId: string): Promise<Project[]> {
+    return this.projectRepository.getProjectsByManagerId(managerId);
   }
 }
