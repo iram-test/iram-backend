@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource, Repository, FindOptionsWhere } from "typeorm";
 import { ProjectEntity } from "../entities/project-entity";
 import { Project } from "../../../domain/entities/project-entity";
 import { UpdateProjectDTO } from "../../../application/dtos/project-dto";
@@ -115,7 +115,7 @@ export class ProjectPostgresRepository implements ProjectRepository {
         project.users.push(userId);
         await this.repository.save(project);
       }
-      return this.getById(projectId);
+      return this.getById(projectId); // Use toDomainEntity here
     } catch (error) {
       console.error("Error adding user to project:", error);
       return null;
@@ -141,7 +141,7 @@ export class ProjectPostgresRepository implements ProjectRepository {
 
       project.users = project.users.filter((id) => id !== userId);
       await this.repository.save(project);
-      return this.getById(projectId);
+      return this.getById(projectId); // Use toDomainEntity here
     } catch (error) {
       console.error("Error removing user from project:", error);
       return null;
@@ -159,6 +159,16 @@ export class ProjectPostgresRepository implements ProjectRepository {
       console.error("Error getting users from project:", error);
       return null;
     }
+  }
+
+  async getProjectsByUserId(userId: string): Promise<Project[]> {
+    const projectEntities = await this.repository
+      .createQueryBuilder("project")
+      .where(":userId = ANY(project.users)", { userId })
+      .leftJoinAndSelect("project.manager", "manager")
+      .getMany();
+
+    return projectEntities.map((entity) => this.toDomainEntity(entity));
   }
 
   private toDomainEntity(entity: ProjectEntity): Project {

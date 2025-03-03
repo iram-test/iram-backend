@@ -12,12 +12,11 @@ import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function stepRoutes(fastify: FastifyInstance) {
+  const roles = [UserRole.MANAGER, UserRole.USER, UserRole.ADMIN];
   fastify.post(
     "/test-cases/:testCaseId/steps",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     addStep,
   );
@@ -25,9 +24,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/test-cases/:testCaseId/steps/:stepId/upload-image",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     uploadImage,
   );
@@ -35,9 +32,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/test-cases/:testCaseId/steps/:stepId/upload-expected-image",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     uploadExpectedImage,
   );
@@ -45,9 +40,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/test-cases/:testCaseId/steps",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getStepsByTestCaseId,
   );
@@ -55,9 +48,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/steps/:stepId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getStepById,
   );
@@ -65,9 +56,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
   fastify.put(
     "/steps/:stepId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     updateStep,
   );
@@ -75,9 +64,7 @@ export async function stepRoutes(fastify: FastifyInstance) {
   fastify.delete(
     "/steps/:stepId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     deleteStep,
   );

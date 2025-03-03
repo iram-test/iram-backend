@@ -11,12 +11,11 @@ import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function sectionRoutes(fastify: FastifyInstance) {
+  const roles = [UserRole.MANAGER, UserRole.USER, UserRole.ADMIN];
   fastify.post(
     "/projects/:projectId/sections",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     addSection,
   );
@@ -24,9 +23,7 @@ export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/sections",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getAll,
   );
@@ -34,9 +31,7 @@ export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/sections/:sectionId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getById,
   );
@@ -44,9 +39,7 @@ export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.put(
     "/sections/:sectionId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     update,
   );
@@ -54,9 +47,7 @@ export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.delete(
     "/sections/:sectionId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     deleteSection,
   );
@@ -64,9 +55,7 @@ export async function sectionRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/projects/:projectId/sections",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getSectionsByProjectId,
   );

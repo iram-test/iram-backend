@@ -6,6 +6,7 @@ import {
 } from "../../application/dtos/project-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import { UserRole } from "../../domain/entities/enums/user-role";
 
 export const addProject = async (
   request: FastifyRequest,
@@ -45,12 +46,22 @@ export const getAllUsersFromProject = async (
 };
 
 export const getAllProjects = async (
-  _: FastifyRequest,
+  request: FastifyRequest,
   reply: FastifyReply,
 ) => {
   try {
-    const projects = await ProjectService.getAll();
-    reply.status(200).send(projects);
+    const userRole = request.user!.role;
+    const userId = request.user!.userId;
+
+    if (userRole === UserRole.USER) {
+      // If the user has the USER role, get only associated projects
+      const projects = await ProjectService.getProjectsByUserId(userId);
+      reply.status(200).send(projects);
+    } else {
+      // If the user has MANAGER or ADMIN role, get all projects
+      const projects = await ProjectService.getAll();
+      reply.status(200).send(projects);
+    }
   } catch (error) {
     logger.error(`Error getting all projects: ${error}`);
     if (error instanceof CustomError) {

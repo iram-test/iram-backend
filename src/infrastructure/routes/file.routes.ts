@@ -31,6 +31,7 @@ const exportRouteOptions: RouteShorthandOptions = {
 };
 
 export async function fileRoutes(fastify: FastifyInstance) {
+  const roles = [UserRole.MANAGER, UserRole.ADMIN, UserRole.USER];
   fastify.post<ImportFileRoute>(
     "/files/import/json",
     { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
@@ -46,7 +47,7 @@ export async function fileRoutes(fastify: FastifyInstance) {
   fastify.get<{ Querystring: ExportTestCasesQuery }>(
     "/files/export/test-cases",
     {
-      preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])],
+      preHandler: [authorize(roles)],
       ...exportRouteOptions,
     },
     getTestCasesByIds,
@@ -55,7 +56,7 @@ export async function fileRoutes(fastify: FastifyInstance) {
   fastify.get<{ Querystring: ExportTestRunsQuery }>(
     "/files/export/test-runs",
     {
-      preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])],
+      preHandler: [authorize(roles)],
       ...exportRouteOptions,
     },
     getTestRunsByIds,

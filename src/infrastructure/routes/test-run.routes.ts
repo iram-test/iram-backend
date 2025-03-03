@@ -37,7 +37,7 @@ export async function testRunRoutes(fastify: FastifyInstance) {
   );
   fastify.delete(
     "/test-runs/:testRunId",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.USER])] },
+    { preHandler: [authorize([UserRole.MANAGER])] },
     deleteTestRun,
   );
 

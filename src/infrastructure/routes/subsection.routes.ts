@@ -11,12 +11,11 @@ import { authorize } from "../middlewares/authorization-middleware";
 import { UserRole } from "../../domain/entities/enums/user-role";
 
 export async function subsectionRoutes(fastify: FastifyInstance) {
+  const roles = [UserRole.MANAGER, UserRole.USER, UserRole.ADMIN];
   fastify.post(
-    "/sections/:sectionId/subsections", // Створення Subsection всередині Section
+    "/sections/:sectionId/subsections",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     addSubsection,
   );
@@ -24,9 +23,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/subsections",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getAll,
   );
@@ -34,9 +31,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/subsections/:subsectionId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getById,
   );
@@ -44,9 +39,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
   fastify.put(
     "/subsections/:subsectionId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     update,
   );
@@ -54,9 +47,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
   fastify.delete(
     "/subsections/:subsectionId",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     deleteSubsection,
   );
@@ -64,9 +55,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/sections/:sectionId/subsections",
     {
-      preHandler: [
-        authorize([UserRole.MANAGER, UserRole.USER, UserRole.ADMIN]),
-      ],
+      preHandler: [authorize(roles)],
     },
     getSubsectionsBySectionId,
   );

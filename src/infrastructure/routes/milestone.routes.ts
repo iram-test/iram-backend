@@ -13,7 +13,11 @@ import { UserRole } from "../../domain/entities/enums/user-role";
 export async function milestoneRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/projects/:projectId/milestones",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     addMilestone,
   );
 
@@ -39,7 +43,11 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
 
   fastify.put(
     "/milestones/:milestoneId",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     updateMilestone,
   );
 

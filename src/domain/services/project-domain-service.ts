@@ -22,7 +22,7 @@ export class ProjectDomainService {
       userId,
       new Date().toISOString(),
       new Date().toISOString(),
-      [],
+      [userId],
     );
 
     return this.projectRepository.addProject(project);
@@ -67,5 +67,9 @@ export class ProjectDomainService {
 
   async getAllUsersFromProject(projectId: string): Promise<string[] | null> {
     return this.projectRepository.getAllUsersFromProject(projectId);
+  }
+
+  async getProjectsByUserId(userId: string): Promise<Project[]> {
+    return this.projectRepository.getProjectsByUserId(userId);
   }
 }

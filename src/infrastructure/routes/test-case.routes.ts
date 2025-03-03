@@ -16,12 +16,20 @@ import { UserRole } from "../../domain/entities/enums/user-role";
 export async function testCaseRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/projects/:projectId/test-cases",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     addTestCase,
   );
   fastify.get(
     "/test-cases",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     getAllTestCases,
   );
   fastify.get(
@@ -35,7 +43,11 @@ export async function testCaseRoutes(fastify: FastifyInstance) {
   );
   fastify.put(
     "/test-cases/:testCaseId",
-    { preHandler: [authorize([UserRole.MANAGER, UserRole.ADMIN])] },
+    {
+      preHandler: [
+        authorize([UserRole.MANAGER, UserRole.ADMIN, UserRole.USER]),
+      ],
+    },
     updateTestCase,
   );
   fastify.delete(

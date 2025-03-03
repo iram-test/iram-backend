@@ -6,6 +6,7 @@ import {
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { ProjectDomainService } from "../../domain/services/project-domain-service";
+import { Project } from "../../domain/entities/project-entity";
 
 const projectRepository = new ProjectPostgresRepository();
 const projectDomainService = new ProjectDomainService(projectRepository);
@@ -32,6 +33,16 @@ class ProjectService {
     } catch (error) {
       logger.error(`Error getting all projects:`, error);
       throw new CustomError("Failed to get projects", 500);
+    }
+  }
+
+  async getProjectsByUserId(userId: string): Promise<Project[]> {
+    try {
+      logger.info(`Getting projects for user ID: ${userId}`);
+      return await projectDomainService.getProjectsByUserId(userId);
+    } catch (error) {
+      logger.error(`Error getting projects for user ID ${userId}:`, error);
+      throw new CustomError("Failed to get projects for user", 500);
     }
   }
 
