@@ -28,7 +28,7 @@ export async function userRoutes(fastify: FastifyInstance) {
     "/users/:userId",
     {
       preHandler: [
-        authorize([UserRole.USER, UserRole.MANAGER, UserRole.ADMIN], "userId"),
+        authorize([UserRole.USER, UserRole.MANAGER, UserRole.ADMIN]),
       ],
     },
     getUserById,
