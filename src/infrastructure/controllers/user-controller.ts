@@ -1,19 +1,25 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import UserService from "../services/user-service";
-import { CreateUserDTO, UpdateUserDTO } from "../../application/dtos/user-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import {
+  CreateUserDTOSchema,
+  UpdateUserDTOSchema,
+} from "../../application/validation/dto-validation/user-dto-schema";
+import { z } from "zod";
 
 export const addUser = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const userDto = request.body as CreateUserDTO;
+    const userDto = CreateUserDTOSchema.parse(request.body);
     const newUser = await UserService.addUser(userDto);
     reply.status(201).send(newUser);
   } catch (error) {
-    logger.error(`Error creating user: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error creating user: ${error}`);
       reply.status(500).send({ message: "Error creating user" });
     }
   }
@@ -57,16 +63,23 @@ export const updateUser = async (
 ) => {
   try {
     const { userId } = request.params as { userId: string };
-    const userDto = request.body as UpdateUserDTO;
+    const userDto = UpdateUserDTOSchema.parse(request.body);
+    if (userId !== userDto.userId) {
+      return reply
+        .status(400)
+        .send({ message: "User ID in path and body do not match" });
+    }
     const updatedUser = await UserService.updateUser(userId, userDto);
     reply.status(200).send(updatedUser);
   } catch (error) {
-    logger.error(
-      `Error during updating user with ID ${request.params}: ${error}`,
-    );
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(
+        `Error during updating user with ID ${request.params}: ${error}`,
+      );
       reply.status(500).send({ message: "Error during update user" });
     }
   }

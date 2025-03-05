@@ -1,27 +1,30 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import ProjectService from "../services/project-service";
-import {
-  CreateProjectDTO,
-  UpdateProjectDTO,
-} from "../../application/dtos/project-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { UserRole } from "../../domain/entities/enums/user-role";
+import {
+  CreateProjectDTOSchema,
+  UpdateProjectDTOSchema,
+} from "../../application/validation/dto-validation/project-dto-schema";
+import { z } from "zod";
 
 export const addProject = async (
   request: FastifyRequest,
   reply: FastifyReply,
 ) => {
   try {
-    const projectDto = request.body as CreateProjectDTO;
+    const projectDto = CreateProjectDTOSchema.parse(request.body);
     const userId = request.user!.userId;
     const newProject = await ProjectService.addProject(projectDto, userId);
     reply.status(201).send(newProject);
   } catch (error) {
-    logger.error(`Error creating project: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error creating project: ${error}`);
       reply.status(500).send({ message: "Error creating project" });
     }
   }
@@ -105,7 +108,7 @@ export const updateProject = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    const projectDto = request.body as UpdateProjectDTO;
+    const projectDto = UpdateProjectDTOSchema.parse(request.body);
     const userId = request.user!.userId;
     const userRole = request.user!.role;
 
@@ -123,12 +126,14 @@ export const updateProject = async (
     const updatedProject = await ProjectService.update(projectId, projectDto);
     reply.status(200).send(updatedProject);
   } catch (error) {
-    logger.error(
-      `Error during update project with id ${request.params}: ${error}`,
-    );
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(
+        `Error during update project with id ${request.params}: ${error}`,
+      );
       reply.status(500).send({ message: "Error updating project" });
     }
   }

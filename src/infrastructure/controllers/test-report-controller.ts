@@ -1,11 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import TestReportService from "../services/test-report-service";
-import {
-  CreateTestReportDTO,
-  UpdateTestReportDTO,
-} from "../../application/dtos/test-report-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import {
+  CreateTestReportDTOSchema,
+  UpdateTestReportDTOSchema,
+} from "../../application/validation/dto-validation/test-report-dto-schema";
+import { z } from "zod";
 
 export const addTestReport = async (
   request: FastifyRequest,
@@ -13,17 +14,19 @@ export const addTestReport = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    const testReportDto = request.body as CreateTestReportDTO;
+    const testReportDto = CreateTestReportDTOSchema.parse(request.body);
     const newTestReport = await TestReportService.addTestReport(
       projectId,
       testReportDto,
     );
     reply.status(201).send(newTestReport);
   } catch (error) {
-    logger.error(`Error creating test report: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error creating test report: ${error}`);
       reply.status(500).send({ message: "Error creating test report" });
     }
   }
@@ -70,17 +73,26 @@ export const updateTestReport = async (
 ) => {
   try {
     const { testReportId } = request.params as { testReportId: string };
-    const testReportDto = request.body as UpdateTestReportDTO;
+    const testReportDto = UpdateTestReportDTOSchema.parse(request.body);
+
+    if (testReportId !== testReportDto.testReportId) {
+      return reply
+        .status(400)
+        .send({ message: "TestReport ID in path and body do not match" });
+    }
+
     const updatedTestReport = await TestReportService.update(
       testReportId,
       testReportDto,
     );
     reply.status(200).send(updatedTestReport);
   } catch (error) {
-    logger.error(`Error updating test report ${request.params}: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error updating test report ${request.params}: ${error}`);
       reply.status(500).send({ message: "Error updating test report" });
     }
   }
