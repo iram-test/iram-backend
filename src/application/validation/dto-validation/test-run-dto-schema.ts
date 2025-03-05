@@ -14,8 +14,8 @@ export const TestRunDTOSchema = z.object({
 
 export const CreateTestRunDTOSchema = z.object({
   name: z.string().min(1),
-  milestoneId: z.string().uuid().optional(),
-  assignedUserId: z.string().uuid().optional(),
+  milestoneId: z.string().uuid().optional().nullable(),
+  assignedUserId: z.string().uuid().optional().nullable(),
   testCaseIds: z.array(z.string().uuid()),
   description: z.string(),
 });
@@ -23,8 +23,8 @@ export const CreateTestRunDTOSchema = z.object({
 export const UpdateTestRunDTOSchema = z.object({
   testRunId: z.string().uuid(),
   name: z.string().min(1).optional(),
-  milestoneId: z.string().uuid().optional(),
-  assignedUserId: z.string().uuid().optional(),
+  milestoneId: z.string().uuid().optional().nullable(),
+  assignedUserId: z.string().uuid().optional().nullable(),
   testCaseIds: z.array(z.string().uuid()).optional(),
   description: z.string().optional(),
 });
