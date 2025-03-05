@@ -7,6 +7,11 @@ import {
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import fileService from "../services/file-service";
+import {
+  CreateTestRunDTOSchema,
+  UpdateTestRunDTOSchema,
+} from "../../application/validation/dto-validation/test-run-dto-schema";
+import { z } from "zod";
 
 export interface ExportTestRunsQuery {
   ids: string[];
@@ -19,14 +24,16 @@ export const addTestRun = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    const testRunDto = request.body as CreateTestRunDTO;
+    const testRunDto = CreateTestRunDTOSchema.parse(request.body);
     const newTestRun = await TestRunService.addTestRun(projectId, testRunDto);
     reply.status(201).send(newTestRun);
   } catch (error) {
-    logger.error(`Error creating test run: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error creating test run: ${error}`);
       reply.status(500).send({ message: "Error creating test run" });
     }
   }
@@ -73,16 +80,25 @@ export const updateTestRun = async (
 ) => {
   try {
     const { testRunId } = request.params as { testRunId: string };
-    const testRunDto = request.body as UpdateTestRunDTO;
+    const testRunDto = UpdateTestRunDTOSchema.parse(request.body);
+
+    if (testRunId !== testRunDto.testRunId) {
+      return reply
+        .status(400)
+        .send({ message: "TestRun ID in path and body do not match" });
+    }
+
     const updatedTestRun = await TestRunService.update(testRunId, testRunDto);
     reply.status(200).send(updatedTestRun);
   } catch (error) {
-    logger.error(
-      `Error updating test run with id: ${request.params}: ${error}`,
-    );
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(
+        `Error updating test run with id: ${request.params}: ${error}`,
+      );
       reply.status(500).send({ message: "Error updating test run" });
     }
   }

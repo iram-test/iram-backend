@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
 import {
   addSubsection,
-  getAll,
-  getById,
-  update,
+  getAllSubsections,
+  getSubsectionById,
+  updateSubsection,
   deleteSubsection,
   getSubsectionsBySectionId,
 } from "../controllers/subsection-controller";
@@ -25,7 +25,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
     {
       preHandler: [authorize(roles)],
     },
-    getAll,
+    getAllSubsections,
   );
 
   fastify.get(
@@ -33,7 +33,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
     {
       preHandler: [authorize(roles)],
     },
-    getById,
+    getSubsectionById,
   );
 
   fastify.put(
@@ -41,7 +41,7 @@ export async function subsectionRoutes(fastify: FastifyInstance) {
     {
       preHandler: [authorize(roles)],
     },
-    update,
+    updateSubsection,
   );
 
   fastify.delete(

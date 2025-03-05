@@ -1,11 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import SectionService from "../services/section-service";
-import {
-  CreateSectionDTO,
-  UpdateSectionDTO,
-} from "../../application/dtos/section-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import {
+  CreateSectionDTOSchema,
+  UpdateSectionDTOSchema,
+} from "../../application/validation/dto-validation/section-dto-schema";
+import { z } from "zod";
 
 export const addSection = async (
   request: FastifyRequest,
@@ -13,14 +14,16 @@ export const addSection = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    const sectionDto = request.body as CreateSectionDTO;
+    const sectionDto = CreateSectionDTOSchema.parse(request.body);
     const newSection = await SectionService.addSection(projectId, sectionDto);
     reply.status(201).send(newSection);
   } catch (error) {
-    logger.error(`Error creating section: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error creating section: ${error}`);
       reply.status(500).send({ message: "Error creating section" });
     }
   }
@@ -58,16 +61,25 @@ export const getById = async (request: FastifyRequest, reply: FastifyReply) => {
 export const update = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const { sectionId } = request.params as { sectionId: string };
-    const sectionDto = request.body as UpdateSectionDTO;
+    const sectionDto = UpdateSectionDTOSchema.parse(request.body);
+
+    if (sectionId !== sectionDto.sectionId) {
+      return reply
+        .status(400)
+        .send({ message: "Section ID in path and body do not match" });
+    }
+
     const updatedSection = await SectionService.update(sectionId, sectionDto);
     reply.status(200).send(updatedSection);
   } catch (error) {
-    logger.error(
-      `Error during update section with id ${request.params}: ${error}`,
-    );
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(
+        `Error during update section with id ${request.params}: ${error}`,
+      );
       reply.status(500).send({ message: "Error updating section" });
     }
   }

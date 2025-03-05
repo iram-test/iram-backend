@@ -1,31 +1,32 @@
-import { z } from 'zod';
-import {Location} from "../../../domain/entities/enums/location";
-import {Language} from "../../../domain/entities/enums/language";
+import { z } from "zod";
+import { Location } from "../../../domain/entities/enums/location";
+import { Language } from "../../../domain/entities/enums/language";
+import { createEnumSchema } from "../index";
 
-const ProjectDTOSchema = z.object({
-    projectId: z.string().uuid(),
-    name: z.string().min(1).max(40),
-    language: z.nativeEnum(Language).nullable(),
-    location: z.nativeEnum(Location).nullable(),
-    description: z.string().min(0).max(512),
-    managerId: z.string().uuid(),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-    users: z.array(z.string().uuid()),
+export const ProjectDTOSchema = z.object({
+  projectId: z.string().uuid(),
+  name: z.string().min(1),
+  language: createEnumSchema(Language).nullable(),
+  location: createEnumSchema(Location).nullable(),
+  description: z.string(),
+  managerId: z.string().uuid(),
+  createdAt: z.string().datetime(), //  ISO string
+  updatedAt: z.string().datetime(), //  ISO string
+  users: z.array(z.string().uuid()),
 });
 
-const CreateProjectDTOSchema = z.object({
-    name: z.string().min(1).max(40),
-    language: z.nativeEnum(Language).optional().nullable(),
-    location: z.nativeEnum(Location).optional().nullable(),
-    description: z.string().min(0).max(512),
+export const CreateProjectDTOSchema = z.object({
+  name: z.string().min(1),
+  language: createEnumSchema(Language).optional().nullable(),
+  location: createEnumSchema(Location).optional().nullable(),
+  description: z.string(),
 });
 
-const UpdateProjectDTOSchema = z.object({
-    name: z.string().min(1).max(40).optional(),
-    language: z.nativeEnum(Language).optional().nullable(),
-    location: z.nativeEnum(Location).optional().nullable(),
-    description: z.string().min(0).max(512).optional(),
-    managerId: z.string().uuid().optional(),
-    users: z.array(z.string().uuid()).optional(),
+export const UpdateProjectDTOSchema = z.object({
+  name: z.string().min(1).optional(),
+  language: createEnumSchema(Language).optional().nullable(),
+  location: createEnumSchema(Location).optional().nullable(),
+  description: z.string().optional(),
+  managerId: z.string().uuid().optional(),
+  users: z.array(z.string().uuid()).optional(),
 });

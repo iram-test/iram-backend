@@ -1,12 +1,13 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import TestCaseService from "../services/test-case-service";
-import {
-  CreateTestCaseDTO,
-  UpdateTestCaseDTO,
-} from "../../application/dtos/test-case-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import fileService from "../services/file-service";
+import {
+  CreateTestCaseDTOSchema,
+  UpdateTestCaseDTOSchema,
+} from "../../application/validation/dto-validation/test-case-dto-schema";
+import { z } from "zod";
 
 export interface ExportTestCasesQuery {
   ids: string[];
@@ -19,17 +20,19 @@ export const addTestCase = async (
 ) => {
   try {
     const { projectId } = request.params as { projectId: string };
-    const testCaseDto = request.body as CreateTestCaseDTO;
+    const testCaseDto = CreateTestCaseDTOSchema.parse(request.body);
     const newTestCase = await TestCaseService.addTestCase(
       projectId,
       testCaseDto,
     );
     reply.status(201).send(newTestCase);
   } catch (error) {
-    logger.error(`Error creating test case: ${error}`);
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(`Error creating test case: ${error}`);
       reply.status(500).send({ message: "Error creating test case" });
     }
   }
@@ -76,19 +79,28 @@ export const updateTestCase = async (
 ) => {
   try {
     const { testCaseId } = request.params as { testCaseId: string };
-    const testCaseDto = request.body as UpdateTestCaseDTO;
+    const testCaseDto = UpdateTestCaseDTOSchema.parse(request.body);
+
+    if (testCaseId !== testCaseDto.testCaseId) {
+      return reply
+        .status(400)
+        .send({ message: "TestCase ID in path and body do not match" });
+    }
+
     const updatedTestCase = await TestCaseService.update(
       testCaseId,
       testCaseDto,
     );
     reply.status(200).send(updatedTestCase);
   } catch (error) {
-    logger.error(
-      `Error during updating test case with id: ${request.params}: ${error}`,
-    );
-    if (error instanceof CustomError) {
-      reply.status(error.statusCode).send({ message: error.message });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
     } else {
+      logger.error(
+        `Error during updating test case with id: ${request.params}: ${error}`,
+      );
       reply.status(500).send({ message: "Error updating test case" });
     }
   }

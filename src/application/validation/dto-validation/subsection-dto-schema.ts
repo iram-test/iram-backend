@@ -1,20 +1,20 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-const SubsectionDTOSchema = z.object({
-    subsectionId: z.string().uuid(),
-    name: z.string().min(1).max(40),
-    description: z.string().min(0).max(512),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+export const SubsectionDTOSchema = z.object({
+  subsectionId: z.string().uuid(),
+  name: z.string().min(1),
+  description: z.string(),
+  createdAt: z.string().datetime(), // ISO string
+  updatedAt: z.string().datetime(), //  ISO string
 });
 
-const CreateSubsectionDTOSchema = z.object({
-    name: z.string().min(1).max(40),
-    description: z.string().min(0).max(512),
+export const CreateSubsectionDTOSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
 });
 
-const UpdateSubsectionDTOSchema = z.object({
-    subsectionId: z.string().uuid(),
-    name: z.string().min(1).max(40).optional(),
-    description: z.string().min(0).max(512).optional(),
+export const UpdateSubsectionDTOSchema = z.object({
+  subsectionId: z.string().uuid(),
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
 });

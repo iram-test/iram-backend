@@ -1,19 +1,20 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import {
-  RegisterDTO,
-  LoginWithUsernameDTO,
-  LoginWithEmailDTO,
-} from "../../application/dtos/auth-dto";
 import authService from "../services/auth-service";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
+import {
+  LoginWithEmailDTOSchema,
+  LoginWithUsernameDTOSchema,
+  RegisterDTOSchema,
+} from "../../application/validation/dto-validation/register-dto-schema";
+import { z } from "zod";
 
 export const register = async (
   request: FastifyRequest,
   reply: FastifyReply,
 ) => {
   try {
-    const registerDto = request.body as RegisterDTO;
+    const registerDto = RegisterDTOSchema.parse(request.body);
     const data = await authService.registration(registerDto);
     reply.code(201).send({
       message: "User registered successfully",
@@ -22,8 +23,14 @@ export const register = async (
       refreshToken: data.refreshToken,
     });
   } catch (error) {
-    logger.error(`Error during registration: ${error}`);
-    reply.code(500).send({ message: "Error during registration" });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
+    } else {
+      logger.error(`Error during registration: ${error}`);
+      reply.code(500).send({ message: "Error during registration" });
+    }
   }
 };
 
@@ -32,12 +39,18 @@ export const loginWithUsername = async (
   reply: FastifyReply,
 ) => {
   try {
-    const loginDto = request.body as LoginWithUsernameDTO;
+    const loginDto = LoginWithUsernameDTOSchema.parse(request.body);
     const tokens = await authService.login(loginDto);
     reply.code(200).send(tokens);
   } catch (error) {
-    logger.error(`Error during login: ${error}`);
-    reply.code(401).send({ message: "Invalid username or password" });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
+    } else {
+      logger.error(`Error during login: ${error}`);
+      reply.code(401).send({ message: "Invalid username or password" });
+    }
   }
 };
 
@@ -46,12 +59,18 @@ export const loginWithEmail = async (
   reply: FastifyReply,
 ) => {
   try {
-    const loginDto = request.body as LoginWithEmailDTO;
+    const loginDto = LoginWithEmailDTOSchema.parse(request.body);
     const tokens = await authService.login(loginDto);
     reply.code(200).send(tokens);
   } catch (error) {
-    logger.error(`Error during login: ${error}`);
-    reply.code(401).send({ message: "Invalid email or password" });
+    if (error instanceof z.ZodError) {
+      reply
+        .code(400)
+        .send({ message: "Validation error", errors: error.errors });
+    } else {
+      logger.error(`Error during login: ${error}`);
+      reply.code(401).send({ message: "Invalid email or password" });
+    }
   }
 };
 
@@ -77,7 +96,6 @@ export const refresh = async (request: FastifyRequest, reply: FastifyReply) => {
   }
 };
 
-// New activate controller
 export const activate = async (
   request: FastifyRequest,
   reply: FastifyReply,

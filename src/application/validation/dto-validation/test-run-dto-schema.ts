@@ -1,30 +1,30 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-const TestRunDTOSchema = z.object({
-    testRunId: z.string().uuid(),
-    name: z.string().min(1).max(40),
-    milestoneIds: z.array(z.string().uuid()),
-    assignedUserIds: z.array(z.string().uuid()).nullable(),
-    projectId: z.string().uuid(),
-    testCaseIds: z.array(z.string().uuid()),
-    description: z.string().min(0).max(512),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+export const TestRunDTOSchema = z.object({
+  testRunId: z.string().uuid(),
+  name: z.string().min(1),
+  milestoneIds: z.array(z.string().uuid()).optional(),
+  assignedUserIds: z.array(z.string().uuid()).nullable(),
+  projectId: z.string().uuid(),
+  testCaseIds: z.array(z.string().uuid()),
+  description: z.string(),
+  createdAt: z.string().datetime(), // ISO string
+  updatedAt: z.string().datetime(), // ISO string
 });
 
-const CreateTestRunDTOSchema = z.object({
-    name: z.string().min(1).max(40),
-    milestoneId: z.string().uuid().optional(),
-    assignedUserId: z.string().uuid().optional(),
-    testCaseIds: z.array(z.string().uuid()),
-    description: z.string().min(0).max(512),
+export const CreateTestRunDTOSchema = z.object({
+  name: z.string().min(1),
+  milestoneId: z.string().uuid().optional(),
+  assignedUserId: z.string().uuid().optional(),
+  testCaseIds: z.array(z.string().uuid()),
+  description: z.string(),
 });
 
-const UpdateTestRunDTOSchema = z.object({
-    testRunId: z.string().uuid(),
-    name: z.string().min(1).max(40).optional(),
-    milestoneId: z.string().uuid().optional(),
-    assignedUserId: z.string().uuid().optional(),
-    testCaseIds: z.array(z.string().uuid()).optional(),
-    description: z.string().min(0).max(512).optional(),
+export const UpdateTestRunDTOSchema = z.object({
+  testRunId: z.string().uuid(),
+  name: z.string().min(1).optional(),
+  milestoneId: z.string().uuid().optional(),
+  assignedUserId: z.string().uuid().optional(),
+  testCaseIds: z.array(z.string().uuid()).optional(),
+  description: z.string().optional(),
 });

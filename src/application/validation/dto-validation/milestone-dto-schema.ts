@@ -1,39 +1,40 @@
-import { z } from 'zod';
-import {MilestoneStatus} from "../../../domain/entities/enums/milestone-status";
+import { z } from "zod";
+import { MilestoneStatus } from "../../../domain/entities/enums/milestone-status";
+import { createEnumSchema } from "../index";
 
-const MilestoneDTOSchema = z.object({
-    milestoneId: z.string().uuid(),
-    name: z.string().min(1).max(40),
-    parentId: z.string().uuid().nullable(),
-    description: z.string().min(0).max(512),
-    startDate: z.string().datetime().nullable(),
-    endDate: z.string().datetime().nullable(),
-    status: z.nativeEnum(MilestoneStatus),
-    projectId: z.string().uuid().nullable(),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-    testReportId: z.string().uuid().nullable(),
-    testRunId: z.string().uuid().nullable(),
+export const MilestoneDTOSchema = z.object({
+  milestoneId: z.string().uuid(),
+  name: z.string().min(1).max(255),
+  parentId: z.string().uuid().nullable(),
+  description: z.string().max(1000),
+  startDate: z.string().datetime().nullable(),
+  endDate: z.string().datetime().nullable(),
+  status: createEnumSchema(MilestoneStatus),
+  projectId: z.string().uuid().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  testReportId: z.string().uuid().nullable(),
+  testRunId: z.string().uuid().nullable(),
 });
 
-const CreateMilestoneDTOSchema = z.object({
-    name: z.string().min(1).max(40),
-    parentId: z.string().uuid().optional().nullable(),
-    description: z.string().min(0).max(512),
-    startDate: z.string().datetime().optional().nullable(),
-    endDate: z.string().datetime().optional().nullable(),
-    status: z.nativeEnum(MilestoneStatus),
-    testReportId: z.string().uuid().optional().nullable(),
-    testRunId: z.string().uuid().optional().nullable(),
+export const CreateMilestoneDTOSchema = z.object({
+  name: z.string().min(1).max(255),
+  parentId: z.string().uuid().optional().nullable(),
+  description: z.string().max(1000),
+  startDate: z.string().datetime().optional().nullable(),
+  endDate: z.string().datetime().optional().nullable(),
+  status: createEnumSchema(MilestoneStatus),
+  testReportId: z.string().uuid().optional().nullable(),
+  testRunId: z.string().uuid().optional().nullable(),
 });
 
-const UpdateMilestoneDTOSchema = z.object({
-    milestoneId: z.string().uuid(),
-    name: z.string().min(1).max(40).optional(),
-    parentId: z.string().uuid().optional().nullable(),
-    description: z.string().min(0).max(512).optional(),
-    startDate: z.string().datetime().optional().nullable(),
-    endDate: z.string().datetime().optional().nullable(),
-    status: z.nativeEnum(MilestoneStatus).optional(),
-    projectId: z.string().uuid().optional(),
+export const UpdateMilestoneDTOSchema = z.object({
+  milestoneId: z.string().uuid(),
+  name: z.string().min(1).max(255).optional(),
+  parentId: z.string().uuid().optional().nullable(),
+  description: z.string().max(1000).optional(),
+  startDate: z.string().datetime().optional().nullable(),
+  endDate: z.string().datetime().optional().nullable(),
+  status: createEnumSchema(MilestoneStatus).optional(),
+  projectId: z.string().uuid().optional(),
 });
