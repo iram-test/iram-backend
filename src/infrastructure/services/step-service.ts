@@ -3,14 +3,24 @@ import { CreateStepDTO, UpdateStepDTO } from "../../application/dtos/step-dto";
 import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { TestCasePostgresRepository } from "../db/repositories/test-case-postgres-repository";
+import {config} from "../../configs";
+import * as Minio from "minio";
 
 const stepRepository = new StepPostgresRepository();
+
+const minioClient = new Minio.Client({
+  endPoint: config.minio.endPoint,
+  port: config.minio.port,
+  useSSL: config.minio.useSSL,
+  accessKey: config.minio.accessKey,
+  secretKey: config.minio.secretKey
+});
 
 class StepService {
   async addStep(testCaseId: string, stepDto: CreateStepDTO) {
     try {
       const testCase = await new TestCasePostgresRepository().getById(
-        testCaseId,
+          testCaseId,
       );
       if (!testCase) {
         logger.warn(`Test case with id: ${testCaseId} was not found`);
@@ -108,7 +118,7 @@ class StepService {
       const step = await stepRepository.getById(stepId);
       if (!step) {
         logger.warn(
-          `Step with id: ${stepId} was not found for expected image upload.`,
+            `Step with id: ${stepId} was not found for expected image upload.`,
         );
         throw new CustomError("Step not found", 404);
       }
@@ -122,10 +132,76 @@ class StepService {
       return updatedStep;
     } catch (error) {
       logger.error(
-        `Error uploading expected image for step with id ${stepId}:`,
-        error,
+          `Error uploading expected image for step with id ${stepId}:`,
+          error,
       );
       throw new CustomError("Failed to upload expected image", 500);
+    }
+  }
+
+  async deleteImage(stepId: string, imageUrl: string) {
+    try {
+      const step = await stepRepository.getById(stepId);
+      if (!step) {
+        logger.warn(`Step with id: ${stepId} was not found for image deletion.`);
+        throw new CustomError("Step not found", 404);
+      }
+
+      const currentImages = step.image || [];
+      const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
+
+      if (!currentImages.includes(imageUrl)) {
+        logger.warn(`Image with URL: ${imageUrl} not found in step with id: ${stepId}.`);
+        throw new CustomError("Image not found", 404);
+      }
+
+      const updatedImages = currentImages.filter(img => img !== imageUrl);
+      await stepRepository.update({ stepId, image: updatedImages });
+
+      await this.deleteFileFromMinIO(filename);
+
+      logger.info(`Image deleted for step with id ${stepId}`);
+    } catch (error: any) {
+      logger.error(`Error deleting image for step with id ${stepId}:`, error);
+      throw new CustomError("Failed to delete image", 500);
+    }
+  }
+
+  async deleteExpectedImage(stepId: string, imageUrl: string) {
+    try {
+      const step = await stepRepository.getById(stepId);
+      if (!step) {
+        logger.warn(`Step with id: ${stepId} was not found for expected image deletion.`);
+        throw new CustomError("Step not found", 404);
+      }
+
+      const currentExpectedImages = step.expectedImage || [];
+      const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
+
+      if (!currentExpectedImages.includes(imageUrl)) {
+        logger.warn(`Expected image with URL: ${imageUrl} not found in step with id: ${stepId}.`);
+        throw new CustomError("Expected image not found", 404);
+      }
+
+      const updatedExpectedImages = currentExpectedImages.filter(img => img !== imageUrl);
+      await stepRepository.update({ stepId, expectedImage: updatedExpectedImages });
+
+      await this.deleteFileFromMinIO(filename);
+
+      logger.info(`Expected image deleted for step with id ${stepId}`);
+    } catch (error: any) {
+      logger.error(`Error deleting expected image for step with id ${stepId}:`, error);
+      throw new CustomError("Failed to delete expected image", 500);
+    }
+  }
+
+  private async deleteFileFromMinIO(filename: string): Promise<void> {
+    try {
+      await minioClient.removeObject(config.minio.bucketName, filename);
+      logger.info(`File deleted successfully from MinIO: ${filename}`);
+    } catch (error: any) {
+      logger.error(`Error deleting file from MinIO: ${error.message}`);
+      throw new Error(`Failed to delete from MinIO: ${error.message}`);
     }
   }
 }

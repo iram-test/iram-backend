@@ -46,6 +46,7 @@
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
+    "minio": "^8.0.5",
     "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",

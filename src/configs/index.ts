@@ -43,4 +43,14 @@ export const config = {
     clientSecret: process.env.OAUTH_CLIENT_SECRET!,
     refreshToken: process.env.OAUTH_REFRESH_TOKEN!,
   },
+  minio: {
+    endPoint: process.env.MINIO_ENDPOINT!,
+    port: parseInt(process.env.MINIO_PORT || "9000", 10),
+    useSSL: process.env.MINIO_USE_SSL === "true",
+    accessKey: process.env.MINIO_ACCESS_KEY || "",
+    secretKey: process.env.MINIO_SECRET_KEY || "",
+    bucketName: process.env.MINIO_BUCKET_NAME || "",
+    expirationUrl: 60 * 60 * 24,
+    publicUrl: process.env.MINIO_PUBLIC_URL || `http://localhost:${process.env.MINIO_PORT || 9000}`
+  }
 };
