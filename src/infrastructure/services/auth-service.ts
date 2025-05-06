@@ -83,11 +83,14 @@ class AuthService {
       throw new CustomError("Invalid username or password", 401);
     }
 
-    const isValid = await validatePassword(
-      loginDto.password,
-      user.password,
-      config.hash.salt,
+    const [salt, storedHash] = user.password.split("$");
+
+    const isValid = validatePassword(
+        loginDto.password,
+        storedHash,
+        salt
     );
+
     if (!isValid) {
       logger.warn(`Invalid password for user: ${user.username || user.email}`);
       throw new CustomError("Invalid username or password", 401);
