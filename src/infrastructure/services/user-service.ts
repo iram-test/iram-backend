@@ -3,6 +3,8 @@ import logger from "../../tools/logger";
 import { CustomError } from "../../tools/custom-error";
 import { User } from "../../domain/entities/user-entity";
 import { UserPostgresRepository } from "../db/repositories/user-postgres-repository";
+import {hashPassword} from "../../tools/password-utils";
+import {config} from "../../configs";
 
 const userRepository = new UserPostgresRepository();
 
@@ -50,6 +52,12 @@ class UserService {
         logger.warn(`User with ID ${userId} was not found for update.`);
         throw new CustomError("User not found", 404);
       }
+
+      if (userDto.password) {
+        const hashedPassword = hashPassword(userDto.password, config.hash.salt);
+        userDto.password = `${config.hash.salt}$${hashedPassword}`;
+      }
+
       const updatedUser = await userRepository.updateUser({
         ...userDto,
         userId,

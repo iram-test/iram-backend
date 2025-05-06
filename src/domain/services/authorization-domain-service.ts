@@ -1,6 +1,6 @@
 import { User } from "../entities/user-entity";
 import { AuthRepository } from "../repositories/authorization-repository";
-import { RegisterDTO } from "../../application/dtos/auth-dto";
+import {RegisterDTO} from "../../application/dtos/auth-dto";
 
 export class AuthorizationDomainService implements AuthRepository {
   constructor(private authorizationRepository: AuthRepository) {}

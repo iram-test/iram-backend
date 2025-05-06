@@ -1,8 +1,3 @@
-import {
-  RegisterDTO,
-  LoginWithUsernameDTO,
-  LoginWithEmailDTO,
-} from "../../application/dtos/auth-dto";
 import { UserDomainService } from "../../domain/services/user-domain-service";
 import { UserPostgresRepository } from "../db/repositories/user-postgres-repository";
 import { generateTokens, verifyRefreshToken } from "../../tools/jwt";
@@ -13,6 +8,7 @@ import { config } from "../../configs";
 import { UserRole } from "../../domain/entities/enums/user-role";
 import { User } from "../../domain/entities/user-entity";
 import mailService from "../../tools/mail-service";
+import {LoginWithEmailDTO, LoginWithUsernameDTO, RegisterDTO} from "../../application/dtos/auth-dto";
 
 const userRepository = new UserPostgresRepository();
 const userService = new UserDomainService(userRepository);
