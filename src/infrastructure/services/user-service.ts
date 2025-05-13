@@ -54,10 +54,8 @@ class UserService {
       }
 
       if (userDto.password) {
-        const hashedPassword = hashPassword(userDto.password, config.hash.salt);
-        userDto.password = `${config.hash.salt}$${hashedPassword}`;
+        userDto.password = hashPassword(userDto.password);
       }
-
       const updatedUser = await userRepository.updateUser({
         ...userDto,
         userId,

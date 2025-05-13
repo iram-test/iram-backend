@@ -28,7 +28,7 @@ class AuthService {
       userRole = UserRole.MANAGER;
     }
 
-    const hashedPassword = hashPassword(registerDto.password, config.hash.salt);
+    const hashedPassword = hashPassword(registerDto.password);
 
     const newUser = await userService.addUser({
       email: registerDto.email,
@@ -83,13 +83,7 @@ class AuthService {
       throw new CustomError("Invalid username or password", 401);
     }
 
-    const [salt, storedHash] = user.password.split("$");
-
-    const isValid = validatePassword(
-        loginDto.password,
-        storedHash,
-        salt
-    );
+    const isValid = validatePassword(loginDto.password, user.password);
 
     if (!isValid) {
       logger.warn(`Invalid password for user: ${user.username || user.email}`);
